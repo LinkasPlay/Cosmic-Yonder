@@ -9,6 +9,7 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Rect Case;
 */
+extern int creeTab(void);
 extern int contenuCase;
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;

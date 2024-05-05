@@ -1,8 +1,8 @@
 #include <SDL.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
 #include "texture.h"
 
 #define WINDOW_WIDTH 1600
@@ -27,6 +27,7 @@ SDL_Rect Case;
 
 void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
+extern int creeTab(void);
 
 int main (int argc, char **argv) {
    	/*/ 
@@ -77,7 +78,7 @@ int main (int argc, char **argv) {
 	}
 
 	SDL_RenderPresent(renderer);
-	SDL_Delay(500);
+	SDL_Delay(100);
 
     //couleur cases
 	if(SDL_SetRenderDrawColor(renderer, 232, 31, 31, SDL_ALPHA_OPAQUE) != 0 ){
@@ -90,7 +91,7 @@ int main (int argc, char **argv) {
 	}
     */
 
-    extern SDL_Rect Case;
+    //extern SDL_Rect Case;
 	
 
     // Création cases pour les textures
@@ -105,7 +106,7 @@ int main (int argc, char **argv) {
 			if ( (Xcase == 1) || (Ycase == 1) || (Xcase == (caseLongueur - 2)) || (Ycase == (caseLargeur - 2)) ) {
 				contenuCase = -2;
 				// case avec porte
-				if ( (Xcase == (caseLongueur / 2) ) && ( Ycase == ( 1 || (caseLargeur - 2) ) ) || (Ycase == (caseLargeur / 2) ) && ( Xcase == ( 1 || (caseLongueur - 2) ) ) ){
+				if ( ( (Xcase == (caseLongueur / 2) ) && ( Ycase == ( 1 || (caseLargeur - 2) ) ) ) || ( (Ycase == (caseLargeur / 2) ) && ( Xcase == ( 1 || (caseLongueur - 2) ) ) ) ){
 					if ( rand()%3 != 0){
 						contenuCase = -1;
 					}
@@ -152,11 +153,54 @@ int main (int argc, char **argv) {
 		while(SDL_PollEvent(&event)){
 
 			switch (event.type){
+
+				case SDL_KEYDOWN:
+
+					switch (event.key.keysym.sym) {
+						case SDLK_z:
+						case SDLK_UP:
+							printf("z ou flèche haut\n");
+							continue;
+
+						case SDLK_q:
+						case SDLK_LEFT:
+							printf("q ou flèche gauche\n");
+							continue;
+
+						case SDLK_s:
+						case SDLK_DOWN:
+							printf("s ou flèche bas\n");
+							continue;
+
+						case SDLK_d:
+						case SDLK_RIGHT:
+							printf("d ou flèche droite\n");
+							continue;
+
+						case SDLK_SPACE:
+							if (creeTab() == 0){
+								printf("\ngud\n\n");
+							}
+							else {
+								printf("\nuh oh\n\n");
+							}
+							continue;
+
+						case SDLK_TAB:
+							program_launched = SDL_FALSE;
+							break;
+
+						default:
+							continue;
+					}
+
+
+
 				//quitter le programme
 				case SDL_QUIT:
 					program_launched = SDL_FALSE;
 					break;
-				
+		
 				default:
 					break;
 			}
