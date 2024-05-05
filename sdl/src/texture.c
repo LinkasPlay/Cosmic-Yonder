@@ -59,7 +59,7 @@ int texture( int argc, char **argv) {
     //Affichage
     SDL_Surface *image = NULL;
     SDL_Texture *texture = NULL;	
-	contenuCase = -2;
+	extern int contenuCase;
     //Chargement image selon son contenu
     switch (contenuCase) {
         // case avec mur
@@ -69,8 +69,8 @@ int texture( int argc, char **argv) {
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
 		        SDL_ExitWithError("Impossible de charger l'image d'un mur");
-	    }
-        break;
+	    	}
+        	break;
         // case avec porte
         case -1:
             image = SDL_LoadBMP("src/porte.bmp");
@@ -78,8 +78,8 @@ int texture( int argc, char **argv) {
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
 		        SDL_ExitWithError("Impossible de charger l'image d'une porte");
-	    }
-		break;
+	   	 	}
+			break;
         // case vide
         case 0:
             image = SDL_LoadBMP("src/sol.bmp");
@@ -87,8 +87,8 @@ int texture( int argc, char **argv) {
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
 		        SDL_ExitWithError("Impossible de charger l'image d'un sol");
-	    }
-		break;
+	    	}
+			break;
         // case avec personnage
         case 1:
             image = SDL_LoadBMP("src/personnage.bmp");
@@ -96,8 +96,8 @@ int texture( int argc, char **argv) {
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
 		        SDL_ExitWithError("Impossible de charger l'image du personnage");
-	    }
-		break;
+	    	}
+			break;
         // case avec monstre
         case 2:
             image = SDL_LoadBMP("src/monstre.bmp");
@@ -105,8 +105,8 @@ int texture( int argc, char **argv) {
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
 		        SDL_ExitWithError("Impossible de charger l'image d'un monstre");
-	    }
-		break;
+	    	}
+			break;
         // case avec machine
         case 3:
             image = SDL_LoadBMP("src/machine.bmp");
@@ -114,8 +114,10 @@ int texture( int argc, char **argv) {
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
 		        SDL_ExitWithError("Impossible de charger l'image d'une machine ");
-	    }
-        break;
+	   		}
+        	break;
+		default:
+			break;
     }
 
     //creeation texture

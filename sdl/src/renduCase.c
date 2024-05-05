@@ -1,6 +1,8 @@
 #include <SDL.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<time.h>
 #include "texture.h"
 
 #define WINDOW_WIDTH 1600
@@ -38,7 +40,7 @@ int main (int argc, char **argv) {
 	/*/
     int caseLongueur = 16;
     int caseLargeur = 12;
-    
+	srand( time( NULL ) );
 	//initialisation video et audio
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
 		SDL_ExitWithError("Initialisation SDL");
@@ -75,7 +77,7 @@ int main (int argc, char **argv) {
 	}
 
 	SDL_RenderPresent(renderer);
-	SDL_Delay(3000);
+	SDL_Delay(500);
 
     //couleur cases
 	if(SDL_SetRenderDrawColor(renderer, 232, 31, 31, SDL_ALPHA_OPAQUE) != 0 ){
@@ -95,8 +97,36 @@ int main (int argc, char **argv) {
     int Xcase,Ycase;
 	//for ( Xcase = ( WINDOW_WIDTH / caseLongueur ) ; Xcase < WINDOW_WIDTH - ( WINDOW_WIDTH / caseLongueur ) ; Xcase + ( WINDOW_WIDTH / caseLongueur ) ) {
     //    for ( Ycase = ( WINDOW_HEIGHT / caseLargeur ) ; Ycase < WINDOW_HEIGHT - ( WINDOW_HEIGHT / caseLargeur ) ; Ycase + ( WINDOW_HEIGHT / caseLargeur ) ) {
-    for ( Xcase = 1 ; Xcase < 15 ; Xcase ++ ) {
-        for ( Ycase = 1 ; Ycase < 11 ; Ycase ++ ) {
+
+    for ( Xcase = 1 ; Xcase < (caseLongueur - 1) ; Xcase ++ ) {
+        for ( Ycase = 1 ; Ycase < (caseLargeur - 1) ; Ycase ++ ) {
+
+			// case avec mur
+			if ( (Xcase == 1) || (Ycase == 1) || (Xcase == (caseLongueur - 2)) || (Ycase == (caseLargeur - 2)) ) {
+				contenuCase = -2;
+				// case avec porte
+				if ( (Xcase == (caseLongueur / 2) ) && ( Ycase == ( 1 || (caseLargeur - 2) ) ) || (Ycase == (caseLargeur / 2) ) && ( Xcase == ( 1 || (caseLongueur - 2) ) ) ){
+					if ( rand()%2 == 0){
+						contenuCase = -1;
+					}
+				}
+			}
+			// case avec monstre
+			else if ( rand()%10 == 0){
+				contenuCase = 2;
+			}
+			// case avec machine
+			else if ( rand()%15 == 0){
+				contenuCase = 3;
+			}
+			//case vide
+			else{
+				contenuCase = 0;
+			}
+			if ( (Xcase == (caseLongueur / 2) ) && (Ycase == (caseLargeur / 2) ) ){
+				contenuCase = 1;
+			}
+			
             Case.x = Xcase * 100;
             Case.y = Ycase * 100;
             Case.w = WINDOW_WIDTH / caseLongueur ;
@@ -113,7 +143,26 @@ int main (int argc, char **argv) {
 	
 	SDL_RenderPresent(renderer);
 	printf("fini");
-	SDL_Delay(5000);
+	SDL_bool program_launched = SDL_TRUE;
+
+	//gestion des évènements
+	while(program_launched){
+		SDL_Event event;
+
+		while(SDL_PollEvent(&event)){
+
+			switch (event.type){
+				//quitter le programme
+				case SDL_QUIT:
+					program_launched = SDL_FALSE;
+					break;
+				
+				default:
+					break;
+			}
+		}
+
+	}
 
     //effacement rendu
 	if(SDL_RenderClear(renderer) != 0){
