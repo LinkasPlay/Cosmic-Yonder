@@ -4,7 +4,7 @@
 #include "texture.h"
 
 #define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 1200
+#define WINDOW_HEIGHT 1100
 
 /*
 	Windows : gcc src/texture.c -o bin/progTexture -I include -L lib -lmingw32 -lSDL2main -lSDL2

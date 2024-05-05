@@ -6,7 +6,7 @@
 #include "texture.h"
 
 #define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 1200
+#define WINDOW_HEIGHT 1100
 
 /*
 	Windows : gcc src/renduCase.c -o bin/progRenduCase -I include -L lib -lmingw32 -lSDL2main -lSDL2
@@ -29,7 +29,7 @@ void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
 
 int main (int argc, char **argv) {
-   /*/ 
+   	/*/ 
 	int contenuCase = 0;
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
@@ -38,8 +38,8 @@ int main (int argc, char **argv) {
 	extern SDL_Window *window;
 	extern SDL_Renderer *renderer;
 	/*/
-    int caseLongueur = 16;
-    int caseLargeur = 12;
+    int caseLongueur = (WINDOW_WIDTH / 100);
+    int caseLargeur = (WINDOW_HEIGHT / 100);
 	srand( time( NULL ) );
 	//initialisation video et audio
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
@@ -106,7 +106,7 @@ int main (int argc, char **argv) {
 				contenuCase = -2;
 				// case avec porte
 				if ( (Xcase == (caseLongueur / 2) ) && ( Ycase == ( 1 || (caseLargeur - 2) ) ) || (Ycase == (caseLargeur / 2) ) && ( Xcase == ( 1 || (caseLongueur - 2) ) ) ){
-					if ( rand()%2 == 0){
+					if ( rand()%3 != 0){
 						contenuCase = -1;
 					}
 				}
