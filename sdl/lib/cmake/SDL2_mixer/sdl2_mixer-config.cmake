@@ -20,7 +20,7 @@ else()
     set(SDL2MIXER_FLAC              0)
 endif()
 
-set(SDL2MIXER_GME                   0)
+set(SDL2MIXER_GME                   1)
 
 set(SDL2MIXER_MOD_MODPLUG           0)
 set(SDL2MIXER_MOD_XMP               1)
