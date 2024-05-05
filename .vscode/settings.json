@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "texture.h": "c",
+        "unistd.h": "c",
+        "stdlib.h": "c",
+        "sdl_mixer.h": "c"
+    }
+}

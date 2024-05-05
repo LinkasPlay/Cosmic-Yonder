@@ -1,6 +1,12 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+#include <time.h>
+
 #include "texture.h"
 
 #define WINDOW_WIDTH 1600
@@ -64,7 +70,7 @@ int texture( int argc, char **argv) {
     switch (contenuCase) {
         // case avec mur
         case -2:
-            image = SDL_LoadBMP("src/mur.bmp");
+            image = SDL_LoadBMP("src/image/mur.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -73,7 +79,7 @@ int texture( int argc, char **argv) {
         	break;
         // case avec porte
         case -1:
-            image = SDL_LoadBMP("src/porte.bmp");
+            image = SDL_LoadBMP("src/image/porte.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -82,7 +88,7 @@ int texture( int argc, char **argv) {
 			break;
         // case vide
         case 0:
-            image = SDL_LoadBMP("src/sol.bmp");
+            image = SDL_LoadBMP("src/image/sol.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -91,7 +97,7 @@ int texture( int argc, char **argv) {
 			break;
         // case avec personnage
         case 1:
-            image = SDL_LoadBMP("src/personnage.bmp");
+            image = SDL_LoadBMP("src/image/personnage.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -100,7 +106,7 @@ int texture( int argc, char **argv) {
 			break;
         // case avec monstre
         case 2:
-            image = SDL_LoadBMP("src/monstre.bmp");
+            image = SDL_LoadBMP("src/image/monstre.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -109,7 +115,7 @@ int texture( int argc, char **argv) {
 			break;
         // case avec machine
         case 3:
-            image = SDL_LoadBMP("src/machine.bmp");
+            image = SDL_LoadBMP("src/image/machine.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);

@@ -1,8 +1,12 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include <time.h>
+
 #include "texture.h"
 
 #define LARGEUR_TAB 5

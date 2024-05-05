@@ -1,16 +1,19 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include <time.h>
+
 #include "texture.h"
 
 #define WINDOW_WIDTH 1600
 #define WINDOW_HEIGHT 1100
 
 /*
-	Windows : gcc src/renduCase.c -o bin/progRenduCase -I include -L lib -lmingw32 -lSDL2main -lSDL2
-	Windows sans terminal qui ouvre : gcc src/renduCase.c -o bin/progRenduCase -I include -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
+	Windows : src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
 	Linux : gcc renduCase.c $(sdl2-config __cflags --libs) -o progRenduCase
 
 	Flags render
@@ -45,6 +48,11 @@ int main (int argc, char **argv) {
 	//initialisation video et audio
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
 		SDL_ExitWithError("Initialisation SDL");
+
+	}
+
+	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0){
+		SDL_ExitWithError("Impossible de charger SDL mixer");
 
 	}
 	
@@ -91,7 +99,16 @@ int main (int argc, char **argv) {
 	}
     */
 
-    //extern SDL_Rect Case;
+    //creation musique
+	Mix_Music * musique = NULL;
+	musique = Mix_LoadMUS("src/musique/vaisseau.mp3");
+	if(musique == NULL){
+		Mix_FreeMusic(musique);
+		SDL_ExitWithError("Impossible de charger la musique");
+	}
+
+
+
 	
 
     // Création cases pour les textures
@@ -142,12 +159,19 @@ int main (int argc, char **argv) {
         }
     }
 	
+	// Boucle de jeu
+
+	if(Mix_PlayMusic(musique, -1) != 0){
+		SDL_ExitWithError("Impossible de jouer la musique");
+	}
+
+
 	SDL_RenderPresent(renderer);
 	printf("fini");
-	SDL_bool program_launched = SDL_TRUE;
+	SDL_bool continuer = SDL_TRUE;
 
 	//gestion des évènements
-	while(program_launched){
+	while(continuer){
 		SDL_Event event;
 
 		while(SDL_PollEvent(&event)){
@@ -187,7 +211,7 @@ int main (int argc, char **argv) {
 							continue;
 
 						case SDLK_TAB:
-							program_launched = SDL_FALSE;
+							continuer = SDL_FALSE;
 							break;
 
 						default:
@@ -198,7 +222,7 @@ int main (int argc, char **argv) {
 
 				//quitter le programme
 				case SDL_QUIT:
-					program_launched = SDL_FALSE;
+					continuer = SDL_FALSE;
 					break;
 		
 				default:
@@ -214,8 +238,10 @@ int main (int argc, char **argv) {
 	}
 
 	// fin programme / libération mémoire
+	Mix_FreeMusic(musique);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	Mix_CloseAudio();
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }
@@ -223,6 +249,7 @@ int main (int argc, char **argv) {
 //message erreur
 void SDL_ExitWithError(const char *message){
 	SDL_Log("ERREUR : %s > %s\n",message, SDL_GetError());
+	Mix_CloseAudio();
 	SDL_Quit();
 	exit(EXIT_FAILURE);
 }
