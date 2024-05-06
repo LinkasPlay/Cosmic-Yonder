@@ -58,6 +58,7 @@ int main (int argc, char **argv) {
 
 	}
 
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
 	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0){
 		SDL_ExitWithError("Impossible de charger SDL mixer");
 
