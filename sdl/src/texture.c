@@ -68,6 +68,15 @@ int texture( int argc, char **argv) {
 	extern int contenuCase;
     //Chargement image selon son contenu
     switch (contenuCase) {
+		// case avec espace
+        case -5:
+            image = SDL_LoadBMP("src/image/espace.bmp");
+            if(image == NULL){
+		        SDL_DestroyRenderer(renderer);
+		        SDL_DestroyWindow(window);
+		        SDL_ExitWithError("Impossible de charger l'image de l'espace");
+	    	}
+			break;
         // case avec mur
         case -2:
             image = SDL_LoadBMP("src/image/mur.bmp");

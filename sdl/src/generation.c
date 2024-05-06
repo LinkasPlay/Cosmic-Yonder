@@ -13,7 +13,7 @@
 #define LONGUEUR_TAB 5
 
 /*
-	Windows : gcc src/generation.c -o bin\progGeneration
+	Windows : src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
 	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
 	Linux : gcc generation.c -o progGeneration
 

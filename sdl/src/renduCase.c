@@ -9,8 +9,8 @@
 
 #include "texture.h"
 
-#define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 1100
+#define WINDOW_WIDTH 1500
+#define WINDOW_HEIGHT 900
 
 /*
 	Windows : src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
@@ -30,32 +30,27 @@ SDL_Rect Case;
 
 void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
-extern int creeTab(void);
+extern int creeMap(void);
 
 int main (int argc, char **argv) {
-   	/*/ 
-	int contenuCase = 0;
-	SDL_Window *window = NULL;
-	SDL_Renderer *renderer = NULL;
-	//
-	extern int contenuCase;
-	extern SDL_Window *window;
-	extern SDL_Renderer *renderer;
-	/*/
+
     int caseLongueur = (WINDOW_WIDTH / 100);
     int caseLargeur = (WINDOW_HEIGHT / 100);
 	srand( time( NULL ) );
+
 	//initialisation video et audio
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
 		SDL_ExitWithError("Initialisation SDL");
 
 	}
 
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
 	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0){
 		SDL_ExitWithError("Impossible de charger SDL mixer");
 
 	}
-	
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
 	//creation fenètre (nom fenétre, position x fenètre, position y, largeur, hauteur, drapeaux)
 	window = SDL_CreateWindow("Cosmic Yonder",
 								SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,WINDOW_HEIGHT,
@@ -93,32 +88,28 @@ int main (int argc, char **argv) {
 		SDL_ExitWithError("Impossible de changer la couleur pour le rendu");
 	}
 
-	/*effacement rendu
-	if(SDL_RenderClear(renderer) != 0){
-		SDL_ExitWithError("Efffacement rendu echouee");
-	}
-    */
-
     //creation musique
+
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
 	Mix_Music * musique = NULL;
 	musique = Mix_LoadMUS("src/musique/vaisseau.mp3");
 	if(musique == NULL){
 		Mix_FreeMusic(musique);
 		SDL_ExitWithError("Impossible de charger la musique");
 	}
-
-
-
-	
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
     // Création cases pour les textures
+
     int Xcase,Ycase;
-	//for ( Xcase = ( WINDOW_WIDTH / caseLongueur ) ; Xcase < WINDOW_WIDTH - ( WINDOW_WIDTH / caseLongueur ) ; Xcase + ( WINDOW_WIDTH / caseLongueur ) ) {
-    //    for ( Ycase = ( WINDOW_HEIGHT / caseLargeur ) ; Ycase < WINDOW_HEIGHT - ( WINDOW_HEIGHT / caseLargeur ) ; Ycase + ( WINDOW_HEIGHT / caseLargeur ) ) {
+	extern int Xcamera;
+	extern int Ycamera;
+	extern int **map;
 
     for ( Xcase = 1 ; Xcase < (caseLongueur - 1) ; Xcase ++ ) {
         for ( Ycase = 1 ; Ycase < (caseLargeur - 1) ; Ycase ++ ) {
 
+			/*
 			// case avec mur
 			if ( (Xcase == 1) || (Ycase == 1) || (Xcase == (caseLongueur - 2)) || (Ycase == (caseLargeur - 2)) ) {
 				contenuCase = -2;
@@ -144,7 +135,12 @@ int main (int argc, char **argv) {
 			if ( (Xcase == (caseLongueur / 2) ) && (Ycase == (caseLargeur / 2) ) ){
 				contenuCase = 1;
 			}
-			
+			*/
+
+			creeMap();
+
+			contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
+			printf("%d",contenuCase);
             Case.x = Xcase * 100;
             Case.y = Ycase * 100;
             Case.w = WINDOW_WIDTH / caseLongueur ;
@@ -159,12 +155,13 @@ int main (int argc, char **argv) {
         }
     }
 	
-	// Boucle de jeu
+	// Boucle de jeu ******************************************************************************** /
 
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
 	if(Mix_PlayMusic(musique, -1) != 0){
 		SDL_ExitWithError("Impossible de jouer la musique");
 	}
-
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 	SDL_RenderPresent(renderer);
 	printf("fini");
@@ -202,7 +199,7 @@ int main (int argc, char **argv) {
 							continue;
 
 						case SDLK_SPACE:
-							if (creeTab() == 0){
+							if (creeMap() == 0){
 								printf("\ngud\n\n");
 							}
 							else {
@@ -237,11 +234,19 @@ int main (int argc, char **argv) {
 		SDL_ExitWithError("Efffacement rendu echouee");
 	}
 
-	// fin programme / libération mémoire
+	// fin programme / libération mémoire ************************************************************************** /
+
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
 	Mix_FreeMusic(musique);
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
 	Mix_CloseAudio();
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }
@@ -249,7 +254,11 @@ int main (int argc, char **argv) {
 //message erreur
 void SDL_ExitWithError(const char *message){
 	SDL_Log("ERREUR : %s > %s\n",message, SDL_GetError());
+	
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
 	Mix_CloseAudio();
+	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
 	SDL_Quit();
 	exit(EXIT_FAILURE);
 }
