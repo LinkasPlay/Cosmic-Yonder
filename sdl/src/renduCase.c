@@ -11,9 +11,10 @@
 
 #define WINDOW_WIDTH 1500
 #define WINDOW_HEIGHT 900
+#define FPS_LIMIT 16
 
 /*
-	Windows : src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
+	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
 	Linux : gcc renduCase.c $(sdl2-config __cflags --libs) -o progRenduCase
 
 	Flags render
@@ -28,9 +29,22 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Rect Case;
 
+extern personnage perso;
+
 void SDL_ExitWithError(const char *message);
+
+void SDL_LimitFPS(unsigned int limit);
+
+int camera(int argc, char **argv);
+
+extern int mouvementHaut(void);
+extern int mouvementGauche(void);
+extern int mouvementBas(void);
+extern int mouvementDroite(void);
+
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
+extern int actualiserMap(void);
 
 int main (int argc, char **argv) {
 
@@ -101,59 +115,18 @@ int main (int argc, char **argv) {
 
     // Création cases pour les textures
 
-    int Xcase,Ycase;
+    
 	extern int Xcamera;
 	extern int Ycamera;
 	extern int **map;
+	
+    if (creeMap() != 0){
+		SDL_ExitWithError("Impossible de cree la map");
+	}
 
-    for ( Xcase = 1 ; Xcase < (caseLongueur - 1) ; Xcase ++ ) {
-        for ( Ycase = 1 ; Ycase < (caseLargeur - 1) ; Ycase ++ ) {
-
-			/*
-			// case avec mur
-			if ( (Xcase == 1) || (Ycase == 1) || (Xcase == (caseLongueur - 2)) || (Ycase == (caseLargeur - 2)) ) {
-				contenuCase = -2;
-				// case avec porte
-				if ( ( (Xcase == (caseLongueur / 2) ) && ( Ycase == ( 1 || (caseLargeur - 2) ) ) ) || ( (Ycase == (caseLargeur / 2) ) && ( Xcase == ( 1 || (caseLongueur - 2) ) ) ) ){
-					if ( rand()%3 != 0){
-						contenuCase = -1;
-					}
-				}
-			}
-			// case avec monstre
-			else if ( rand()%10 == 0){
-				contenuCase = 2;
-			}
-			// case avec machine
-			else if ( rand()%15 == 0){
-				contenuCase = 3;
-			}
-			//case vide
-			else{
-				contenuCase = 0;
-			}
-			if ( (Xcase == (caseLongueur / 2) ) && (Ycase == (caseLargeur / 2) ) ){
-				contenuCase = 1;
-			}
-			*/
-
-			creeMap();
-
-			contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
-			printf("%d",contenuCase);
-            Case.x = Xcase * 100;
-            Case.y = Ycase * 100;
-            Case.w = WINDOW_WIDTH / caseLongueur ;
-	        Case.h = WINDOW_HEIGHT / caseLargeur ;
-            //printf("%d et %d et %d et %d\n",Case.x,Case.y,Case.w,Case.h);
-            if(SDL_RenderDrawRect(renderer, &Case) != 0){
-		        SDL_ExitWithError("Impossible de dessiner une case");
-	        }
-			if(texture(argc, argv ) != EXIT_SUCCESS){
-				SDL_ExitWithError("Fonction texture interompue");
-			}
-        }
-    }
+	if (camera(argc, argv) != EXIT_SUCCESS){
+		SDL_ExitWithError("Probleme fonction camera");
+	}
 	
 	// Boucle de jeu ******************************************************************************** /
 
@@ -166,12 +139,23 @@ int main (int argc, char **argv) {
 	SDL_RenderPresent(renderer);
 	printf("fini");
 	SDL_bool continuer = SDL_TRUE;
+	unsigned int frame_limit = 0;
+
+	frame_limit = SDL_GetTicks() + FPS_LIMIT;
+	SDL_LimitFPS(frame_limit);
+	frame_limit = SDL_GetTicks() + FPS_LIMIT;
 
 	//gestion des évènements
 	while(continuer){
 		SDL_Event event;
 
 		while(SDL_PollEvent(&event)){
+
+			frame_limit = SDL_GetTicks() + FPS_LIMIT;
+			camera(argc, argv);
+			SDL_RenderPresent(renderer);
+			SDL_LimitFPS(frame_limit);
+			frame_limit = SDL_GetTicks() + FPS_LIMIT;
 
 			switch (event.type){
 
@@ -180,22 +164,30 @@ int main (int argc, char **argv) {
 					switch (event.key.keysym.sym) {
 						case SDLK_z:
 						case SDLK_UP:
-							printf("z ou flèche haut\n");
+							if(mouvementHaut() != EXIT_SUCCESS){
+								SDL_ExitWithError("Erreur mouvement haut");
+							}
 							continue;
 
 						case SDLK_q:
 						case SDLK_LEFT:
-							printf("q ou flèche gauche\n");
+							if(mouvementGauche() != EXIT_SUCCESS){
+								SDL_ExitWithError("Erreur mouvement gauche");
+							}
 							continue;
 
 						case SDLK_s:
 						case SDLK_DOWN:
-							printf("s ou flèche bas\n");
+							if(mouvementBas() != EXIT_SUCCESS){
+								SDL_ExitWithError("Erreur mouvement bas");
+							}
 							continue;
 
 						case SDLK_d:
 						case SDLK_RIGHT:
-							printf("d ou flèche droite\n");
+							if(mouvementDroite() != EXIT_SUCCESS){
+								SDL_ExitWithError("Erreur mouvement droite");
+							}
 							continue;
 
 						case SDLK_SPACE:
@@ -215,8 +207,6 @@ int main (int argc, char **argv) {
 							continue;
 					}
 
-
-
 				//quitter le programme
 				case SDL_QUIT:
 					continuer = SDL_FALSE;
@@ -225,6 +215,11 @@ int main (int argc, char **argv) {
 				default:
 					break;
 			}
+
+			
+			
+			
+
 		}
 
 	}
@@ -251,6 +246,39 @@ int main (int argc, char **argv) {
 	return EXIT_SUCCESS;
 }
 
+// afficher les images de la camera
+int camera(int argc, char ** argv){
+
+	int Xcase,Ycase;
+
+	for ( Xcase = 1 ; Xcase < ( (WINDOW_WIDTH / 100) - 1) ; Xcase ++ ) {
+		
+        for ( Ycase = 1 ; Ycase < ( (WINDOW_HEIGHT / 100) - 1) ; Ycase ++ ) {
+
+			printf("%d\n",(Xcamera + Xcase));
+			contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
+			//contenuCase = -5;
+			//printf("%d",contenuCase);
+            Case.x = Xcase * 100;
+            Case.y = Ycase * 100;
+            Case.w = WINDOW_WIDTH / (WINDOW_WIDTH / 100) ;
+	        Case.h = WINDOW_HEIGHT / (WINDOW_HEIGHT / 100) ;
+            //printf("%d et %d et %d et %d\n",Case.x,Case.y,Case.w,Case.h);
+            if(SDL_RenderDrawRect(renderer, &Case) != 0){
+		        SDL_ExitWithError("Impossible de dessiner une case");
+	        }
+			if(texture(argc, argv ) != EXIT_SUCCESS){
+				SDL_ExitWithError("Fonction texture interompue");
+			}
+        }
+    }
+	perso.frameAnimation ++;
+	SDL_RenderPresent(renderer);
+	return EXIT_SUCCESS;
+
+
+}
+
 //message erreur
 void SDL_ExitWithError(const char *message){
 	SDL_Log("ERREUR : %s > %s\n",message, SDL_GetError());
@@ -262,3 +290,22 @@ void SDL_ExitWithError(const char *message){
 	SDL_Quit();
 	exit(EXIT_FAILURE);
 }
+
+// limite fps
+void SDL_LimitFPS(unsigned int limit){
+	unsigned int ticks = SDL_GetTicks();
+
+	if (limit< ticks) {
+		return;
+	}
+	else if (limit > ticks + FPS_LIMIT){
+		SDL_Delay(FPS_LIMIT);
+	}
+	else {
+		SDL_Delay(limit - ticks);
+	}
+
+
+
+}
+

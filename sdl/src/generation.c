@@ -13,7 +13,7 @@
 #define LONGUEUR_TAB 5
 
 /*
-	Windows : src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
+	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
 	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
 	Linux : gcc generation.c -o progGeneration
 
@@ -29,14 +29,6 @@ void erreur(char message){
 	printf("ERREUR : %s\n",message);
 	exit(0);
 }
-
-typedef struct {
-    int largeur;
-    int longueur;
-    int posX;
-    int posY;
-    int ** cases;
-} salle ;
 
 int creeTab(void) {
 
