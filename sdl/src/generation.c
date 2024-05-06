@@ -1,8 +1,12 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include <time.h>
+
 #include "texture.h"
 
 #define LARGEUR_TAB 5
@@ -12,7 +16,7 @@
 #define COLONNES 5
 
 /*
-	Windows : gcc src/generation.c -o bin\progGeneration
+	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
 	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
 	Linux : gcc generation.c -o progGeneration
 
@@ -28,14 +32,6 @@ void erreur(char message){
 	printf("ERREUR : %s\n",message);
 	exit(0);
 }
-
-typedef struct {
-    int largeur;
-    int longueur;
-    int posX;
-    int posY;
-    int ** cases;
-} salle ;
 
 int creeTab(void) {
 

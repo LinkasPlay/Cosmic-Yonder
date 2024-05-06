@@ -1,13 +1,20 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+#include <time.h>
+
 #include "texture.h"
 
 #define WINDOW_WIDTH 1600
 #define WINDOW_HEIGHT 1100
+#define FRAME_IN_ANIMATION 2
 
 /*
-	Windows : gcc src/texture.c -o bin/progTexture -I include -L lib -lmingw32 -lSDL2main -lSDL2
+	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
 	Windows sans terminal qui ouvre : gcc src/texture.c -o bin/progTexture -I include -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
 	Linux : gcc texture.c $(sdl2-config __cflags --libs) -o progTexture
     Windows : gcc src/*.c -I include -L lib -lmingw32 -lSDL2main -lSDL2
@@ -19,6 +26,7 @@
 	SDL_RENDERER_TARGETTEXTURE
 */
 
+extern personnage perso;
 
 extern void SDL_ExitWithError(const char *message);
 
@@ -60,11 +68,22 @@ int texture( int argc, char **argv) {
     SDL_Surface *image = NULL;
     SDL_Texture *texture = NULL;	
 	extern int contenuCase;
+	char * nomImage;
+
     //Chargement image selon son contenu
     switch (contenuCase) {
+		// case avec espace
+        case -5:
+            image = SDL_LoadBMP("src/image/espace.bmp");
+            if(image == NULL){
+		        SDL_DestroyRenderer(renderer);
+		        SDL_DestroyWindow(window);
+		        SDL_ExitWithError("Impossible de charger l'image de l'espace");
+	    	}
+			break;
         // case avec mur
         case -2:
-            image = SDL_LoadBMP("src/mur.bmp");
+            image = SDL_LoadBMP("src/image/mur.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -73,7 +92,7 @@ int texture( int argc, char **argv) {
         	break;
         // case avec porte
         case -1:
-            image = SDL_LoadBMP("src/porte.bmp");
+            image = SDL_LoadBMP("src/image/porte.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -82,7 +101,7 @@ int texture( int argc, char **argv) {
 			break;
         // case vide
         case 0:
-            image = SDL_LoadBMP("src/sol.bmp");
+            image = SDL_LoadBMP("src/image/sol.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -91,16 +110,116 @@ int texture( int argc, char **argv) {
 			break;
         // case avec personnage
         case 1:
-            image = SDL_LoadBMP("src/personnage.bmp");
+			// choix image selon direction et frame
+			switch (perso.direction){
+			
+			// direction = haut
+			case 1:
+			
+				// frame 1 - 10 => image 1
+				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageHaut (1).bmp");
+				}
+
+				// frame 11 - 20 => image 2
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageHaut (2).bmp");
+				}
+
+				// frame 21 - 30 => image 3
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageHaut (3).bmp");
+				}
+				// frame 31 - 40 => image 4
+				else {
+					image = SDL_LoadBMP("src/image/personnage/personnageHaut (4).bmp");
+				}
+				break;
+
+			// direction = gauche
+			case 2:
+				
+				// frame 1 - 10 => image 1
+				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageGauche (1).bmp");
+				}
+
+				// frame 11 - 20 => image 2
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageGauche (2).bmp");
+				}
+
+				// frame 21 - 30 => image 3
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageGauche (3).bmp");
+				}
+				// frame 31 - 40 => image 4
+				else {
+					image = SDL_LoadBMP("src/image/personnage/personnageGauche (4).bmp");
+				}
+				break;
+
+			// direction = bas
+			case 3:
+				
+				// frame 1 - 10 => image 1
+				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageBas (1).bmp");
+				}
+
+				// frame 11 - 20 => image 2
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageBas (2).bmp");
+				}
+
+				// frame 21 - 30 => image 3
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageBas (3).bmp");
+				}
+				// frame 31 - 40 => image 4
+				else {
+					image = SDL_LoadBMP("src/image/personnage/personnageBas (4).bmp");
+				}
+				break;
+
+			// direction = droite
+			case 4:
+				
+				// frame 1 - 10 => image 1
+				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageDroite (1).bmp");
+				}
+
+				// frame 11 - 20 => image 2
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageDroite (2).bmp");
+				}
+
+				// frame 21 - 30 => image 3
+				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
+					image = SDL_LoadBMP("src/image/personnage/personnageDroite (3).bmp");
+				}
+				// frame 31 - 40 => image 4
+				else {
+					image = SDL_LoadBMP("src/image/personnage/personnageDroite (4).bmp");
+				}
+				break;
+			
+			default:
+				break;
+			}
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
 		        SDL_ExitWithError("Impossible de charger l'image du personnage");
 	    	}
+			if (perso.frameAnimation >= FRAME_IN_ANIMATION * 4){
+				perso.frameAnimation = 0;
+			}
 			break;
         // case avec monstre
         case 2:
-            image = SDL_LoadBMP("src/monstre.bmp");
+            image = SDL_LoadBMP("src/image/monstre.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
@@ -109,7 +228,7 @@ int texture( int argc, char **argv) {
 			break;
         // case avec machine
         case 3:
-            image = SDL_LoadBMP("src/machine.bmp");
+            image = SDL_LoadBMP("src/image/machine.bmp");
             if(image == NULL){
 		        SDL_DestroyRenderer(renderer);
 		        SDL_DestroyWindow(window);
