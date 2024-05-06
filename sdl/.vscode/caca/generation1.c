@@ -1,19 +1,20 @@
 #include <SDL.h>
-#include <SDL_mixer.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <time.h>
-
 #include "texture.h"
 
 #define LARGEUR_TAB 5
 #define LONGUEUR_TAB 5
 
+#define LIGNES 5
+#define COLONNES 5
+
+extern void SDL_ExitWithError(const char *message);
+
 /*
-	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
+	Windows : gcc src/generation.c -o bin\progGeneration
 	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
 	Linux : gcc generation.c -o progGeneration
 
@@ -29,6 +30,14 @@ void erreur(char message){
 	printf("ERREUR : %s\n",message);
 	exit(0);
 }
+
+typedef struct {
+    int largeur;
+    int longueur;
+    int posX;
+    int posY;
+    int ** cases;
+} salle ;
 
 int creeTab(void) {
 
@@ -69,9 +78,56 @@ int creeTab(void) {
     return 0;
 }
 
-salle generation (int graine, salle vaisseau, int numSalle) {
-    
+/*
+J'ai fais un programme qui va creer un tableau de 5 par 5 ou chaque element va etre remplacer par une image.
+Aussi la case au centre tout en haut est une porte pour acceder au niveau suivant.
+*/
+salle generation () {
+
+    for (int i = 0; i < LIGNES; i++) {
+        for (int j = 0; j < COLONNES; j++) {
+            if (i == 2 && j == 0 || i==0 && j==2 || i==2 && j==4 || i=4 && j==2) {
+                tableau[i][j] = -1;
+            } else {
+                tableau[i][j] = -2
+            }
+        }
+    }
+
+    printf("Tableau de 5 par 5 :\n");
+    for (int i = 0; i < LIGNES; i++) {
+        for (int j = 0; j < COLONNES; j++) {
+            if (tableau[i][j] == image) {
+                printf("porte");
+            } else {
+                printf("autre_image");
+            }
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < LIGNES; i++) {
+        for (int j = 0; j < COLONNES; j++) {
+            if (tableau[i][j] != image) {
+                SDL_FreeSurface(tableau[i][j]);
+            }
+        }
+    }
+
+    SDL_Quit();
+
+    return 0;
+}
     
 	return vaisseau;
-}
+
+
+
+
+/*
+test 01
+rfeienjfezbhsfveiebzefd
+*/
+    
+
 
