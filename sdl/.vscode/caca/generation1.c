@@ -11,6 +11,8 @@
 #define LIGNES 5
 #define COLONNES 5
 
+extern void SDL_ExitWithError(const char *message);
+
 /*
 	Windows : gcc src/generation.c -o bin\progGeneration
 	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
@@ -81,38 +83,16 @@ J'ai fais un programme qui va creer un tableau de 5 par 5 ou chaque element va e
 Aussi la case au centre tout en haut est une porte pour acceder au niveau suivant.
 */
 salle generation () {
-    
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        printf("Erreur lors de l'initialisation de SDL : %s\n", SDL_GetError());
-        return 1;
-    }
-
-    SDL_Surface* image = SDL_LoadBMP("votre_image.bmp");
-    if (image == NULL) {
-        printf("Erreur lors du chargement de l'image : %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_Surface* tableau[LIGNES][COLONNES];
 
     for (int i = 0; i < LIGNES; i++) {
         for (int j = 0; j < COLONNES; j++) {
-            if (i == 2 && j == 0 || i=0 && j==2 || i==2 && j==4 || i=4 && j==2) {
-                tableau[i][j] = image;
-                SDL_IncrementRefcount(image);
+            if (i == 2 && j == 0 || i==0 && j==2 || i==2 && j==4 || i=4 && j==2) {
+                tableau[i][j] = -1;
             } else {
-                tableau[i][j] = SDL_LoadBMP("autre_image.bmp");
-                if (tableau[i][j] == NULL) {
-                    printf("Erreur lors du chargement de l'image : %s\n", SDL_GetError());
-                    SDL_Quit();
-                    return 1;
-                }
+                tableau[i][j] = -2
             }
         }
     }
-
-    SDL_FreeSurface(image);
 
     printf("Tableau de 5 par 5 :\n");
     for (int i = 0; i < LIGNES; i++) {
