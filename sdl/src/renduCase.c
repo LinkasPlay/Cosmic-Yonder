@@ -38,6 +38,7 @@ extern int mouvementHaut(void);
 extern int mouvementGauche(void);
 extern int mouvementBas(void);
 extern int mouvementDroite(void);
+extern int attaqueEpee(void);
 
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
@@ -128,8 +129,10 @@ int jeu (int argc, char **argv) {
 	extern int Ycamera;
 	extern tile **map;
 	
-    if (creeMap() != 0){
-		SDL_ExitWithError("Impossible de cree la map");
+	if (perso.lvl == 0){
+		if (creeMap() != 0){
+			SDL_ExitWithError("Impossible de cree la map");
+		}
 	}
 
 	if (camera(argc, argv) != EXIT_SUCCESS){
@@ -170,36 +173,44 @@ int jeu (int argc, char **argv) {
 				case SDL_KEYDOWN:
 
 					switch (event.key.keysym.sym) {
-						case SDLK_z:
+
+						case SDLK_e: 
+						case SDLK_SPACE:
+							if(attaqueEpee() != EXIT_SUCCESS){
+								SDL_ExitWithError("Erreur attaque");
+							}
+							continue;
+
+						case SDLK_z: // mouvement vers le haut
 						case SDLK_UP:
 							if(mouvementHaut() != EXIT_SUCCESS){
 								SDL_ExitWithError("Erreur mouvement haut");
 							}
 							continue;
 
-						case SDLK_q:
+						case SDLK_q: // mouvement vers la gauche
 						case SDLK_LEFT:
 							if(mouvementGauche() != EXIT_SUCCESS){
 								SDL_ExitWithError("Erreur mouvement gauche");
 							}
 							continue;
 
-						case SDLK_s:
+						case SDLK_s: // mouvement vers le bas
 						case SDLK_DOWN:
 							if(mouvementBas() != EXIT_SUCCESS){
 								SDL_ExitWithError("Erreur mouvement bas");
 							}
 							continue;
 
-						case SDLK_d:
+						case SDLK_d: // mouvement vers la droite
 						case SDLK_RIGHT:
 							if(mouvementDroite() != EXIT_SUCCESS){
 								SDL_ExitWithError("Erreur mouvement droite");
 							}
 							continue;
 
-						case SDLK_SPACE:
-							if (creeMap() == 0){
+						case SDLK_TAB: // recharger la map
+							if (actualiserMap() == 0){
 								printf("\ngud\n\n");
 							}
 							else {
@@ -207,7 +218,8 @@ int jeu (int argc, char **argv) {
 							}
 							continue;
 
-						case SDLK_TAB:
+						//quitter le programme (menu pause dans le futur)
+						case SDLK_ESCAPE:
 							continuer = SDL_FALSE;
 							break;
 

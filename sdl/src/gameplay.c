@@ -56,11 +56,38 @@ extern int texture( int argc, char **argv);
 extern int creeMap(void);
 extern int actualiserMap(void);
 
+extern tile **map;
+
 extern int Xcamera;
 extern int Ycamera;
 
 personnage perso;
 personnage persoPast;
+
+void lvlMaj(monstre mstr){
+    perso.xp = perso.xp + mstr.xp;
+    if (perso.xp > ( 100 * ( perso.lvl * 0.9 ) ) ){
+        perso.xp = perso.xp - ( 100 * ( perso.lvl * 0.9 ) );
+        perso.lvl ++;
+    }
+}
+
+
+int degatMonstre(int dmg, monstre mstr){
+    mstr.hp = mstr.hp - dmg;
+    // monstre seulement blessé
+    if (mstr.hp > 0){
+        mstr.frameAnimation = -5;
+    }
+    // monstre tué
+    else {
+        mstr.frameAnimation = -10;
+        lvlMaj(mstr);
+        if (mstr.loot > 1){
+            perso.inv[mstr.loot] ++;
+        }
+    }
+}
 
 int attaqueEpee(void){
 
@@ -68,13 +95,87 @@ int attaqueEpee(void){
         
         //vers le haut
         case 1 :
-            
+            // annimation a ajouté ici
+            if (map[perso.posX - 1][perso.posY].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX - 1][perso.posY].mstr);
+            }
+            if (map[perso.posX - 1][perso.posY - 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX - 1][perso.posY - 1].mstr);
+            }
+            if (map[perso.posX ][perso.posY - 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX][perso.posY - 1].mstr);
+            }
+            if (map[perso.posX + 1][perso.posY - 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY - 1].mstr);
+            }
+            if (map[perso.posX + 1][perso.posY].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY].mstr);
+            }
+            break;
 
+        //vers la gauche
+        case 2 :
+            // annimation a ajouté ici
+            if (map[perso.posX][perso.posY + 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX][perso.posY + 1].mstr);
+            }
+            if (map[perso.posX - 1][perso.posY + 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX - 1][perso.posY + 1].mstr);
+            }
+            if (map[perso.posX - 1][perso.posY].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY].mstr);
+            }
+            if (map[perso.posX - 1][perso.posY - 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX - 1][perso.posY - 1].mstr);
+            }
+            if (map[perso.posX][perso.posY - 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX][perso.posY - 1].mstr);
+            }
+            break;
+
+        //vers le bas
+        case 3 :
+            // annimation a ajouté ici
+            if (map[perso.posX + 1][perso.posY].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY].mstr);
+            }
+            if (map[perso.posX + 1][perso.posY + 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY + 1].mstr);
+            }
+            if (map[perso.posX ][perso.posY + 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX][perso.posY + 1].mstr);
+            }
+            if (map[perso.posX - 1][perso.posY + 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX - 1][perso.posY + 1].mstr);
+            }
+            if (map[perso.posX - 1][perso.posY].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX - 1][perso.posY].mstr);
+            }
+            break;
+
+        //vers la doite
+        case 4 :
+            // annimation a ajouté ici
+            if (map[perso.posX][perso.posY - 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX][perso.posY - 1].mstr);
+            }
+            if (map[perso.posX + 1][perso.posY - 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY - 1].mstr);
+            }
+            if (map[perso.posX + 1][perso.posY].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY].mstr);
+            }
+            if (map[perso.posX + 1][perso.posY + 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX + 1][perso.posY + 1].mstr);
+            }
+            if (map[perso.posX][perso.posY + 1].contenu == 2){
+                degatMonstre(perso.lvl * 10 + 40, map[perso.posX][perso.posY + 1].mstr);
+            }
+            break;
 
     }
 
-
-
+    return EXIT_SUCCESS;
 }
 
 int mouvementHaut(void){

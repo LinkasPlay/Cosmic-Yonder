@@ -11,6 +11,8 @@
 
 extern int jeu(int argc, char **argv);
 
+extern personnage perso;
+
 void clean_ressources(SDL_Window *w, SDL_Renderer *r, SDL_Texture *t){
     
     if(t != NULL){
@@ -86,6 +88,8 @@ int main(int argc, char **argv){
     SDL_RenderPresent(renderer);
     SDL_Delay(5000);
 
+    //lancer le jeu
+    perso.lvl = 0;
     if (jeu (argc, argv) != EXIT_SUCCESS) {
         SDL_Log("Erreur : jeu a planté > %s\n", SDL_GetError());
         clean_ressources(NULL,NULL,NULL);

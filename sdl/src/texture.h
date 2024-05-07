@@ -19,7 +19,10 @@ typedef struct personnage {
     int direction; //haut = 1, gauche = 2, bas = 3, droite = 4
     int posX;
     int posY;
-    int frameAnimation;
+    int frameAnimation; // 4 frames , -5 = dégat, -10 = dcd
+    int xp;
+    int lvl;
+    int * inv;
 } personnage;
 
 typedef struct salle {
@@ -34,6 +37,7 @@ typedef struct monstre {
     int hp;
     int xp;
     int loot;
+    int frameAnimation; // 4 frames , -5 = dégat, -10 = dcd
 } monstre;
 
 typedef struct special {

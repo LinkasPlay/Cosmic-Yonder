@@ -44,16 +44,22 @@ typedef struct salle {
 extern personnage perso;
 extern personnage persoPast;
 extern int room;
+int inv[7];
 
 int Xcamera = (DIMENSION_MAP / 2) - 7;
 int Ycamera = (DIMENSION_MAP / 2) - 4;
 tile **map;
 
 int creeMap(void) {
+
+    // initialisation perso
     perso.posX = (DIMENSION_MAP / 2);
     perso.posY = (DIMENSION_MAP / 2);
     perso.direction = 3;
     perso.frameAnimation = 0;
+    perso.inv = inv;
+    perso.lvl = 1;
+    perso.xp = 0;
 
     // Allocation de mémoire pour map
     map = malloc(sizeof(int*[DIMENSION_MAP]));
