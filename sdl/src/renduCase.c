@@ -22,12 +22,11 @@
 	SDL_RENDERER_TARGETTEXTURE
 */
 
-int contenuCase = 0;
-SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
+tile contenuCase;
 SDL_Rect Case;
 
 extern personnage perso;
+
 
 void SDL_ExitWithError(const char *message);
 
@@ -44,11 +43,20 @@ extern int texture( int argc, char **argv);
 extern int creeMap(void);
 extern int actualiserMap(void);
 
-int main (int argc, char **argv) {
+int jeu (int argc, char **argv) {
+
+	extern SDL_Window * window;
+	extern SDL_Renderer * renderer;
 
     int caseLongueur = (WINDOW_WIDTH / 100);
     int caseLargeur = (WINDOW_HEIGHT / 100);
 	srand( time( NULL ) );
+
+	if(SDL_RenderClear(renderer) != 0){
+		SDL_ExitWithError("Efffacement rendu echouee");
+	}
+
+	/*
 
 	//initialisation video et audio
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
@@ -63,7 +71,7 @@ int main (int argc, char **argv) {
 	}
 	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
-	//creation fenètre (nom fenétre, position x fenètre, position y, largeur, hauteur, drapeaux)
+	/*creation fenètre (nom fenétre, position x fenètre, position y, largeur, hauteur, drapeaux)
 	window = SDL_CreateWindow("Cosmic Yonder",
 								SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,WINDOW_HEIGHT,
 								0);
@@ -76,6 +84,8 @@ int main (int argc, char **argv) {
 	if(renderer == NULL){
 		SDL_ExitWithError("Creation rendu echouee");
 	}
+
+	*/
 
     //couleur fond
 	if(SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE) != 0 ){
@@ -116,7 +126,7 @@ int main (int argc, char **argv) {
     
 	extern int Xcamera;
 	extern int Ycamera;
-	extern int **map;
+	extern tile **map;
 	
     if (creeMap() != 0){
 		SDL_ExitWithError("Impossible de cree la map");

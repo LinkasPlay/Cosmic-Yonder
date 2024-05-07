@@ -1,6 +1,15 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+#include <time.h>
+
+#include "texture.h"
+
+extern int jeu(int argc, char **argv);
 
 void clean_ressources(SDL_Window *w, SDL_Renderer *r, SDL_Texture *t){
     
@@ -15,13 +24,14 @@ void clean_ressources(SDL_Window *w, SDL_Renderer *r, SDL_Texture *t){
     }
 }
 
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+
 int main(int argc, char **argv){
 
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
     SDL_Surface *picture = NULL;
     SDL_Texture *texture = NULL;
-    SDL_Rect dest_rect = {0, 0, 1145, 500};
+    SDL_Rect dest_rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
         SDL_Log("Erreur : Initialisation SDL > %s\n", SDL_GetError());
@@ -29,7 +39,10 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE);
     }
 
-    window = SDL_CreateWindow("Cosmic Yonder", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1145, 500, 0);
+    window = SDL_CreateWindow("Cosmic Yonder", 
+                                SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,WINDOW_HEIGHT, 
+                                0);
+
     if(window == NULL){
         SDL_Log("Erreur : Creation fenetre echouee > %s\n", SDL_GetError());
         clean_ressources(NULL,NULL,NULL);
@@ -72,6 +85,12 @@ int main(int argc, char **argv){
 
     SDL_RenderPresent(renderer);
     SDL_Delay(5000);
+
+    if (jeu (argc, argv) != EXIT_SUCCESS) {
+        SDL_Log("Erreur : jeu a planté > %s\n", SDL_GetError());
+        clean_ressources(NULL,NULL,NULL);
+        exit(EXIT_FAILURE);
+    }
 
     clean_ressources(window, renderer, texture);
 

@@ -27,15 +27,33 @@ typedef struct salle {
     int longueur;
     int posX;
     int posY;
-    int ** cases;
+    int ** cases; 
 } salle ;
 
-extern int creeTab(void);
-extern int contenuCase;
+typedef struct monstre {
+    int hp;
+    int xp;
+    int loot;
+} monstre;
+
+typedef struct special {
+    int type; // 1 = coffre; 2 = machine, 3 = grande machine, 4 = grande machine ( 1 clé a molette utilisée ), 5 = coffre ouvert, 6 = machine réparée, 7 = grande machine réparée
+    int inv; // la valeur de l'objet contenu dans le coffre ( 0 si machine )
+} special;
+
+typedef struct tile {
+    int contenu; // -5 = vide, -2 = mur, -1 = porte, 0 = sol, 1 = personnage, 2 = monstre, 3 = coffre / machine
+    monstre mstr;
+    special spe;
+} tile;
+
+extern int creeMap(void);
+extern int jeu(int argc, char **argv);
+extern tile contenuCase;
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern int Xcamera;
 extern int Ycamera;
-extern int **map;
+extern tile **map;
 
 #endif

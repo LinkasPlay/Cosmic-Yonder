@@ -29,7 +29,7 @@ extern personnage perso;
 extern void SDL_ExitWithError(const char *message);
 
 int texture( int argc, char **argv) {
-    extern int contenuCase;
+	
     extern SDL_Window *window;
 	extern SDL_Renderer *renderer;
 	//printf("aaaaaaaaaaaaaaaaa\n");
@@ -65,11 +65,11 @@ int texture( int argc, char **argv) {
     //Affichage
     SDL_Surface *image = NULL;
     SDL_Texture *texture = NULL;	
-	extern int contenuCase;
+	extern tile contenuCase;
 	char * nomImage;
 
     //Chargement image selon son contenu
-    switch (contenuCase) {
+    switch (contenuCase.contenu) {
 		// case avec espace
         case -5:
             image = SDL_LoadBMP("src/image/espace.bmp");

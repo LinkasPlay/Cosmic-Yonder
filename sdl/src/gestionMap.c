@@ -45,11 +45,9 @@ extern personnage perso;
 extern personnage persoPast;
 extern int room;
 
-
-
 int Xcamera = (DIMENSION_MAP / 2) - 7;
 int Ycamera = (DIMENSION_MAP / 2) - 4;
-int **map;
+tile **map;
 
 int creeMap(void) {
     perso.posX = (DIMENSION_MAP / 2);
@@ -76,9 +74,9 @@ int creeMap(void) {
 
     for (unsigned i = 0; i < DIMENSION_MAP; ++i) {
         for (unsigned j = 0; j < DIMENSION_MAP; ++j) {
-            map[i][j] = -5;
+            map[i][j].contenu = -5;
             if ( (i == perso.posX) && (j == perso.posY) ){
-                map[i][j] = 1;
+                map[i][j].contenu = 1;
             }
         }
     }
@@ -99,10 +97,10 @@ int actualiserMap(void){
     for (unsigned i = 0; i < DIMENSION_MAP; ++i) { // pos X case
         for (unsigned j = 0; j < DIMENSION_MAP; ++j) { // pos Y case
             if ( (i == perso.posX) && (j == perso.posY) ){
-                map[i][j] = 1;
+                map[i][j].contenu = 1;
             }
             else if ( (i == persoPast.posX) && (j == persoPast.posY) ){
-                map[i][j] = 0;
+                map[i][j].contenu = 0;
             }
             
             //printf("[%d] ",p[i][j]);
