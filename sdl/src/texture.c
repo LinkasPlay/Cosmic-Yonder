@@ -9,8 +9,6 @@
 
 #include "texture.h"
 
-#define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 1100
 #define FRAME_IN_ANIMATION 2
 
 /*

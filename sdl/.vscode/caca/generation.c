@@ -137,10 +137,3 @@ salle generation () {
     
 	return vaisseau;
 
-
-
-
-
-    
-
-

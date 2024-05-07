@@ -2,6 +2,9 @@
 #define TEXTURE_H
 
 #define DIMENSION_MAP 300
+#define WINDOW_WIDTH 1500
+#define WINDOW_HEIGHT 900
+#define FPS_LIMIT 16
 
 extern void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);

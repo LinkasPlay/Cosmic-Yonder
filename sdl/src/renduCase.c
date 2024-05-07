@@ -9,9 +9,7 @@
 
 #include "texture.h"
 
-#define WINDOW_WIDTH 1500
-#define WINDOW_HEIGHT 900
-#define FPS_LIMIT 16
+
 
 /*
 	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows

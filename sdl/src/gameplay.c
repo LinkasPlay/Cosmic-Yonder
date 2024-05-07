@@ -25,14 +25,22 @@ extern int texture( int argc, char **argv);
 extern int creeMap(void);
 extern int actualiserMap(void);
 
+extern int Xcamera;
+extern int Ycamera;
+
 personnage perso;
 personnage persoPast;
 
 int mouvementHaut(void){
-    persoPast.posX = perso.posX;
-    persoPast.posY = perso.posY;
-    perso.direction = 1;
-    perso.posY = perso.posY - 1;
+    if ( (Ycamera != 0) ){
+        Ycamera = Ycamera - 1;
+    }
+    if (perso.posY > 1){
+        persoPast.posX = perso.posX;
+        persoPast.posY = perso.posY;
+        perso.direction = 1;
+        perso.posY = perso.posY - 1;
+    }
     if (actualiserMap() != EXIT_SUCCESS){
         return EXIT_FAILURE;
     }
@@ -40,10 +48,15 @@ int mouvementHaut(void){
 }
 
 int mouvementGauche(void){
-    persoPast.posX = perso.posX;
-    persoPast.posY = perso.posY;
-    perso.direction = 2;
-    perso.posX = perso.posX - 1;
+    if ( (Xcamera != 0) ) {
+        Xcamera = Xcamera - 1;
+    }
+    if (perso.posX > 1){
+        persoPast.posX = perso.posX;
+        persoPast.posY = perso.posY;
+        perso.direction = 2;
+        perso.posX = perso.posX - 1;
+    }
     if (actualiserMap() != EXIT_SUCCESS){
         return EXIT_FAILURE;
     }
@@ -51,10 +64,15 @@ int mouvementGauche(void){
 }
 
 int mouvementBas(void){
-    persoPast.posX = perso.posX;
-    persoPast.posY = perso.posY;
-    perso.direction = 3;
-    perso.posY = perso.posY + 1;
+    if ( (Ycamera < (DIMENSION_MAP - (WINDOW_HEIGHT / 100) ) ) ){
+        Ycamera = Ycamera + 1;
+    }
+    if (perso.posY < DIMENSION_MAP - 2){
+        persoPast.posX = perso.posX;
+        persoPast.posY = perso.posY;
+        perso.direction = 3;
+        perso.posY = perso.posY + 1;
+    }
     if (actualiserMap() != EXIT_SUCCESS){
         return EXIT_FAILURE;
     }
@@ -62,10 +80,15 @@ int mouvementBas(void){
 }
 
 int mouvementDroite(void){
-    persoPast.posX = perso.posX;
-    persoPast.posY = perso.posY;
-    perso.direction = 4;
-    perso.posX = perso.posX + 1;
+    if ( (Xcamera < (DIMENSION_MAP - (WINDOW_WIDTH / 100) ) ) ) {
+        Xcamera = Xcamera + 1;
+    }
+    if (perso.posX < DIMENSION_MAP - 2){
+        persoPast.posX = perso.posX;
+        persoPast.posY = perso.posY;
+        perso.direction = 4;
+        perso.posX = perso.posX + 1;
+    }
     if (actualiserMap() != EXIT_SUCCESS){
         return EXIT_FAILURE;
     }
