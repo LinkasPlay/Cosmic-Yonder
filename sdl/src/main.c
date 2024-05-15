@@ -23,11 +23,8 @@ int main(int argc, char **argv){
     SDL_Renderer *renderer = NULL;  
     SDL_Surface *picture = NULL;
     SDL_Texture *texture = NULL;
-<<<<<<< Updated upstream
-    SDL_Rect dest_rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-=======
-    SDL_Rect dest_rect = {0,0,640,480};
->>>>>>> Stashed changes
+    SDL_Rect dest_rect = {0,0,1147,480};
+
 
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
         SDL_Log("Erreur : Initialisation SDL > %s\n", SDL_GetError());
@@ -35,13 +32,7 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE);
     }
 
-<<<<<<< Updated upstream
-    window = SDL_CreateWindow("Cosmic Yonder", 
-                                SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,WINDOW_HEIGHT, 
-                                0);
-=======
-    window = SDL_CreateWindow("Cosmic Yonder", SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),640,480,0);
->>>>>>> Stashed changes
+    window = SDL_CreateWindow("Cosmic Yonder", SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),1147,480,0);
 
     if(window == NULL){
         SDL_Log("Erreur : Creation fenetre echouee > %s\n", SDL_GetError());
@@ -84,9 +75,32 @@ int main(int argc, char **argv){
     }
 
     SDL_RenderPresent(renderer);
-    SDL_Delay(5000);
 
     clean_ressources(window, renderer, texture);
+
+    SDL_bool program_launched = SDL_TRUE;
+
+    while(program_launched){
+        
+        SDL_Event event;
+
+        while (SDL_PollEvent(&event)){
+            switch(event.type){
+                case SDL_QUIT:
+                    program_launched = SDL_FALSE;
+                    break;
+                
+                default:
+                    break;
+            }
+        }
+        
+
+    }
+
+
+
+    
 
 
     return EXIT_SUCCESS;
