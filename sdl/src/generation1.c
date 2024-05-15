@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-#include <times.h>
 #include "texture.h"
 
 #define LARGEUR_TAB 5
@@ -83,6 +82,8 @@ int creeTab(void) {
 J'ai fais un programme qui va creer un tableau de 5 par 5 ou chaque element va etre remplacer par une image.
 Aussi la case au centre tout en haut est une porte pour acceder au niveau suivant.
 */
+
+/*
 salle generation () {
 
     for (int i = 0; i < LIGNES; i++) {
@@ -119,14 +120,10 @@ salle generation () {
 
     return 0;
 }
-    
-	return vaisseau;
-
-
-
+*/
 
 unsigned int genererGraine(int parametre1, int parametre2) {
-    unsigned int g²raine = parametre1 * parametre2;
+    unsigned int graine = parametre1 * parametre2;
 
     static clock_t ticks_prev = 0; 
     clock_t ticks = clock();
@@ -144,23 +141,6 @@ unsigned int genererGraine(int parametre1, int parametre2) {
     return graine;
 }
 
-int main() {
-    int p1 = 10;
-    int p2 = 5;
-
-    unsigned int graine = genererGraine(p1, p2);
-
-    printf("Graine générée : %u\n", graine);
-
-    return 0;
-}
-
-
-
-/*
-test 01
-rfeienjfezbhsfveiebzefd
-*/
     
 
 

@@ -24,7 +24,7 @@
 Expliquation gameplay du jeu :
 
     on commence avec l'invetaire vide
-    1) l'épée tuyau perme de fraper autour de soi, fait 50 de dégats
+    1) l'épée/tuyau perme de fraper autour de soi, fait 50 de dégats
     2 ) le pistolet tire sur une ligne droite devant soi, fait 20 dégats
     3) les potions de vies redonnes 2 coeurs au joueur
     4) les potions d'xp donne 1/4 de l'xp nécessaire pour ganer un niveau
@@ -41,7 +41,7 @@ Expliquation gameplay du jeu :
 
     utiliser une clé à molette sur une machine permet de gagner 3minutes en plus au chrono total
     il faut utiliser 2 clé a molette sur les grandes machines pour les réparés
-    il faut réparé 5 grandes machines pour avoir la vrai fin
+    il faut réparé 3 grandes machines pour avoir la vrai fin
 
     il y a quatre type de monstres :
         niv 1 : 80 pv, 10 xp
