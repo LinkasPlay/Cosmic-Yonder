@@ -32,14 +32,6 @@ void erreur(char message){
 	exit(0);
 }
 
-typedef struct {
-    int largeur;
-    int longueur;
-    int posX;
-    int posY;
-    int ** cases;
-} salle ;
-
 int creeTab(void) {
 
     int largeurTab, longueurTab;

@@ -33,11 +33,7 @@ int main(int argc, char **argv){
 
     SDL_Surface *picture = NULL;
     SDL_Texture *texture = NULL;
-<<<<<<< Updated upstream
     SDL_Rect dest_rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-=======
-    SDL_Rect dest_rect = {0, 0, 1139, 497};
->>>>>>> Stashed changes
 
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
         SDL_Log("Erreur : Initialisation SDL > %s\n", SDL_GetError());
@@ -45,14 +41,10 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE);
     }
 
-<<<<<<< Updated upstream
     window = SDL_CreateWindow("Cosmic Yonder", 
                                 SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,WINDOW_HEIGHT, 
                                 0);
 
-=======
-    window = SDL_CreateWindow("Cosmic Yonder", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1139, 497, 0);
->>>>>>> Stashed changes
     if(window == NULL){
         SDL_Log("Erreur : Creation fenetre echouee > %s\n", SDL_GetError());
         clean_ressources(NULL,NULL,NULL);
