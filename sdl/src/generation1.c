@@ -5,6 +5,7 @@
 #include <time.h>
 #include <times.h>
 #include "texture.h"
+#include <math.h>
 
 #define LARGEUR_TAB 5
 #define LONGUEUR_TAB 5
@@ -125,35 +126,20 @@ salle generation () {
 
 
 
-unsigned int genererGraine(int parametre1, int parametre2) {
-    unsigned int g²raine = parametre1 * parametre2;
+int genererGraine(int parametre1, int parametre2) {
+    int graine = parametre1 * parametre2;
+    unsigned int d = parametre2 * parametre1;
 
-    static clock_t ticks_prev = 0; 
-    clock_t ticks = clock();
+    graine = cos(d) * 100;
 
-    unsigned int diff_ticks = (unsigned int)(ticks - ticks_prev);
-
-    ticks_prev = ticks;
-
-    graine = (graine + diff_ticks) % (UINT_MAX - 1) * 143^2 * diff_ticks%5;
-
-    if (graine < 100) {
-        graine = genererGraine(graine + 80000+ 4525%51, parametre2);
+    if (graine < 0) {
+        graine = -graine;
     }
 
     return graine;
 }
 
-int main() {
-    int p1 = 10;
-    int p2 = 5;
 
-    unsigned int graine = genererGraine(p1, p2);
-
-    printf("Graine générée : %u\n", graine);
-
-    return 0;
-}
 
 
 
