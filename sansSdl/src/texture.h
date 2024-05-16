@@ -54,8 +54,6 @@ typedef struct tile {
 extern int creeMap(void);
 extern int jeu(int argc, char **argv);
 extern tile contenuCase;
-extern SDL_Window *window;
-extern SDL_Renderer *renderer;
 extern int Xcamera;
 extern int Ycamera;
 extern tile **map;

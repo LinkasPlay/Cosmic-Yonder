@@ -1,11 +1,8 @@
-#include <SDL.h>
-#include <SDL_mixer.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <time.h>
+#include <ncurses.h>
 
 #include "texture.h"
 
@@ -51,6 +48,7 @@ Expliquation gameplay du jeu :
 
 */
 
+/*
 extern void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
 extern int creeMap(void);

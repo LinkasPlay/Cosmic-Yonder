@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "texture.h": "c",
+        "unistd.h": "c",
+        "stdio.h": "c"
     }
 }

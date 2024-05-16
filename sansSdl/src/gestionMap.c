@@ -1,11 +1,8 @@
-#include <SDL.h>
-#include <SDL_mixer.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <time.h>
+#include <ncurses.h>
 
 #include "texture.h"
 
@@ -41,6 +38,7 @@ typedef struct salle {
 } salle ;
 */
 
+/*
 extern personnage perso;
 extern personnage persoPast;
 extern int room;

@@ -1,8 +1,12 @@
-#include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <ncurses.h>
 
+extern WINDOW_WIDTH;
+extern 
+
+/*
 void clean_ressources(SDL_Window *w, SDL_Renderer *r, SDL_Texture *t){
     
     if(t != NULL){
@@ -20,8 +24,30 @@ void clean_ressources(SDL_Window *w, SDL_Renderer *r, SDL_Texture *t){
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL; 
 
-int main(int argc, char **argv){
+*/
+
+int main(void) {
+    WINDOW *boite;
+    char *msg= "Texte au centre";
+    int taille= strlen(msg);
+    
+    initscr();
+    while(1) {
+        clear();    // Efface la fenêtre (donc l'ancien message)
+        mvprintw(LINES/2, (COLS / 2) - (taille / 2), msg);
+        refresh();
+        if(getch() != 410)
+            break;
+    }
+    
+    endwin();
+    
+    free(boite);
+    
+    return 0;
+}
  
+    /*
     SDL_Surface *picture = NULL;
     SDL_Texture *texture = NULL;
     SDL_Rect dest_rect = {0,0,1147,480};
@@ -33,7 +59,7 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE);
     }
 
-    window = SDL_CreateWindow("Cosmic Yonder", SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),1147,480,0);
+    window = SDL_CreateWindow("Cosmic Yonder", SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,480,0);
 
     if(window == NULL){
         SDL_Log("Erreur : Creation fenetre echouee > %s\n", SDL_GetError());
@@ -106,7 +132,7 @@ int main(int argc, char **argv){
 
     return EXIT_SUCCESS;
 }
-
+*/
 
     
     

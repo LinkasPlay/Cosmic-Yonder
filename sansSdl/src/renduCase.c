@@ -1,11 +1,8 @@
-#include <SDL.h>
-#include <SDL_mixer.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <time.h>
+#include <ncurses.h>
 
 #include "texture.h"
 
@@ -13,6 +10,7 @@
 
 /*
 	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
+	Windows : gcc sansSdl\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
 	Linux : gcc renduCase.c $(sdl2-config __cflags --libs) -o progRenduCase
 
 	Flags render
@@ -22,15 +20,11 @@
 	SDL_RENDERER_TARGETTEXTURE
 */
 
+/*
 tile contenuCase;
 SDL_Rect Case;
 
 extern personnage perso;
-
-
-void SDL_ExitWithError(const char *message);
-
-void SDL_LimitFPS(unsigned int limit);
 
 int camera(int argc, char **argv);
 
@@ -45,9 +39,6 @@ extern int creeMap(void);
 extern int actualiserMap(void);
 
 int jeu (int argc, char **argv) {
-
-	extern SDL_Window * window;
-	extern SDL_Renderer * renderer;
 
     int caseLongueur = (WINDOW_WIDTH / 100);
     int caseLargeur = (WINDOW_HEIGHT / 100);
@@ -88,6 +79,8 @@ int jeu (int argc, char **argv) {
 
 	*/
 
+/*
+
     //couleur fond
 	if(SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE) != 0 ){
 		SDL_ExitWithError("Impossible de changer la couleur pour le rendu");
@@ -124,7 +117,8 @@ int jeu (int argc, char **argv) {
 
     // Création cases pour les textures
 
-    
+    /*
+
 	extern int Xcamera;
 	extern int Ycamera;
 	extern tile **map;
@@ -147,6 +141,7 @@ int jeu (int argc, char **argv) {
 	}
 	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
+/*
 	SDL_RenderPresent(renderer);
 	printf("fini");
 	SDL_bool continuer = SDL_TRUE;
@@ -255,6 +250,7 @@ int jeu (int argc, char **argv) {
 	Mix_FreeMusic(musique);
 	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
+/*
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
@@ -262,6 +258,7 @@ int jeu (int argc, char **argv) {
 	Mix_CloseAudio();
 	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
+/*
 	SDL_Quit();
 	return EXIT_SUCCESS;
 }
@@ -307,6 +304,7 @@ void SDL_ExitWithError(const char *message){
 	Mix_CloseAudio();
 	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
+/*
 	SDL_Quit();
 	exit(EXIT_FAILURE);
 }

@@ -1,8 +1,9 @@
-#include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <time.h>
+
+#include <ncurses.h>
+
 #include "texture.h"
 #include <math.h>
 
@@ -11,8 +12,6 @@
 
 #define LIGNES 5
 #define COLONNES 5
-
-extern void SDL_ExitWithError(const char *message);
 
 /*
 	Windows : gcc src/generation.c -o bin\progGeneration
@@ -27,6 +26,8 @@ extern void SDL_ExitWithError(const char *message);
 */
 
 //message erreur
+
+/*
 void erreur(char message){
 	printf("ERREUR : %s\n",message);
 	exit(0);

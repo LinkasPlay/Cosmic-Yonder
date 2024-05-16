@@ -1,11 +1,8 @@
-#include <SDL.h>
-#include <SDL_mixer.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <time.h>
+#include <ncurses.h>
 
 #include "texture.h"
 
@@ -24,6 +21,7 @@
 	SDL_RENDERER_TARGETTEXTURE
 */
 
+/*
 extern personnage perso;
 
 extern void SDL_ExitWithError(const char *message);
@@ -246,7 +244,7 @@ int texture( int argc, char **argv) {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-    */
+    
 	return EXIT_SUCCESS;
 }
 
@@ -470,7 +468,7 @@ int textureInterface( int argc, char **argv) {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-    */
+    *
 	return EXIT_SUCCESS;
 }
 
