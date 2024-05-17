@@ -136,6 +136,8 @@ unsigned int genererGraine(int parametre1, int parametre2) {
 
 int graine=69; 
 
+extern salle room;
+
 unsigned int aleatoire(int salle, int graine, int min, int max){
     double rdn;
 
@@ -144,22 +146,7 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
     return (unsigned int)rdn;
 }
 
-typedef struct salle {
-    int num;
-    int largeur;
-    int longueur;
-    int posX;
-    int posY;
-    tile ** cases; 
-} salle ;
-
-typedef struct tile {
-    int contenu; // -5 = vide, -2 = mur, -1 = porte, 0 = sol, 1 = personnage, 2 = monstre, 3 = coffre / machine
-    monstre mstr;
-    special spe; // signifie le cote si porte (0 = haut, 1 = gauche, 2 = bas, 3 = droite)
-} tile;
-
-salle generation(int longueur, int largeur, int num_salle, int cote){
+int generation(int longueur, int largeur, int num_salle, int cote){
 
     tile **p = malloc(sizeof(tile)*largeur);
     if(p==NULL){
@@ -179,8 +166,10 @@ salle generation(int longueur, int largeur, int num_salle, int cote){
     int porteCoord[4];
     int al = 1;
 
-    portes[cote] = 1;
     int portes[4];
+
+    portes[cote] = 1;
+    
     for(unsigned i=0 ; i<4 ; i++){
         if (portes[i] != 1){
             if(aleatoire(num_salle, graine, 1, 100)<=60){
@@ -215,7 +204,7 @@ salle generation(int longueur, int largeur, int num_salle, int cote){
              case 3:
                 al = aleatoire(num_salle, graine, 1, longueur-2);
                 p[al][largeur-1].contenu = -1;
-                p[al][largeur-1].spe.type = 3
+                p[al][largeur-1].spe.type = 3;
                 break;
             
             default:
@@ -229,7 +218,7 @@ salle generation(int longueur, int largeur, int num_salle, int cote){
 
     for(unsigned i = 0 ; i<largeur ; i++){
         for(unsigned j = 0 ; j<largeur ; j++){
-            if(j==0 || j==largeur-1 || i==0 || i==longeur-1){
+            if(j==0 || j==largeur-1 || i==0 || i==longueur-1){
                 if (p[i][j].contenu != -1){
                     p[i][j].contenu = -2;
                 }
@@ -237,7 +226,7 @@ salle generation(int longueur, int largeur, int num_salle, int cote){
                 p[i][j].mstr.hp = 0;
                 p[i][j].mstr.xp = 0;
                 p[i][j].mstr.loot = 0;
-                p[i][j].mstr.frameAnnimation = 0;
+                p[i][j].mstr.frameAnimation = 0;
 
                  p[i][j].spe.inv = 0;
 
@@ -264,7 +253,7 @@ salle generation(int longueur, int largeur, int num_salle, int cote){
                         p[i][j].mstr.hp = 100;
                         p[i][j].mstr.xp = 10;
                         p[i][j].mstr.loot = 0; //aleatoire
-                        p[i][j].mstr.frameAnnimation = 0;
+                        p[i][j].mstr.frameAnimation = 0;
 
                         break;
                     
@@ -277,13 +266,13 @@ salle generation(int longueur, int largeur, int num_salle, int cote){
             
         }
     }
-    salle room;
+    
     room.num = num_salle;
     room.largeur = largeur;
     room.longueur = longueur;
     room.posX = 10;
     room.posY = 10;
     room.cases = p;
-    return room;
+    return EXIT_SUCCESS;
 }   
-`
+

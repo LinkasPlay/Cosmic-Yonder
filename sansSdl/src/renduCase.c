@@ -19,7 +19,7 @@
 	SDL_RENDERER_TARGETTEXTURE
 */
 
-
+/*
 tile contenuCase;
 SDL_Rect Case;
 

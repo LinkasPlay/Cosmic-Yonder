@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <string.h>
 
+extern int generation(int longueur, int largeur, int num_salle, int cote);
+
+salle room;
+
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
 void ncurses_initialiser() {
@@ -89,7 +93,20 @@ int main(void) {
             break;
     }
 
+    if(generation(5, 5, 0, 0) != EXIT_SUCCESS){
+        printf("Erreur generation salle");
+    }
+
     endwin();
+
+    for (unsigned i = 0; i < 5; ++i) {
+        for (unsigned j = 0; j < 5; ++j) {
+            printf("[ %d ] ",room.cases[i][j].contenu);
+        }
+        printf ("\n");
+    }
+
+    
     return 0;
 }
 
