@@ -3,7 +3,8 @@
     "texture.h": "c",
     "unistd.h": "c",
     "stdlib.h": "c",
-    "sdl_mixer.h": "c"
+    "sdl_mixer.h": "c",
+    "ncurses.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

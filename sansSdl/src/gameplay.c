@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -48,7 +47,7 @@ Expliquation gameplay du jeu :
 
 */
 
-/*
+
 extern void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
@@ -240,4 +239,4 @@ int mouvementDroite(void){
     return EXIT_SUCCESS;
 }
 
-
+*/

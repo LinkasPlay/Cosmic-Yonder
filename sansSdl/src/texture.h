@@ -26,11 +26,12 @@ typedef struct personnage {
 } personnage;
 
 typedef struct salle {
+    int num;
     int largeur;
     int longueur;
     int posX;
     int posY;
-    int ** cases; 
+    tile ** cases; 
 } salle ;
 
 typedef struct monstre {
@@ -48,7 +49,7 @@ typedef struct special {
 typedef struct tile {
     int contenu; // -5 = vide, -2 = mur, -1 = porte, 0 = sol, 1 = personnage, 2 = monstre, 3 = coffre / machine
     monstre mstr;
-    special spe;
+    special spe; // .type signifie le cote si porte (0 = haut, 1 = gauche, 2 = bas, 3 = droite)
 } tile;
 
 extern int creeMap(void);

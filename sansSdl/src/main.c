@@ -1,51 +1,98 @@
+#include "texture.h"
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <ncurses.h>
+#include <unistd.h>
+#include <string.h>
 
-extern WINDOW_WIDTH;
-extern 
+int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
-/*
-void clean_ressources(SDL_Window *w, SDL_Renderer *r, SDL_Texture *t){
-    
-    if(t != NULL){
-        SDL_DestroyTexture(t);
+void ncurses_initialiser() {
+    initscr();          /* Démarre le mode ncurses */
+    cbreak();           /* Pour les saisies clavier (désactive la mise en buffer) */
+    noecho();           /* Désactive l'affichage des caractères saisis */
+    keypad(stdscr, TRUE);   /* Active les touches spécifiques */
+    refresh();          /* Met à jour l'affichage */
+    curs_set(FALSE);    /* Masque le curseur */
+}
+
+void ncurses_couleurs() {
+    if (has_colors() == FALSE) {
+        endwin();
+        fprintf(stderr, "Le terminal ne supporte pas les couleurs.\n");
+        exit(EXIT_FAILURE);
     }
-    if(r != NULL){
-        SDL_DestroyRenderer(r);
+    start_color();
+}
+
+void ncurses_souris() {
+    if (!mousemask(ALL_MOUSE_EVENTS, NULL)) {
+        endwin();
+        fprintf(stderr, "Erreur lors de l'initialisation de la souris.\n");
+        exit(EXIT_FAILURE);
     }
-    if(w != NULL){
-        SDL_DestroyWindow(w);
+    if (has_mouse() != TRUE) {
+        endwin();
+        fprintf(stderr, "Aucune souris n'est détectée.\n");
+        exit(EXIT_FAILURE);
     }
 }
 
-// NE PAS BOUGZER WINDOW ET RENDERER OU IMPOSSIBLE DE COMPILER
-SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL; 
-
-*/
-
-int main(void) {
-    WINDOW *boite;
-    char *msg= "Texte au centre";
-    int taille= strlen(msg);
-    
-    initscr();
-    while(1) {
-        clear();    // Efface la fenêtre (donc l'ancien message)
-        mvprintw(LINES/2, (COLS / 2) - (taille / 2), msg);
-        refresh();
-        if(getch() != 410)
-            break;
+int click_souris() {
+    MEVENT event;
+    int ch;
+    while ((ch = getch()) != KEY_F(1)) {
+        switch (ch) {
+            case KEY_F(2): /*Pour quitter le jeu*/
+                return 1;
+            case KEY_MOUSE:
+                if (getmouse(&event) == OK) {
+                    C = event.x;
+                    L = event.y;
+                    if (event.bstate & BUTTON1_CLICKED) {
+                        if (L < 51 && C < 132) {
+                            return 0;
+                        }
+                    }
+                }
+        }
     }
-    
-    endwin();
-    
-    free(boite);
-    
     return 0;
 }
+
+int main(void) {
+    ncurses_initialiser();
+    ncurses_couleurs();
+    ncurses_souris();
+
+    int start_y = 10;
+    int start_x = 10;
+    int x = 10;
+    int y = 10;
+    char *msg = "Texte au centre";
+    int taille = strlen(msg);
+
+    WINDOW *win = newwin(10, 20, start_y, start_x);
+    refresh();
+
+    box(win, 0, 0); // Dessine le cadre de la fenêtre
+    mvwprintw(win, 1, 1, "Chokbar de bz");
+    wrefresh(win);
+
+    getch();
+
+    while (1) {
+        clear(); // Efface le contenu de la fenêtre
+        mvprintw(LINES / 2, (COLS / 2) - (taille / 2), "%s", msg);
+        refresh();
+        if (getch() != 410)
+            break;
+    }
+
+    endwin();
+    return 0;
+}
+
  
     /*
     SDL_Surface *picture = NULL;
