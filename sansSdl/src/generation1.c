@@ -148,70 +148,83 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
 
 int generation(int longueur, int largeur, int num_salle, int cote){
 
-    tile **p = malloc(sizeof(tile)*largeur);
+    tile **p = malloc(sizeof(tile *)*largeur);
     if(p==NULL){
-        printf("Echec de l'allocation");
+        printf("Echec de l'allocation\n");
         return EXIT_FAILURE;
     }
     
     for(unsigned i = 0 ; i<largeur ; i++){
         p[i]=malloc(sizeof(tile)*longueur);
         
-        if(p==NULL){
-            printf("Echec de l'allocation");
+        if(p[i]==NULL){
+            printf("Echec de l'allocation\n");
             return EXIT_FAILURE;
         }
     }
 
     int porteCoord[4];
     int al = 1;
-
     int portes[4];
 
     portes[cote] = 1;
     
     for(unsigned i=0 ; i<4 ; i++){
-        if (portes[i] != 1){
-            if(aleatoire(num_salle, graine, 1, 100)<=60){
-                portes[i] = 1;
-            }
-            else{
-                portes[i] = 0;
-            }
-            
+        if (num_salle == 1){
+            p[0][2].contenu = -1;
+            p[0][2].spe.type = 0;
+
+            p[4][2].contenu = -1;
+            p[4][2].spe.type = 0;  
+
+            p[2][0].contenu = -1;
+            p[2][0].spe.type = 0;  
+
+            p[2][4].contenu = -1;
+            p[2][4].spe.type = 0;  
         }
-        if (portes[i] == 1){
-            switch (i){
+        else{
+            if (portes[i] != 1){
+                if(aleatoire(num_salle, graine, 1, 100)<=60){
+                    portes[i] = 1;
+                }
+                else{
+                    portes[i] = 0;
+                }
+                
+            }
+            if (portes[i] == 1){
+                switch (i){
 
-            case 0:
-                al = aleatoire(num_salle, graine, 1, largeur-2);
-                p[0][al].contenu = -1;
-                p[0][al].spe.type = 0;
-                break;
+                case 0:
+                    al = aleatoire(num_salle, graine, 1, largeur-2);
+                    p[0][al].contenu = -1;
+                    p[0][al].spe.type = 0;
+                    break;
 
-             case 1:
-                al = aleatoire(num_salle, graine, 1, longueur-2);
-                p[al][0].contenu = -1;
-                p[al][0].spe.type = 1;
-                break;
+                case 1:
+                    al = aleatoire(num_salle, graine, 1, longueur-2);
+                    p[al][0].contenu = -1;
+                    p[al][0].spe.type = 1;
+                    break;
 
-             case 2:
-                al = aleatoire(num_salle, graine, 1, largeur-2);
-                p[longueur-1][al].contenu = -1;
-                p[longueur-1][al].spe.type = 2;
-                break;
+                case 2:
+                    al = aleatoire(num_salle, graine, 1, largeur-2);
+                    p[longueur-1][al].contenu = -1;
+                    p[longueur-1][al].spe.type = 2;
+                    break;
 
-             case 3:
-                al = aleatoire(num_salle, graine, 1, longueur-2);
-                p[al][largeur-1].contenu = -1;
-                p[al][largeur-1].spe.type = 3;
-                break;
-            
-            default:
-                break;
+                case 3:
+                    al = aleatoire(num_salle, graine, 1, longueur-2);
+                    p[al][largeur-1].contenu = -1;
+                    p[al][largeur-1].spe.type = 3;
+                    break;
+                
+                default:
+                    break;
+                }
             }
         }
-        
     }
 
     int obj = 0;

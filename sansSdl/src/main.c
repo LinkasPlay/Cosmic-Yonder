@@ -93,20 +93,52 @@ int main(void) {
             break;
     }
 
-    if(generation(5, 5, 0, 0) != EXIT_SUCCESS){
-        printf("Erreur generation salle");
+    if(generation(5, 5, 1, 0) != EXIT_SUCCESS){
+        printf("Erreur generation salle\n");
     }
 
     endwin();
 
     for (unsigned i = 0; i < 5; ++i) {
         for (unsigned j = 0; j < 5; ++j) {
-            printf("[ %d ] ",room.cases[i][j].contenu);
+            printf("[ %d ] ", room.cases[i][j].contenu);
         }
-        printf ("\n");
+        printf("\n");
     }
 
-    
+    scanf("%d", &x);
+
+    // Libération de la mémoire de la première génération
+    for (unsigned i = 0; i < 5; ++i) {
+        free(room.cases[i]);
+    }
+    free(room.cases);
+    room.cases = NULL; // Réinitialisation de room.cases pour éviter la double libération
+
+    scanf("%d", &x);
+
+    if (generation(6, 6, 3, 1) != EXIT_SUCCESS) {
+        printf("Erreur generation salle\n");
+    }
+
+    scanf("%d", &x);
+
+    for (unsigned i = 0; i < 7; ++i) {
+        for (unsigned j = 0; j < 9; ++j) {
+            printf("[ %d ] ", room.cases[i][j].contenu);
+        }
+        printf("\n");
+    }
+
+    scanf("%d", &x);
+
+    // Libération de la mémoire de la deuxième génération
+    for (unsigned i = 0; i < 7; ++i) {
+        free(room.cases[i]);
+    }
+    free(room.cases);
+    room.cases = NULL;
+
     return 0;
 }
 
