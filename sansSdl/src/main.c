@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <string.h>
 
+using namespace std:
+void start_ncurses(bool useRaw, bool useNoecho);
+void printMenu(WINDOW * menu, string choices[], int size, int highlight);
+
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern int graine;
@@ -66,7 +70,7 @@ int click_souris() {
     return 0;
 }
 
-int main(void) {
+int main(int argc, char ** argv){
     ncurses_initialiser();
     ncurses_couleurs();
     ncurses_souris();
@@ -127,7 +131,29 @@ int main(void) {
             break;
     }
 
-    // EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    
+    //taille écran//
+    int yMax, xMax;
+    getmaxyx(stdscr, yMax, xMax);
+    //création fenêtre//
+    WINDOW = inputwin = newwin(6, xMax-12, yMax-8, 5);
+    box(inputwin, 0, 0);
+    refresh();
+    wresfresh(inputwin);
+    keypad(inputwin, true);
+    getch();
+
+
+
+
+
+
+
+
+
+    
+    
+
 
     endwin();
 
