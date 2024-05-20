@@ -116,16 +116,12 @@ salle generation () {
 }
 */
 
-unsigned int genererGraine(int parametre1, int parametre2) {
-    unsigned int graine = parametre1 * parametre2;
+unsigned int genererGraine(int salle, int graine, int min, int max){
+    double rdn;
 
-    graine = cos(parametre1 + parametre2) * 100;
-
-    if (graine < 0) {
-        graine = -graine;
-    }
-
-    return graine;
+    rdn = (cos(salle + graine) + 1) / 2; // Valeur entre 0 et 1
+    rdn = rdn * (max - min) + min; // Réajustement de la plage
+    return (unsigned int)rdn;
 }
 
     
