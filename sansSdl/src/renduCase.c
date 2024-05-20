@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -38,48 +37,10 @@ extern int texture( int argc, char **argv);
 extern int creeMap(void);
 extern int actualiserMap(void);
 
-int jeu (int argc, char **argv) {
+int jeu (void) {
 
     int caseLongueur = (WINDOW_WIDTH / 100);
     int caseLargeur = (WINDOW_HEIGHT / 100);
-	srand( time( NULL ) );
-
-	if(SDL_RenderClear(renderer) != 0){
-		SDL_ExitWithError("Efffacement rendu echouee");
-	}
-
-	/*
-
-	//initialisation video et audio
-	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
-		SDL_ExitWithError("Initialisation SDL");
-
-	}
-
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
-	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0){
-		SDL_ExitWithError("Impossible de charger SDL mixer");
-
-	}
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-	/*creation fenètre (nom fenétre, position x fenètre, position y, largeur, hauteur, drapeaux)
-	window = SDL_CreateWindow("Cosmic Yonder",
-								SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,WINDOW_HEIGHT,
-								0);
-	if(window == NULL){
-		SDL_ExitWithError("Creation fenetre echouee");
-	}
-
-	//creation rendu
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-	if(renderer == NULL){
-		SDL_ExitWithError("Creation rendu echouee");
-	}
-
-	*/
-
-/*
 
     //couleur fond
 	if(SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE) != 0 ){
@@ -104,21 +65,6 @@ int jeu (int argc, char **argv) {
 		SDL_ExitWithError("Impossible de changer la couleur pour le rendu");
 	}
 
-    //creation musique
-
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
-	Mix_Music * musique = NULL;
-	musique = Mix_LoadMUS("src/musique/vaisseau.mp3");
-	if(musique == NULL){
-		Mix_FreeMusic(musique);
-		SDL_ExitWithError("Impossible de charger la musique");
-	}
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-    // Création cases pour les textures
-
-    /*
-
 	extern int Xcamera;
 	extern int Ycamera;
 	extern tile **map;
@@ -135,21 +81,8 @@ int jeu (int argc, char **argv) {
 	
 	// Boucle de jeu ******************************************************************************** /
 
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
-	if(Mix_PlayMusic(musique, -1) != 0){
-		SDL_ExitWithError("Impossible de jouer la musique");
-	}
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-/*
-	SDL_RenderPresent(renderer);
 	printf("fini");
-	SDL_bool continuer = SDL_TRUE;
 	unsigned int frame_limit = 0;
-
-	frame_limit = SDL_GetTicks() + FPS_LIMIT;
-	SDL_LimitFPS(frame_limit);
-	frame_limit = SDL_GetTicks() + FPS_LIMIT;
 
 	//gestion des évènements
 	while(continuer){
@@ -239,27 +172,8 @@ int jeu (int argc, char **argv) {
 
 	}
 
-    //effacement rendu
-	if(SDL_RenderClear(renderer) != 0){
-		SDL_ExitWithError("Efffacement rendu echouee");
-	}
+	endwin();
 
-	// fin programme / libération mémoire ************************************************************************** /
-
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
-	Mix_FreeMusic(musique);
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-/*
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! /
-	Mix_CloseAudio();
-	/* PROBLEME COMPILATION AUDIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-/*
-	SDL_Quit();
 	return EXIT_SUCCESS;
 }
 
@@ -327,3 +241,4 @@ void SDL_LimitFPS(unsigned int limit){
 
 }
 
+*/

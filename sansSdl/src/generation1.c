@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -7,11 +6,15 @@
 #include "texture.h"
 #include <math.h>
 
+#define OBJ_MAX 9
+
 #define LARGEUR_TAB 5
 #define LONGUEUR_TAB 5
 
 #define LIGNES 5
 #define COLONNES 5
+
+int porteLibre = 0;
 
 /*
 	Windows : gcc src/generation.c -o bin\progGeneration
@@ -24,6 +27,7 @@
 	SDL_RENDERER_PRESENTVSYNC
 	SDL_RENDERER_TARGETTEXTURE
 */
+
 
 //message erreur
 
@@ -116,14 +120,185 @@ salle generation () {
 }
 */
 
-unsigned int genererGraine(int salle, int graine, int min, int max){
-    double rdn;
+    /*
+unsigned int genererGraine(int parametre1, int parametre2) {
+    unsigned int graine = parametre1 * parametre2;
 
     rdn = (cos(salle + graine) + 1) / 2; // Valeur entre 0 et 1
     rdn = rdn * (max - min) + min; // Réajustement de la plage
     return (unsigned int)rdn;
 }
 
-    
+    */
 
+
+int graine=69; 
+
+extern salle room;
+
+unsigned int aleatoire(int salle, int graine, int min, int max){
+    double rdn;
+    max++;
+
+    rdn = (cos(salle + graine) + 1) / 2; // Valeur entre 0 et 1
+    rdn = rdn * (max - min) + min; // Réajustement de la plage
+    return (unsigned int)rdn;
+}
+
+int generation(int longueur, int largeur, int num_salle, int cote){
+
+    tile **p = malloc(sizeof(tile *)*largeur);
+    if(p==NULL){
+        printf("Echec de l'allocation\n");
+        return EXIT_FAILURE;
+    }
+    
+    for(unsigned i = 0 ; i<largeur ; i++){
+        p[i]=malloc(sizeof(tile)*longueur);
+        
+        if(p[i]==NULL){
+            printf("Echec de l'allocation\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    int porteCoord[4];
+    int al = 1;
+    int portes[4];
+
+    portes[cote] = 1;
+    if (porteLibre == 1){
+        portes[0] = 1;
+        portes[1] = 1;
+        portes[2] = 1;
+        portes[3] = 1;
+    }
+    
+    for(unsigned i=0 ; i<4 ; i++){
+        printf("\ni = %d \n", i);
+        if (num_salle == 1){
+            porteLibre = 4;
+            p[0][2].contenu = -1;
+            p[0][2].spe.type = 0;
+
+            p[4][2].contenu = -1;
+            p[4][2].spe.type = 0;  
+
+            p[2][0].contenu = -1;
+            p[2][0].spe.type = 0;  
+
+            p[2][4].contenu = -1;
+            p[2][4].spe.type = 0;  
+        }
+        else{
+            if (portes[i] != 1){
+                if(aleatoire(i * num_salle, graine * i - num_salle, 1, 100)<=60){
+                    portes[i] = 1;
+                    porteLibre ++;
+                }
+                else{
+                    portes[i] = 0;
+                }
+                
+                
+            }
+            printf("portes %d = %d \n", i, portes[i]);
+            if (portes[i] == 1){
+                switch (i){
+
+                case 0:
+                    al = aleatoire(i * num_salle, graine * 6, 1, largeur-2);
+                    p[0][al].contenu = -1;
+                    p[0][al].spe.type = 0;
+                    break;
+
+                case 1:
+                    al = aleatoire(i * num_salle, graine * 4, 1, longueur-2);
+                    p[al][0].contenu = -1;
+                    p[al][0].spe.type = 1;
+                    break;
+
+                case 2:
+                    al = aleatoire(i * num_salle, graine * 7, 1, largeur-2);
+                    p[longueur-1][al].contenu = -1;
+                    p[longueur-1][al].spe.type = 2;
+                    break;
+
+                case 3:
+                    al = aleatoire(i * num_salle, graine * 2, 1, longueur-2);
+                    p[al][largeur-1].contenu = -1;
+                    p[al][largeur-1].spe.type = 3;
+                    break;
+                
+                default:
+                    break;
+                }
+                printf("\nal = %d (nsal = %d, gr = %d, la-2 = %d \n\n", al, num_salle, graine, largeur-2);
+            }
+        }
+    }
+
+    porteLibre--;
+
+    int obj = 0;
+
+    for(unsigned i = 0 ; i<largeur ; i++){
+        for(unsigned j = 0 ; j<largeur ; j++){
+            if(j==0 || j==largeur-1 || i==0 || i==longueur-1){
+                if (p[i][j].contenu != -1){
+                    p[i][j].contenu = -2;
+                }
+
+                p[i][j].mstr.hp = 0;
+                p[i][j].mstr.xp = 0;
+                p[i][j].mstr.loot = 0;
+                p[i][j].mstr.frameAnimation = 0;
+
+                 p[i][j].spe.inv = 0;
+
+            }
+            else if (num_salle == 1){
+                p[i][j].contenu == 0;
+                p[2][2].contenu == 1;
+            }
+            else if (obj < ( ( (longueur - 2) * (largeur - 2) ) / OBJ_MAX ) ){
+
+                if(aleatoire(num_salle, graine, 1, 100)<=40){
+
+                    //placement objet
+                    al = aleatoire(num_salle, graine * 17, 1, 10);
+                    switch (al)
+                    {
+
+                    // monstre niv 1 (30%)
+                    case 1:
+                    case 2:
+                    case 3:
+                        p[i][j].contenu == 2;
+                        
+                        p[i][j].mstr.hp = 100;
+                        p[i][j].mstr.xp = 10;
+                        p[i][j].mstr.loot = 0; //aleatoire
+                        p[i][j].mstr.frameAnimation = 0;
+
+                        break;
+                    
+                    default:
+                        break;
+                    }
+
+                }
+            }
+            
+        }
+    }
+    
+    room.num = num_salle;
+    room.largeur = largeur;
+    room.longueur = longueur;
+    room.posX = 10;
+    room.posY = 10;
+    room.cases = p;
+    return EXIT_SUCCESS;
+}   
 
