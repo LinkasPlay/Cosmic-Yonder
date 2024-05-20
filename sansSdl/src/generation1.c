@@ -14,6 +14,8 @@
 #define LIGNES 5
 #define COLONNES 5
 
+int porteLibre = 0;
+
 /*
 	Windows : gcc src/generation.c -o bin\progGeneration
 	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
@@ -140,6 +142,7 @@ extern salle room;
 
 unsigned int aleatoire(int salle, int graine, int min, int max){
     double rdn;
+    max++;
 
     rdn = (cos(salle + graine) + 1) / 2; // Valeur entre 0 et 1
     rdn = rdn * (max - min) + min; // Réajustement de la plage
@@ -168,9 +171,17 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     int portes[4];
 
     portes[cote] = 1;
+    if (porteLibre == 1){
+        portes[0] = 1;
+        portes[1] = 1;
+        portes[2] = 1;
+        portes[3] = 1;
+    }
     
     for(unsigned i=0 ; i<4 ; i++){
+        printf("\ni = %d \n", i);
         if (num_salle == 1){
+            porteLibre = 4;
             p[0][2].contenu = -1;
             p[0][2].spe.type = 0;
 
@@ -185,37 +196,40 @@ int generation(int longueur, int largeur, int num_salle, int cote){
         }
         else{
             if (portes[i] != 1){
-                if(aleatoire(num_salle, graine, 1, 100)<=60){
+                if(aleatoire(i * num_salle, graine * i - num_salle, 1, 100)<=60){
                     portes[i] = 1;
+                    porteLibre ++;
                 }
                 else{
                     portes[i] = 0;
                 }
                 
+                
             }
+            printf("portes %d = %d \n", i, portes[i]);
             if (portes[i] == 1){
                 switch (i){
 
                 case 0:
-                    al = aleatoire(num_salle, graine, 1, largeur-2);
+                    al = aleatoire(i * num_salle, graine * 6, 1, largeur-2);
                     p[0][al].contenu = -1;
                     p[0][al].spe.type = 0;
                     break;
 
                 case 1:
-                    al = aleatoire(num_salle, graine, 1, longueur-2);
+                    al = aleatoire(i * num_salle, graine * 4, 1, longueur-2);
                     p[al][0].contenu = -1;
                     p[al][0].spe.type = 1;
                     break;
 
                 case 2:
-                    al = aleatoire(num_salle, graine, 1, largeur-2);
+                    al = aleatoire(i * num_salle, graine * 7, 1, largeur-2);
                     p[longueur-1][al].contenu = -1;
                     p[longueur-1][al].spe.type = 2;
                     break;
 
                 case 3:
-                    al = aleatoire(num_salle, graine, 1, longueur-2);
+                    al = aleatoire(i * num_salle, graine * 2, 1, longueur-2);
                     p[al][largeur-1].contenu = -1;
                     p[al][largeur-1].spe.type = 3;
                     break;
@@ -223,9 +237,12 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                 default:
                     break;
                 }
+                printf("\nal = %d (nsal = %d, gr = %d, la-2 = %d \n\n", al, num_salle, graine, largeur-2);
             }
         }
     }
+
+    porteLibre--;
 
     int obj = 0;
 
@@ -246,14 +263,14 @@ int generation(int longueur, int largeur, int num_salle, int cote){
             }
             else if (num_salle == 1){
                 p[i][j].contenu == 0;
-                p[largeur/2][longueur/2].contenu == 1;
+                p[2][2].contenu == 1;
             }
             else if (obj < ( ( (longueur - 2) * (largeur - 2) ) / OBJ_MAX ) ){
 
                 if(aleatoire(num_salle, graine, 1, 100)<=40){
 
                     //placement objet
-                    al = aleatoire(num_salle, graine, 1, 10);
+                    al = aleatoire(num_salle, graine * 17, 1, 10);
                     switch (al)
                     {
 

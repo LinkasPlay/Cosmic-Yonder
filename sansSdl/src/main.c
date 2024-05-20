@@ -6,6 +6,8 @@
 #include <string.h>
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
+extern unsigned int aleatoire(int salle, int graine, int min, int max);
+extern int graine;
 
 salle room;
 
@@ -93,11 +95,11 @@ int main(void) {
             break;
     }
 
+    endwin();
+
     if(generation(5, 5, 1, 0) != EXIT_SUCCESS){
         printf("Erreur generation salle\n");
     }
-
-    endwin();
 
     for (unsigned i = 0; i < 5; ++i) {
         for (unsigned j = 0; j < 5; ++j) {
@@ -106,7 +108,10 @@ int main(void) {
         printf("\n");
     }
 
-    scanf("%d", &x);
+    int tabLa, tabLo;
+
+    printf("Valeur de la longueur puis de la largeur de la salle : \n");
+    scanf("%d", &tabLa);
 
     // Libération de la mémoire de la première génération
     for (unsigned i = 0; i < 5; ++i) {
@@ -115,25 +120,35 @@ int main(void) {
     free(room.cases);
     room.cases = NULL; // Réinitialisation de room.cases pour éviter la double libération
 
-    scanf("%d", &x);
+    scanf("%d", &tabLo);
 
-    if (generation(6, 6, 3, 1) != EXIT_SUCCESS) {
+    if (generation(tabLa, tabLo, 5, 2) != EXIT_SUCCESS) {
         printf("Erreur generation salle\n");
     }
 
-    scanf("%d", &x);
-
-    for (unsigned i = 0; i < 7; ++i) {
-        for (unsigned j = 0; j < 9; ++j) {
+    for (unsigned i = 0; i < tabLa; ++i) {
+        for (unsigned j = 0; j < tabLo; ++j) {
             printf("[ %d ] ", room.cases[i][j].contenu);
         }
         printf("\n");
     }
 
-    scanf("%d", &x);
+    do {
+        printf(" \n\n Valeur min et max de al : \n");
+        scanf("%d", &tabLa);
+        scanf("%d", &tabLo);
+        printf("\nal = %d \n", aleatoire(3, graine, tabLa, tabLo));
+        scanf("%d", &x);
+    } while (x!=0);
+
+    for(unsigned z = 0; z<20; z++){
+        printf("al %d = %d \n",z, aleatoire(z * 5, graine * z - 5, 1, 100));
+        printf("al2 %d = %d \n\n",z, aleatoire(z * 5, graine * z - 5, 1, 6));
+    }
+
 
     // Libération de la mémoire de la deuxième génération
-    for (unsigned i = 0; i < 7; ++i) {
+    for (unsigned i = 0; i < tabLa; ++i) {
         free(room.cases[i]);
     }
     free(room.cases);
