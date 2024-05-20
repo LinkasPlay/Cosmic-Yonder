@@ -81,59 +81,6 @@ J'ai fais un programme qui va creer un tableau de 5 par 5 ou chaque element va e
 Aussi la case au centre tout en haut est une porte pour acceder au niveau suivant.
 */
 
-/*
-salle generation () {
-
-    for (int i = 0; i < LIGNES; i++) {
-        for (int j = 0; j < COLONNES; j++) {
-            if (i == 2 && j == 0 || i==0 && j==2 || i==2 && j==4 || i=4 && j==2) {
-                tableau[i][j] = -1;
-            } else {
-                tableau[i][j] = -2
-            }
-        }
-    }
-
-    printf("Tableau de 5 par 5 :\n");
-    for (int i = 0; i < LIGNES; i++) {
-        for (int j = 0; j < COLONNES; j++) {
-            if (tableau[i][j] == image) {
-                printf("porte");
-            } else {
-                printf("autre_image");
-            }
-        }
-        printf("\n");
-    }
-
-    for (int i = 0; i < LIGNES; i++) {
-        for (int j = 0; j < COLONNES; j++) {
-            if (tableau[i][j] != image) {
-                SDL_FreeSurface(tableau[i][j]);
-            }
-        }
-    }
-
-    SDL_Quit();
-
-    return 0;
-}
-*/
-
-    /*
-unsigned int genererGraine(int parametre1, int parametre2) {
-    unsigned int graine = parametre1 * parametre2;
-
-    graine = cos(parametre1 + parametre2) * 100;
-
-    if (graine < 0) {
-        graine = -graine;
-    }
-
-    return graine;
-}
-
-    */
 
 
 int graine=69; 

@@ -81,6 +81,32 @@ int main(void) {
     WINDOW *win = newwin(10, 20, start_y, start_x);
     refresh();
 
+
+    /*
+        COLOR_PAIR(n)
+        COLOR_BLACK 0
+        COLOR_RED 1
+        COLOR_GREEN 2
+        COLOR_YELLOW 3
+        COLOR_BLUE 4
+        COLOR_MAGENTA 5
+        COLOR_CYAN 6
+        COLOR_WHITE 7
+
+    */
+
+    init_pair(1, COLOR_CYAN, COLOR_WHITE);
+
+    if(can_change_color()){
+        printw("on peut changer la couleur");
+        init_color(COLOR_CYAN, 9, 999, 999);
+    }
+    attron(COLOR_PAIR(1));
+    printw("texte de fou");
+    attroff(COLOR_PAIR(1));
+
+    getch();
+
     box(win, 0, 0); // Dessine le cadre de la fenêtre
     mvwprintw(win, 1, 1, "Chokbar de bz");
     wrefresh(win);
