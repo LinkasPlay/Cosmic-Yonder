@@ -7,7 +7,7 @@
 #define FPS_LIMIT 16
 
 extern void SDL_ExitWithError(const char *message);
-extern int texture( int argc, char **argv);
+extern int texture(void);
 /*
 int contenuCase = 0;
 SDL_Window *window = NULL;
@@ -53,7 +53,7 @@ typedef struct salle {
 } salle ;
 
 extern int creeMap(void);
-extern int jeu(int argc, char **argv);
+extern int jeu(void);
 extern tile contenuCase;
 extern int Xcamera;
 extern int Ycamera;

@@ -98,7 +98,7 @@ int main(void) {
     init_pair(1, COLOR_CYAN, COLOR_WHITE);
 
     if(can_change_color()){
-        printw("on peut changer la couleur");
+        printw("on peut changer la couleur\n");
         init_color(COLOR_CYAN, 9, 999, 999);
     }
     attron(COLOR_PAIR(1));
@@ -110,6 +110,12 @@ int main(void) {
     box(win, 0, 0); // Dessine le cadre de la fenêtre
     mvwprintw(win, 1, 1, "Chokbar de bz");
     wrefresh(win);
+
+    win = newwin(10, 20, start_y+0, start_x+20);
+    box(win, 0, 0); // Dessine le cadre de la fenêtre
+    mvwprintw(win, 1, 1, "Chokbar de 2 bz");
+    wrefresh(win);
+
 
     getch();
 
@@ -159,6 +165,7 @@ int main(void) {
         printf("\n");
     }
 
+    /*
     do {
         printf(" \n\n Valeur min et max de al : \n");
         scanf("%d", &tabLa);
@@ -171,6 +178,7 @@ int main(void) {
         printf("al %d = %d \n",z, aleatoire(z * 5, graine * z - 5, 1, 100));
         printf("al2 %d = %d \n\n",z, aleatoire(z * 5, graine * z - 5, 1, 6));
     }
+    */
 
 
     // Libération de la mémoire de la deuxième génération
