@@ -172,13 +172,12 @@ int camera(void){
             //Case.y = Ycase * 100;
             //Case.w = WINDOW_WIDTH / (WINDOW_WIDTH / 100) ;
 	        //Case.h = WINDOW_HEIGHT / (WINDOW_HEIGHT / 100) ;
-            //printf("%d et %d et %d et %d\n",Case.x,Case.y,Case.w,Case.h);
-			/*
-            if(SDL_RenderDrawRect(renderer, &Case) != 0){
-		        SDL_ExitWithError("Impossible de dessiner une case");
-	        }
-			if(texture(argc, argv ) != EXIT_SUCCESS){
-				SDL_ExitWithError("Fonction texture interompue");
+			win = newwin(5, 10, Ycamera, Xcase);
+   	 		box(win, 0, 0); // Dessine le cadre de la fenêtre
+    		mvwprintw(win, 1, 1, "Chokbar de 2 bz");
+    		wrefresh(win);
+			if(texture(win) != EXIT_SUCCESS){
+				printf("Fonction texture interompue");
 			}
 			*/
         }

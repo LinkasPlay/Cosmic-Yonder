@@ -127,6 +127,8 @@ int main(void) {
             break;
     }
 
+    // EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
     endwin();
 
     if(generation(5, 5, 1, 0) != EXIT_SUCCESS){
