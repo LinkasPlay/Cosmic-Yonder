@@ -9,8 +9,6 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
-
-
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 void start_ncurses(bool useRaw, bool useNoecho);
@@ -27,16 +25,15 @@ salle room;
 
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
-void print_menu(WINDOW *menu_win, int highlight, int n_choices, char * choices[]);
+void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
 
 char *choices[] = { 
-			"Choice 1",
-			"Choice 2",
-			"Choice 3",
-			"Choice 4",
-			"Exit",
-		  };
-    
+    "Nouvelle partie",
+    "Charger partie",
+    "Option",
+    "Soundtrack",
+    "Exit",
+};
 
 int n_choices = 5;
 
@@ -93,7 +90,7 @@ int click_souris() {
     return 0;
 }
 
-int main(int argc, char ** argv){
+int main(int argc, char **argv) {
     ncurses_initialiser();
     ncurses_couleurs();
     ncurses_souris();
@@ -168,48 +165,134 @@ int main(int argc, char ** argv){
     int choice = 0;
     int c = 0;
 
-	start_x = 10;
-	start_y = 10;
-		
-	menu_win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, start_y, start_x);
-	keypad(menu_win, TRUE);
-	mvprintw(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
-	refresh();
-	print_menu(menu_win, highlight, n_choices, choices);
-	while(1)
-	{	c = wgetch(menu_win);
-		switch(c)
-		{	case KEY_UP:
-				if(highlight == 1)
-					highlight = n_choices;
-				else
-					highlight--;
-				break;
-			case KEY_DOWN:
-				if(highlight == n_choices)
-					highlight = 1;
-				else 
-					highlight++;
-				break;
-			case 10:
-				choice = highlight;
-				break;
-			default:
-				mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", c, c);
-				refresh();
-				break;
-		}
-		print_menu(menu_win, highlight, n_choices, choices);
-		if(choice != 0){	/* User did a choice come out of the infinite loop */
-			break;
-	}	
-	mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
-	clrtoeol();
-	refresh();
-	endwin();
+    start_x = 10;
+    start_y = 10;
+
+    menu_win = newwin(10, 30, start_y, start_x); // Dimensions ajustées pour WINDOW_HEIGHT et WINDOW_WIDTH
+    keypad(menu_win, TRUE);
+    mvprintw(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
+    refresh();
+    print_menu(menu_win, highlight, n_choices, choices);
+    
+    while (1) {
+        c = wgetch(menu_win);
+        switch (c) {
+            case KEY_UP:
+                if (highlight == 1)
+                    highlight = n_choices;
+                else
+                    highlight--;
+                break;
+            case KEY_DOWN:
+                if (highlight == n_choices)
+                    highlight = 1;
+                else
+                    highlight++;
+                break;
+            case 10:
+                choice = highlight;
+                break;
+            default:
+                mvprintw(24, 0, "Character pressed is = %3d Hopefully it can be printed as '%c'", c, c);
+                refresh();
+                break;
+        }
+        print_menu(menu_win, highlight, n_choices, choices);
+        if (choice != 0) { /* User did a choice come out of the infinite loop */
+            break;
+        }
     }
 
+    mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
+    clrtoeol();
+    refresh();
+    endwin();
 
+    switch (choice) {
+        case 1:
+            if(jeu() != EXIT_SUCCESS){
+                printf("Erreur jeu");
+                exit(EXIT_FAILURE);
+            }
+            break;
+        case 2:
+            if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
+                printf("Erreur generation salle\n");
+                exit(EXIT_FAILURE);
+            }
+
+            for (unsigned i = 0; i < 5; ++i) {
+                for (unsigned j = 0; j < 5; ++j) {
+                    printf("[ %d ] ", room.cases[i][j].contenu);
+                }
+                printf("\n");
+            }
+
+            int tabLa, tabLo;
+
+            printf("Valeur de la longueur puis de la largeur de la salle : \n");
+            scanf("%d", &tabLa);
+
+            // Libération de la mémoire de la première génération
+            for (unsigned i = 0; i < 5; ++i) {
+                free(room.cases[i]);
+            }
+            free(room.cases);
+            room.cases = NULL; // Réinitialisation de room.cases pour éviter la double libération
+
+            scanf("%d", &tabLo);
+
+            if (generation(tabLa, tabLo, 5, 2) != EXIT_SUCCESS) {
+                printf("Erreur generation salle\n");
+                exit(EXIT_FAILURE);
+            }
+
+            for (unsigned i = 0; i < tabLa; ++i) {
+                for (unsigned j = 0; j < tabLo; ++j) {
+                    printf("[ %d ] ", room.cases[i][j].contenu);
+                }
+                printf("\n");
+            }
+
+            // Libération de la mémoire de la deuxième génération
+            for (unsigned i = 0; i < tabLa; ++i) {
+                free(room.cases[i]);
+            }
+            free(room.cases);
+            room.cases = NULL;
+            break;
+            
+        case 4:
+            printf("debut musique ==================== \n");
+            printf("Quelle musique ?");
+            scanf("%d", &x);
+
+            // Créer un thread pour jouer la musique
+            pthread_t music_thread;
+            pthread_create(&music_thread, NULL, play_music, &x);
+
+            // Boucle pour détecter l'appui sur la touche espace
+            ch = 0;
+            while (ch != ' ') {
+                ch = getch();
+                // Rien à faire, juste attendre l'appui sur espace
+            }
+
+            // Arrêter la musique et attendre la fin du thread
+            stop_music = true;
+            pthread_join(music_thread, NULL);
+
+            // Terminer ncurses
+            endwin();
+            break;
+
+        case 5:
+            printf("Fin du jeu\n");
+            exit(EXIT_SUCCESS);
+        
+        default:
+            break;
+    }
     // Boucle pour détecter l'appui sur la touche espace
     ch = 0;
     while (ch != ' ') {
@@ -219,105 +302,24 @@ int main(int argc, char ** argv){
 
     endwin();
 
-    if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
-        printf("Erreur generation salle\n");
-    }
-
-    for (unsigned i = 0; i < 5; ++i) {
-        for (unsigned j = 0; j < 5; ++j) {
-            printf("[ %d ] ", room.cases[i][j].contenu);
-        }
-        printf("\n");
-    }
-
-    int tabLa, tabLo;
-
-    printf("Valeur de la longueur puis de la largeur de la salle : \n");
-    scanf("%d", &tabLa);
-
-    // Libération de la mémoire de la première génération
-    for (unsigned i = 0; i < 5; ++i) {
-        free(room.cases[i]);
-    }
-    free(room.cases);
-    room.cases = NULL; // Réinitialisation de room.cases pour éviter la double libération
-
-    scanf("%d", &tabLo);
-
-    if (generation(tabLa, tabLo, 5, 2) != EXIT_SUCCESS) {
-        printf("Erreur generation salle\n");
-    }
-
-    for (unsigned i = 0; i < tabLa; ++i) {
-        for (unsigned j = 0; j < tabLo; ++j) {
-            printf("[ %d ] ", room.cases[i][j].contenu);
-        }
-        printf("\n");
-    }
-
-    /*
-    do {
-        printf(" \n\n Valeur min et max de al : \n");
-        scanf("%d", &tabLa);
-        scanf("%d", &tabLo);
-        printf("\nal = %d \n", aleatoire(3, graine, tabLa, tabLo));
-        scanf("%d", &x);
-    } while (x!=0);
-
-    for(unsigned z = 0; z<20; z++){
-        printf("al %d = %d \n",z, aleatoire(z * 5, graine * z - 5, 1, 100));
-        printf("al2 %d = %d \n\n",z, aleatoire(z * 5, graine * z - 5, 1, 6));
-    }
-    */
-
-    // Libération de la mémoire de la deuxième génération
-    for (unsigned i = 0; i < tabLa; ++i) {
-        free(room.cases[i]);
-    }
-    free(room.cases);
-    room.cases = NULL;
-
-    printf("debut musique ==================== \n");
-    printf("Quelle musique ?");
-    scanf("%d", &x);
-
-    // Créer un thread pour jouer la musique
-    pthread_t music_thread;
-    pthread_create(&music_thread, NULL, play_music, &x);
-
-    // Boucle pour détecter l'appui sur la touche espace
-    ch = 0;
-    while (ch != ' ') {
-        ch = getch();
-        // Rien à faire, juste attendre l'appui sur espace
-    }
-
-    // Arrêter la musique et attendre la fin du thread
-    stop_music = true;
-    pthread_join(music_thread, NULL);
-
-    // Terminer ncurses
-    endwin();
-
-    return 0;
+    return EXIT_SUCCESS;
 }
 
-void print_menu(WINDOW *menu_win, int highlight, int n_choices, char * choices[])
-{
-	int x, y, i;	
+void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]) {
+    int x, y, i;    
 
-	x = 2;
-	y = 2;
-	box(menu_win, 0, 0);
-	for(i = 0; i < n_choices; i++)
-	{	if(highlight == i + 1) /* High light the present choice */
-		{	wattron(menu_win, A_REVERSE); 
-			mvwprintw(menu_win, y, x, "%s", choices[i]);
-			wattroff(menu_win, A_REVERSE);
-		}
-		else
-			mvwprintw(menu_win, y, x, "%s", choices[i]);
-		y++;
-	}
-	wrefresh(menu_win);
+    x = 2;
+    y = 2;
+    box(menu_win, 0, 0);
+    for (i = 0; i < n_choices; i++) {    
+        if (highlight == i + 1) { /* High light the present choice */
+            wattron(menu_win, A_REVERSE); 
+            mvwprintw(menu_win, y, x, "%s", choices[i]);
+            wattroff(menu_win, A_REVERSE);
+        } else {
+            mvwprintw(menu_win, y, x, "%s", choices[i]);
+        }
+        y++;
+    }
+    wrefresh(menu_win);
 }
