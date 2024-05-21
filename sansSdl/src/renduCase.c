@@ -31,7 +31,7 @@ extern int mouvementBas(void);
 extern int mouvementDroite(void);
 extern int attaqueEpee(void);
 
-extern int texture(void);
+extern int texture(WINDOW *win);
 extern int creeMap(void);
 extern int actualiserMap(void);
 
@@ -172,14 +172,14 @@ int camera(void){
             //Case.y = Ycase * 100;
             //Case.w = WINDOW_WIDTH / (WINDOW_WIDTH / 100) ;
 	        //Case.h = WINDOW_HEIGHT / (WINDOW_HEIGHT / 100) ;
-			win = newwin(5, 10, Ycamera, Xcase);
+			WINDOW *win = newwin(5, 10, Ycamera, Xcase);
    	 		box(win, 0, 0); // Dessine le cadre de la fenêtre
     		mvwprintw(win, 1, 1, "Chokbar de %d bz",Ycase + Xcase-1 * Ycase);
     		wrefresh(win);
-			if(texture(win) != EXIT_SUCCESS){
-				printf("Fonction texture interompue");
-			}
-			*/
+			//if(texture(win) != EXIT_SUCCESS){
+			//	printf("Fonction texture interompue");
+			//}
+			
         }
     }
 	perso.frameAnimation ++;

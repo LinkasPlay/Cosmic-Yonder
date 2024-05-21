@@ -7,7 +7,7 @@
 #define FPS_LIMIT 16
 
 extern void SDL_ExitWithError(const char *message);
-extern int texture(void);
+//extern int texture(WINDOW *win);
 /*
 int contenuCase = 0;
 SDL_Window *window = NULL;
