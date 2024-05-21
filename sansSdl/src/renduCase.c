@@ -7,17 +7,7 @@
 
 
 
-/*
-	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
-	Windows : gcc sansSdl\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
-	Linux : gcc renduCase.c $(sdl2-config __cflags --libs) -o progRenduCase
-
-	Flags render
-	SDL_RENDERER_SOFTWARE
-	SDL_RENDERER_ACCELERATED
-	SDL_RENDERER_PRESENTVSYNC
-	SDL_RENDERER_TARGETTEXTURE
-*/
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 tile contenuCase;
 
@@ -31,7 +21,7 @@ extern int mouvementBas(void);
 extern int mouvementDroite(void);
 extern int attaqueEpee(void);
 
-extern int texture(void);
+extern int texture(WINDOW *win);
 extern int creeMap(void);
 extern int actualiserMap(void);
 
@@ -60,6 +50,57 @@ int jeu (void) {
 	unsigned int frame_limit = 0;
 
 	//gestion des évènements
+
+	int ch;
+
+	while (ch != KEY_EXIT) {
+		ch = getch();
+        switch (ch) {
+            case KEY_EXIT: /*Pour quitter le jeu*/
+                return 1;
+				break;
+
+			//attaque
+			case 'e':
+            case ' ':
+				if(attaqueEpee() != EXIT_SUCCESS){
+					printf("Erreur attaque");
+				}
+				continue;
+
+			//mvouvement haut
+			case 'z':
+			case KEY_UP:
+			if(mouvementHaut() != EXIT_SUCCESS){
+				printf("Erreur mouvement haut");
+			}
+			continue;
+            
+			//mvouvement gauche
+			case 'q':
+			case KEY_LEFT:
+			if(mouvementGauche() != EXIT_SUCCESS){
+				printf("Erreur mouvement gauche");
+			}
+			continue;
+
+			//mvouvement bas
+			case 's':
+			case KEY_DOWN:
+			if(mouvementBas() != EXIT_SUCCESS){
+				printf("Erreur mouvement bas");
+			}
+			continue;
+
+			//mvouvement droite
+			case 'd':
+			case KEY_RIGHT:
+			if(mouvementDroite() != EXIT_SUCCESS){
+				printf("Erreur mouvement droite");
+			}
+			continue;
+        }
+    }
 
 	/*
 	while(continuer){
@@ -172,14 +213,13 @@ int camera(void){
             //Case.y = Ycase * 100;
             //Case.w = WINDOW_WIDTH / (WINDOW_WIDTH / 100) ;
 	        //Case.h = WINDOW_HEIGHT / (WINDOW_HEIGHT / 100) ;
-			win = newwin(5, 10, Ycamera, Xcase);
+			WINDOW *win = newwin(5, 10, Ycamera, Xcase);
    	 		box(win, 0, 0); // Dessine le cadre de la fenêtre
-    		mvwprintw(win, 1, 1, "Chokbar de 2 bz");
     		wrefresh(win);
 			if(texture(win) != EXIT_SUCCESS){
 				printf("Fonction texture interompue");
 			}
-			*/
+			
         }
     }
 	perso.frameAnimation ++;

@@ -16,17 +16,7 @@
 
 int porteLibre = 0;
 
-/*
-	Windows : gcc src/generation.c -o bin\progGeneration
-	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
-	Linux : gcc generation.c -o progGeneration
-
-	Flags render
-	SDL_RENDERER_SOFTWARE
-	SDL_RENDERER_ACCELERATED
-	SDL_RENDERER_PRESENTVSYNC
-	SDL_RENDERER_TARGETTEXTURE
-*/
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 
 //message erreur

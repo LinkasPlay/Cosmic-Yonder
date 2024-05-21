@@ -1,20 +1,16 @@
+#include "texture.h"
+#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-
 #include <ncurses.h>
+#include <unistd.h>
+#include <string.h>
+#include <pthread.h>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 
 #include "texture.h"
 
-/*
-	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
-	Linux : gcc renduCase.c $(sdl2-config __cflags --libs) -o progRenduCase
-
-	Flags render
-	SDL_RENDERER_SOFTWARE
-	SDL_RENDERER_ACCELERATED
-	SDL_RENDERER_PRESENTVSYNC
-	SDL_RENDERER_TARGETTEXTURE
-*/
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 /*
 Expliquation gameplay du jeu :
@@ -47,7 +43,6 @@ Expliquation gameplay du jeu :
 
 */
 
-/*
 extern void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
@@ -58,8 +53,8 @@ extern tile **map;
 extern int Xcamera;
 extern int Ycamera;
 
-personnage perso;
-personnage persoPast;
+extern personnage perso;
+extern personnage persoPast;
 
 void lvlMaj(monstre mstr){
     perso.xp = perso.xp + mstr.xp;
@@ -239,4 +234,3 @@ int mouvementDroite(void){
     return EXIT_SUCCESS;
 }
 
-*/
