@@ -61,6 +61,57 @@ int jeu (void) {
 
 	//gestion des évènements
 
+	int ch;
+
+	while (ch != KEY_EXIT) {
+		ch = getch();
+        switch (ch) {
+            case KEY_EXIT: /*Pour quitter le jeu*/
+                return 1;
+				break;
+
+			//attaque
+			case 'e':
+            case ' ':
+				if(attaqueEpee() != EXIT_SUCCESS){
+					printf("Erreur attaque");
+				}
+				continue;
+
+			//mvouvement haut
+			case 'z':
+			case KEY_UP:
+			if(mouvementHaut() != EXIT_SUCCESS){
+				printf("Erreur mouvement haut");
+			}
+			continue;
+            
+			//mvouvement gauche
+			case 'q':
+			case KEY_LEFT:
+			if(mouvementGauche() != EXIT_SUCCESS){
+				printf("Erreur mouvement gauche");
+			}
+			continue;
+
+			//mvouvement bas
+			case 's':
+			case KEY_DOWN:
+			if(mouvementBas() != EXIT_SUCCESS){
+				printf("Erreur mouvement bas");
+			}
+			continue;
+
+			//mvouvement droite
+			case 'd':
+			case KEY_RIGHT:
+			if(mouvementDroite() != EXIT_SUCCESS){
+				printf("Erreur mouvement droite");
+			}
+			continue;
+        }
+    }
+
 	/*
 	while(continuer){
 		SDL_Event event;

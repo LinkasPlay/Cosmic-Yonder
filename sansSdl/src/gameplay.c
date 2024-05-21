@@ -47,7 +47,6 @@ Expliquation gameplay du jeu :
 
 */
 
-/*
 extern void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
@@ -58,8 +57,8 @@ extern tile **map;
 extern int Xcamera;
 extern int Ycamera;
 
-personnage perso;
-personnage persoPast;
+extern personnage perso;
+extern personnage persoPast;
 
 void lvlMaj(monstre mstr){
     perso.xp = perso.xp + mstr.xp;
@@ -239,4 +238,3 @@ int mouvementDroite(void){
     return EXIT_SUCCESS;
 }
 
-*/
