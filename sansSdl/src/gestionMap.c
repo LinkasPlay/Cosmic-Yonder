@@ -6,40 +6,11 @@
 #include "texture.h"
 
 
-/*
-	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
-	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
-	Linux : gcc generation.c -o progGeneration
-
-	Flags render
-	SDL_RENDERER_SOFTWARE
-	SDL_RENDERER_ACCELERATED
-	SDL_RENDERER_PRESENTVSYNC
-	SDL_RENDERER_TARGETTEXTURE
-*/
-
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 //message erreur
 
-/*/
-typedef struct personnage {
-    int direction; //haut = 1, gauche = 2, bas = 3, droite = 4
-    int posX;
-    int posY;
-    int frameAnimation;
-} personnage;
-
-typedef struct salle {
-    int largeur;
-    int longueur;
-    int posX;
-    int posY;
-    int ** cases;
-} salle ;
-*/
-
-/*
-extern personnage perso;
-extern personnage persoPast;
+personnage perso;
+personnage persoPast;
 extern int room;
 int inv[7];
 
@@ -114,5 +85,4 @@ int actualiserMap(void){
 
 }
 
-*/
 

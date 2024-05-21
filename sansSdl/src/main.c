@@ -5,13 +5,40 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <pthread.h>
+#include <pulse/simple.h>
+#include <pulse/error.h>
+
+
+
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
+
+void start_ncurses(bool useRaw, bool useNoecho);
+//void printMenu(WINDOW * menu, stdin choices[], int size, int highlight);
+
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
+extern void* play_music(void* arg);
+
 extern int graine;
+extern bool stop_music;
 
 salle room;
 
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
+
+void print_menu(WINDOW *menu_win, int highlight, int n_choices, char * choices[]);
+
+char *choices[] = { 
+			"Choice 1",
+			"Choice 2",
+			"Choice 3",
+			"Choice 4",
+			"Exit",
+		  };
+    
+
+int n_choices = 5;
 
 void ncurses_initialiser() {
     initscr();          /* Démarre le mode ncurses */
@@ -66,10 +93,12 @@ int click_souris() {
     return 0;
 }
 
-int main(void) {
+int main(int argc, char ** argv){
     ncurses_initialiser();
     ncurses_couleurs();
     ncurses_souris();
+
+    raw(); // Utiliser raw pour obtenir les touches directement
 
     int start_y = 10;
     int start_x = 10;
@@ -81,11 +110,49 @@ int main(void) {
     WINDOW *win = newwin(10, 20, start_y, start_x);
     refresh();
 
+    /*
+        COLOR_PAIR(n)
+        COLOR_BLACK 0
+        COLOR_RED 1
+        COLOR_GREEN 2
+        COLOR_YELLOW 3
+        COLOR_BLUE 4
+        COLOR_MAGENTA 5
+        COLOR_CYAN 6
+        COLOR_WHITE 7
+    */
+
+    init_pair(1, COLOR_CYAN, COLOR_WHITE);
+
+    if (can_change_color()) {
+        printw("on peut changer la couleur\n");
+        init_color(COLOR_CYAN, 9, 999, 999);
+    }
+    attron(COLOR_PAIR(1));
+    printw("texte de fou");
+    attroff(COLOR_PAIR(1));
+
+    int ch;
+    // Boucle pour détecter l'appui sur la touche espace
+    while ((ch = getch()) != ' ') {
+        // Rien à faire, juste attendre l'appui sur espace
+    }
+
     box(win, 0, 0); // Dessine le cadre de la fenêtre
     mvwprintw(win, 1, 1, "Chokbar de bz");
     wrefresh(win);
 
-    getch();
+    win = newwin(10, 20, start_y + 0, start_x + 20);
+    box(win, 0, 0); // Dessine le cadre de la fenêtre
+    mvwprintw(win, 1, 1, "Chokbar de 2 bz");
+    wrefresh(win);
+
+    // Boucle pour détecter l'appui sur la touche espace
+    ch = 0;
+    while (ch != ' ') {
+        ch = getch();
+        // Rien à faire, juste attendre l'appui sur espace
+    }
 
     while (1) {
         clear(); // Efface le contenu de la fenêtre
@@ -96,8 +163,63 @@ int main(void) {
     }
 
     endwin();
+    WINDOW *menu_win;
+    int highlight = 1;
+    int choice = 0;
+    int c = 0;
 
-    if(generation(5, 5, 1, 0) != EXIT_SUCCESS){
+	start_x = 10;
+	start_y = 10;
+		
+	menu_win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, start_y, start_x);
+	keypad(menu_win, TRUE);
+	mvprintw(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
+	refresh();
+	print_menu(menu_win, highlight, n_choices, choices);
+	while(1)
+	{	c = wgetch(menu_win);
+		switch(c)
+		{	case KEY_UP:
+				if(highlight == 1)
+					highlight = n_choices;
+				else
+					highlight--;
+				break;
+			case KEY_DOWN:
+				if(highlight == n_choices)
+					highlight = 1;
+				else 
+					highlight++;
+				break;
+			case 10:
+				choice = highlight;
+				break;
+			default:
+				mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", c, c);
+				refresh();
+				break;
+		}
+		print_menu(menu_win, highlight, n_choices, choices);
+		if(choice != 0){	/* User did a choice come out of the infinite loop */
+			break;
+	}	
+	mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
+	clrtoeol();
+	refresh();
+	endwin();
+    }
+
+
+    // Boucle pour détecter l'appui sur la touche espace
+    ch = 0;
+    while (ch != ' ') {
+        ch = getch();
+        // Rien à faire, juste attendre l'appui sur espace
+    }
+
+    endwin();
+
+    if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
         printf("Erreur generation salle\n");
     }
 
@@ -133,6 +255,7 @@ int main(void) {
         printf("\n");
     }
 
+    /*
     do {
         printf(" \n\n Valeur min et max de al : \n");
         scanf("%d", &tabLa);
@@ -145,7 +268,7 @@ int main(void) {
         printf("al %d = %d \n",z, aleatoire(z * 5, graine * z - 5, 1, 100));
         printf("al2 %d = %d \n\n",z, aleatoire(z * 5, graine * z - 5, 1, 6));
     }
-
+    */
 
     // Libération de la mémoire de la deuxième génération
     for (unsigned i = 0; i < tabLa; ++i) {
@@ -154,96 +277,47 @@ int main(void) {
     free(room.cases);
     room.cases = NULL;
 
+    printf("debut musique ==================== \n");
+    printf("Quelle musique ?");
+    scanf("%d", &x);
+
+    // Créer un thread pour jouer la musique
+    pthread_t music_thread;
+    pthread_create(&music_thread, NULL, play_music, &x);
+
+    // Boucle pour détecter l'appui sur la touche espace
+    ch = 0;
+    while (ch != ' ') {
+        ch = getch();
+        // Rien à faire, juste attendre l'appui sur espace
+    }
+
+    // Arrêter la musique et attendre la fin du thread
+    stop_music = true;
+    pthread_join(music_thread, NULL);
+
+    // Terminer ncurses
+    endwin();
+
     return 0;
 }
 
- 
-    /*
-    SDL_Surface *picture = NULL;
-    SDL_Texture *texture = NULL;
-    SDL_Rect dest_rect = {0,0,1147,480};
+void print_menu(WINDOW *menu_win, int highlight, int n_choices, char * choices[])
+{
+	int x, y, i;	
 
-
-    if(SDL_Init(SDL_INIT_VIDEO) != 0){
-        SDL_Log("Erreur : Initialisation SDL > %s\n", SDL_GetError());
-        clean_ressources(NULL,NULL,NULL);
-        exit(EXIT_FAILURE);
-    }
-
-    window = SDL_CreateWindow("Cosmic Yonder", SDL_WINDOWPOS_CENTERED,(SDL_WINDOWPOS_CENTERED),WINDOW_WIDTH,480,0);
-
-    if(window == NULL){
-        SDL_Log("Erreur : Creation fenetre echouee > %s\n", SDL_GetError());
-        clean_ressources(NULL,NULL,NULL);
-        exit(EXIT_FAILURE);
-    }
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    if(renderer == NULL){
-        SDL_Log("Erreur > %s\n", SDL_GetError());
-        clean_ressources(window,NULL,NULL);
-        exit(EXIT_FAILURE);
-    }
-
-    picture = SDL_LoadBMP("src/image/spacet.bmp");
-    if(picture == NULL){
-        SDL_Log("Erreur > %s\n", SDL_GetError());
-        clean_ressources(window,renderer,NULL);
-        exit(EXIT_FAILURE);
-    }
-
-    texture = SDL_CreateTextureFromSurface(renderer, picture);
-    SDL_FreeSurface(picture);
-    if(texture == NULL){
-        SDL_Log("Erreur > %s\n", SDL_GetError());
-        clean_ressources(window,renderer,NULL);
-        exit(EXIT_FAILURE);
-    }
-
-    if ((SDL_QueryTexture(texture, NULL, NULL, &dest_rect.w, &dest_rect.h)) != 0){
-        SDL_Log("Erreur > %s\n", SDL_GetError());
-        clean_ressources(window,renderer,texture);
-        exit(EXIT_FAILURE);
-    }
-
-    if ((SDL_RenderCopy(renderer, texture, NULL, &dest_rect)) != 0){
-        SDL_Log("Erreur > %s\n", SDL_GetError());
-        clean_ressources(window,renderer,texture);
-        exit(EXIT_FAILURE);
-    }
-
-    SDL_RenderPresent(renderer);
-
-    clean_ressources(window, renderer, texture);
-
-    SDL_bool program_launched = SDL_TRUE;
-
-    while(program_launched){
-        
-        SDL_Event event;
-
-        while (SDL_PollEvent(&event)){
-            switch(event.type){
-                case SDL_QUIT:
-                    program_launched = SDL_FALSE;
-                    break;
-                
-                default:
-                    break;
-            }
-        }
-        
-
-    }
-
-
-
-    
-
-
-    return EXIT_SUCCESS;
+	x = 2;
+	y = 2;
+	box(menu_win, 0, 0);
+	for(i = 0; i < n_choices; i++)
+	{	if(highlight == i + 1) /* High light the present choice */
+		{	wattron(menu_win, A_REVERSE); 
+			mvwprintw(menu_win, y, x, "%s", choices[i]);
+			wattroff(menu_win, A_REVERSE);
+		}
+		else
+			mvwprintw(menu_win, y, x, "%s", choices[i]);
+		y++;
+	}
+	wrefresh(menu_win);
 }
-*/
-
-    
-    

@@ -16,17 +16,7 @@
 
 int porteLibre = 0;
 
-/*
-	Windows : gcc src/generation.c -o bin\progGeneration
-	Windows sans terminal qui ouvre : gcc src/generation.c -o bin\progGeneration -mwindows
-	Linux : gcc generation.c -o progGeneration
-
-	Flags render
-	SDL_RENDERER_SOFTWARE
-	SDL_RENDERER_ACCELERATED
-	SDL_RENDERER_PRESENTVSYNC
-	SDL_RENDERER_TARGETTEXTURE
-*/
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 
 //message erreur
@@ -81,6 +71,7 @@ J'ai fais un programme qui va creer un tableau de 5 par 5 ou chaque element va e
 Aussi la case au centre tout en haut est une porte pour acceder au niveau suivant.
 */
 
+<<<<<<< HEAD
 /*
 salle generation () {
 
@@ -130,6 +121,8 @@ unsigned int genererGraine(int parametre1, int parametre2) {
 }
 
     */
+=======
+>>>>>>> d078f7c62bf6c09c6c159309b92eec0a3365cde1
 
 
 int graine=69; 
