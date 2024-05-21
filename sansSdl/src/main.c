@@ -136,12 +136,34 @@ int main(int argc, char ** argv){
     int yMax, xMax;
     getmaxyx(stdscr, yMax, xMax);
     //création fenêtre//
-    WINDOW = inputwin = newwin(6, xMax-12, yMax-8, 5);
-    box(inputwin, 0, 0);
+    WINDOW = menuwin = newwin(6, xMax-12, yMax-8, 5);
+    box(menuwin, 0, 0);
     refresh();
-    wresfresh(inputwin);
-    keypad(inputwin, true);
+    wresfresh(menuwin);
+
+    keypad(menuwin, true);
+
+    string choices[3] = {"Malk", "Jog", "Run"};
+    int choice;
+    int highlight = 0;
+
+    while(1){
+        for(int i = 0; i < 3; i++){
+           if(i == highlight){
+            wattron(menuwin, A_REVERSE);
+           mvwprintw(menuwin, i+1, 1, choices[i]);
+           } 
+        }    
+        
+    }
+
+
+
+
+
     getch();
+
+
 
 
 
