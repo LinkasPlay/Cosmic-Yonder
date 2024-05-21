@@ -7,18 +7,7 @@
 
 #define FRAME_IN_ANIMATION 2
 
-/*
-	Windows : gcc src\*.c -o bin\progMain.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -mwindows
-	Windows sans terminal qui ouvre : gcc src/texture.c -o bin/progTexture -I include -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
-	Linux : gcc texture.c $(sdl2-config __cflags --libs) -o progTexture
-    Windows : gcc src/*.c -I include -L lib -lmingw32 -lSDL2main -lSDL2
-
-	Flags render
-	SDL_RENDERER_SOFTWARE
-	SDL_RENDERER_ACCELERATED
-	SDL_RENDERER_PRESENTVSYNC
-	SDL_RENDERER_TARGETTEXTURE
-*/
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 extern personnage perso;
 

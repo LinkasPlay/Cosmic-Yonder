@@ -6,6 +6,8 @@
 #define WINDOW_HEIGHT 900
 #define FPS_LIMIT 16
 
+// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
+
 extern void SDL_ExitWithError(const char *message);
 //extern int texture(WINDOW *win);
 /*
@@ -52,8 +54,11 @@ typedef struct salle {
     tile ** cases; 
 } salle ;
 
+extern int musique(int num_musique);
 extern int creeMap(void);
 extern int jeu(void);
+extern void* play_music(void* arg);
+
 extern tile contenuCase;
 extern int Xcamera;
 extern int Ycamera;
