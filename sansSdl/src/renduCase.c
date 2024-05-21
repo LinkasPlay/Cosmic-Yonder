@@ -174,11 +174,10 @@ int camera(void){
 	        //Case.h = WINDOW_HEIGHT / (WINDOW_HEIGHT / 100) ;
 			WINDOW *win = newwin(5, 10, Ycamera, Xcase);
    	 		box(win, 0, 0); // Dessine le cadre de la fenêtre
-    		mvwprintw(win, 1, 1, "Chokbar de %d bz",Ycase + Xcase-1 * Ycase);
     		wrefresh(win);
-			//if(texture(win) != EXIT_SUCCESS){
-			//	printf("Fonction texture interompue");
-			//}
+			if(texture(win) != EXIT_SUCCESS){
+				printf("Fonction texture interompue");
+			}
 			
         }
     }
