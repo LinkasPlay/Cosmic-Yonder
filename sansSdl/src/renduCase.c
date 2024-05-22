@@ -1,9 +1,13 @@
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <ncurses.h>
-
 #include "texture.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ncurses.h>
+#include <unistd.h>
+#include <string.h>
+
+#include <pthread.h>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 
 
 
@@ -12,8 +16,10 @@
 tile contenuCase;
 
 extern personnage perso;
+int start_y;
+int start_x;
 
-int camera(void);
+int camera(WINDOW * win);
 
 extern int mouvementHaut(void);
 extern int mouvementGauche(void);
@@ -27,37 +33,128 @@ extern int actualiserMap(void);
 
 int jeu (void) {
 
-    int caseLongueur = (WINDOW_WIDTH / 100);
-    int caseLargeur = (WINDOW_HEIGHT / 100);
-  
-	extern int Xcamera;
-	extern int Ycamera;
-	extern tile **map;
-	
-	if (perso.lvl == 0){
-		if (creeMap() != 0){
-			printf("Impossible de cree la map");
+    int LINES = getmaxy(stdscr);
+    int COLS = getmaxx(stdscr);
+
+    int winHauteur = (int)(LINES * 0.97);
+    int winLargeur = (int)(COLS * 0.8);
+
+    // Arrondir winHauteur à un multiple de CASE_HEIGHT
+    winHauteur = (winHauteur / CASE_HEIGHT) * CASE_HEIGHT;
+
+    // Arrondir winLargeur à un multiple de CASE_WIDTH
+    winLargeur = (winLargeur / CASE_WIDTH) * CASE_WIDTH;
+
+    int winY = (LINES - winHauteur) / 2;
+    int winX = (COLS - winLargeur) / 2;
+
+    if (perso.lvl == 0) {
+        if (creeMap() != 0) {
+            printf("Impossible de créer la map\n");
+            endwin();
+            return 1;
+        }
+    }
+
+    WINDOW *win = newwin(winHauteur, winLargeur, winY, winX);
+
+    // Texte centré
+    char *msg = "Veuillez séléctionner la taille de la fenêtre pour cette partie.";
+    char *msg2 = "Elle ne pourra pas être modifiée plus tard et impactera le nombre de choses visibles";
+    int taille = strlen(msg);
+    int taille2 = strlen(msg2);
+	char *msg3 = "Vous vous apprété à lancer le jeu dans une fenètre très petite.";
+    int taille3 = strlen(msg3);
+
+    while (1) {
+        // Mettre à jour les dimensions de l'écran
+        LINES = getmaxy(stdscr);
+        COLS = getmaxx(stdscr);
+
+        winHauteur = (int)(LINES * 0.97);
+        winLargeur = (int)(COLS * 0.8);
+
+        // Arrondir winHauteur à un multiple de CASE_HEIGHT
+        winHauteur = (winHauteur / CASE_HEIGHT) * CASE_HEIGHT;
+
+        // Arrondir winLargeur à un multiple de CASE_WIDTH
+        winLargeur = (winLargeur / CASE_WIDTH) * CASE_WIDTH;
+
+        winY = (LINES - winHauteur) / 2;
+        winX = (COLS - winLargeur) / 2;
+
+        clear(); // Efface le contenu de la fenêtre principale
+        refresh(); // Rafraîchit la fenêtre principale
+
+        // Supprime l'ancienne fenêtre avant d'en créer une nouvelle
+        delwin(win);
+        
+        win = newwin(winHauteur, winLargeur, winY, winX);
+        box(win, 0, 0); // Dessine le cadre de la fenêtre
+        mvwprintw(win, winHauteur / 2 - 1, (winLargeur / 2) - (taille / 2), "%s", msg);
+        mvwprintw(win, winHauteur / 2 + 1, (winLargeur / 2) - (taille2 / 2), "%s", msg2);
+        wrefresh(win);
+
+        if (getch() == 10) {// Touche pour sortir = entrée
+			if(winHauteur < CASE_HEIGHT * 5 || winLargeur < CASE_WIDTH * 7){ // verif taille écran
+
+				clear(); // Efface le contenu de la fenêtre principale
+                refresh(); // Rafraîchit la fenêtre principale
+
+				win = newwin(winHauteur, winLargeur, winY, winX);
+                box(win, 0, 0); // Dessine le cadre de la fenêtre
+
+				msg3 = "Vous vous apprété à lancer le jeu dans une fenètre réduite.";
+    			taille3 = strlen(msg3);
+				mvwprintw(win, winHauteur / 2 - 1, (winLargeur / 2) - (taille3 / 2), "%s", msg3);
+				msg3 = "Ce qui risque de le rendre très complex.";
+    			taille3 = strlen(msg3);
+				mvwprintw(win, winHauteur / 2 , (winLargeur / 2) - (taille3 / 2), "%s", msg3);
+				msg3 = "Appuyez sur entré pour confirmé.";
+    			taille3 = strlen(msg3);
+				mvwprintw(win, winHauteur / 2 + 1, (winLargeur / 2) - (taille3 / 2), "%s", msg3);
+				wrefresh(win);
+				if (getch() == 10) {// Touche pour sortir = entrée
+					break;
+           		}
+			}
+			else{
+				break;
+			}
+            
 		}
+    }
+
+	start_y = winY;
+    start_x = winX;
+
+    //endwin();
+	//wclear(win); // Efface le contenu de la fenêtre principale
+    //refresh(); // Rafraîchit la fenêtre principale
+    //printf("\n\n\n\n\n\n\nnbCaseHauteur = %d \nnbCaseLargeur = %d\n", winHauteur / CASE_HEIGHT, winLargeur / CASE_WIDTH);
+	//printf("Hauteur = %d \nLargeur = %d\n\n", winHauteur, winLargeur );
+
+    //return EXIT_SUCCESS;
+
+	if (camera(win) != EXIT_SUCCESS){
+		printf("Probleme fonction camera");
+		endwin();
+		exit(EXIT_FAILURE);
 	}
 
-	if (camera() != EXIT_SUCCESS){
-		printf("Probleme fonction camera");
-	}
+	
 	
 	// Boucle de jeu ******************************************************************************** /
 
-	printf("fini");
-	unsigned int frame_limit = 0;
-
 	//gestion des évènements
 
-	int ch;
+	int ch = 0;
 
-	while (ch != KEY_EXIT) {
+	while (ch != 10) {
 		ch = getch();
         switch (ch) {
-            case KEY_EXIT: /*Pour quitter le jeu*/
-                return 1;
+            case 10: /*Pour quitter le jeu*/
+			printf("fin jeu\n");
 				break;
 
 			//attaque
@@ -102,129 +199,39 @@ int jeu (void) {
         }
     }
 
-	/*
-	while(continuer){
-		SDL_Event event;
-
-		while(SDL_PollEvent(&event)){
-
-			frame_limit = SDL_GetTicks() + FPS_LIMIT;
-			camera(argc, argv);
-			SDL_RenderPresent(renderer);
-			SDL_LimitFPS(frame_limit);
-			frame_limit = SDL_GetTicks() + FPS_LIMIT;
-
-			switch (event.type){
-
-				case SDL_KEYDOWN:
-
-					switch (event.key.keysym.sym) {
-
-						case SDLK_e: 
-						case SDLK_SPACE:
-							if(attaqueEpee() != EXIT_SUCCESS){
-								SDL_ExitWithError("Erreur attaque");
-							}
-							continue;
-
-						case SDLK_z: // mouvement vers le haut
-						case SDLK_UP:
-							if(mouvementHaut() != EXIT_SUCCESS){
-								SDL_ExitWithError("Erreur mouvement haut");
-							}
-							continue;
-
-						case SDLK_q: // mouvement vers la gauche
-						case SDLK_LEFT:
-							if(mouvementGauche() != EXIT_SUCCESS){
-								SDL_ExitWithError("Erreur mouvement gauche");
-							}
-							continue;
-
-						case SDLK_s: // mouvement vers le bas
-						case SDLK_DOWN:
-							if(mouvementBas() != EXIT_SUCCESS){
-								SDL_ExitWithError("Erreur mouvement bas");
-							}
-							continue;
-
-						case SDLK_d: // mouvement vers la droite
-						case SDLK_RIGHT:
-							if(mouvementDroite() != EXIT_SUCCESS){
-								SDL_ExitWithError("Erreur mouvement droite");
-							}
-							continue;
-
-						case SDLK_TAB: // recharger la map
-							if (actualiserMap() == 0){
-								printf("\ngud\n\n");
-							}
-							else {
-								printf("\nuh oh\n\n");
-							}
-							continue;
-
-						//quitter le programme (menu pause dans le futur)
-						case SDLK_ESCAPE:
-							continuer = SDL_FALSE;
-							break;
-
-						default:
-							continue;
-					}
-
-				//quitter le programme
-				case SDL_QUIT:
-					continuer = SDL_FALSE;
-					break;
-		
-				default:
-					break;
-			}
-
-			
-			
-			
-
-		}
-
-	}
-	*/
-
 	endwin();
 
 	return EXIT_SUCCESS;
 }
 
 // afficher les images de la camera
-int camera(void){
+int camera(WINDOW *win) {
+    int max_y, max_x;
+    getmaxyx(win, max_y, max_x);
 
-	int Xcase,Ycase;
+    int Xcase, Ycase;
+    WINDOW *boiteCase;
+    tile contenuCase;
 
-	for ( Xcase = 1 ; Xcase < ( (WINDOW_WIDTH / 100) - 1) ; Xcase ++ ) {
-		
-        for ( Ycase = 1 ; Ycase < ( (WINDOW_HEIGHT / 100) - 1) ; Ycase ++ ) {
+    // Commence à afficher les textures à partir du bord gauche et en haut de la fenêtre
 
-			printf("%d\n",(Xcamera + Xcase));
-			contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
-			//contenuCase = -5;
-			//printf("%d",contenuCase);
-            //Case.x = Xcase * 100;
-            //Case.y = Ycase * 100;
-            //Case.w = WINDOW_WIDTH / (WINDOW_WIDTH / 100) ;
-	        //Case.h = WINDOW_HEIGHT / (WINDOW_HEIGHT / 100) ;
-			WINDOW *win = newwin(5, 10, Ycamera, Xcase);
-   	 		box(win, 0, 0); // Dessine le cadre de la fenêtre
-    		wrefresh(win);
-			if(texture(win) != EXIT_SUCCESS){
-				printf("Fonction texture interompue");
-			}
-			
+    for (Xcase = 0; Xcase < max_x / CASE_WIDTH; Xcase++) {
+        for (Ycase = 0; Ycase < max_y / CASE_HEIGHT; Ycase++) {
+
+            contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
+            boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, start_y + Ycase * CASE_HEIGHT, start_x + Xcase * CASE_WIDTH);
+            box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
+            wrefresh(boiteCase);
+
+            if (texture(boiteCase) != EXIT_SUCCESS) {
+                mvwprintw(win, 1, 1, "Fonction texture interrompue");
+                delwin(boiteCase);
+                return EXIT_FAILURE;
+            }
+            wrefresh(boiteCase);
+            delwin(boiteCase);
         }
     }
-	perso.frameAnimation ++;
-	return EXIT_SUCCESS;
-
-
+    perso.frameAnimation++;
+    return EXIT_SUCCESS;
 }
-

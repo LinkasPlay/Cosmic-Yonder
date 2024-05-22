@@ -30,7 +30,7 @@ int creeMap(void) {
     perso.xp = 0;
 
     // Allocation de mémoire pour map
-    map = malloc(sizeof(int*[DIMENSION_MAP]));
+    map = malloc(sizeof(tile*[DIMENSION_MAP]));
 
     if (map == NULL) {
         printf("Échec de l'allocation\n");
@@ -38,7 +38,7 @@ int creeMap(void) {
     }
 
     for (unsigned i = 0; i < DIMENSION_MAP; ++i) {
-        map[i] = malloc(sizeof(int[DIMENSION_MAP]));
+        map[i] = malloc(sizeof(tile[DIMENSION_MAP]));
 
         if (map[i] == NULL) {
             printf("Échec de l'allocation\n");

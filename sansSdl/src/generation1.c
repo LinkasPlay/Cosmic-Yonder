@@ -215,12 +215,41 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                     case 1:
                     case 2:
                     case 3:
-                        p[i][j].contenu == 2;
-                        
-                        p[i][j].mstr.hp = 100;
+                        p[i][j].contenu = 2;
+                        p[i][j].mstr.hp = 80;
                         p[i][j].mstr.xp = 10;
                         p[i][j].mstr.loot = 0; //aleatoire
                         p[i][j].mstr.frameAnimation = 0;
+                    
+                    // monstre niv 2 (20%)
+                    case 4:
+                    case 5:
+                   
+                        p[i][j].contenu=2;
+                        p[i][j].mstr.hp=180;
+                        p[i][j].mstr.xp = 20;
+                        p[i][j].mstr.loot = 0; //aleatoire 
+                        p[i][j].mstr.frameAnimation = 0;
+                    
+                    // monstre niv 3 (10%)
+                    case 6:
+                        p[i][j].contenu=2;
+                        p[i][j].mstr.hp=260;
+                        p[i][j].mstr.xp=30;
+                        p[i][j].mstr.loot=0; 
+                        p[i][j].mstr.frameAnimation=0;
+                    
+                    case 7:                    
+                    case 8:
+                        p[i][j].contenu=3;
+                        p[i][j].spe.type=2;
+                    case 9:
+                        p[i][j].contenu=3;
+                        p[i][j].spe.type=3;    
+                    
+                    case 10:
+                        p[i][j].contenu=3;
+                        p[i][j].spe.type=1;
 
                         break;
                     
