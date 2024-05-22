@@ -9,6 +9,8 @@
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
+//Taille des cases = 5 x 10
+
 extern personnage perso;
 
 int afficher_image_ascii(WINDOW *win, const char *filename) {
@@ -20,11 +22,8 @@ int afficher_image_ascii(WINDOW *win, const char *filename) {
 
     int ch;
     int row = 0, col = 0;
-
-    // Efface la fenêtre avant d'afficher l'image
     werase(win);
 
-    // Lire le fichier caractère par caractère et afficher dans la fenêtre
     while ((ch = fgetc(file)) != EOF) {
         if (ch == '\n') {
             row++;
@@ -36,177 +35,93 @@ int afficher_image_ascii(WINDOW *win, const char *filename) {
     }
 
     fclose(file);
-
-    // Rafraîchir la fenêtre pour afficher l'image
     wrefresh(win);
+    return EXIT_SUCCESS;
 	return EXIT_SUCCESS;
 }
 
 int texture(WINDOW *win) {
-	
-    //Affichage
-	extern tile contenuCase;
-	char * image;
+    extern tile contenuCase;
+    char *image;
 
-    //Chargement image selon son contenu
     switch (contenuCase.contenu) {
-		// case avec espace
         case -5:
-            if (afficher_image_ascii(win, "image/espace.txt") != EXIT_SUCCESS) {
-				printf("Erreur affichage image");
-				exit(EXIT_FAILURE);
-			}
-			break;
-        // case avec mur
+            image = "image/espace.txt";
+            break;
         case -2:
-			if (afficher_image_ascii(win, "image/mur.txt") != EXIT_SUCCESS) {
-				printf("Erreur affichage image");
-				exit(EXIT_FAILURE);
-			}
-        	break;
-        // case avec porte
+            image = "image/mur.txt";
+            break;
         case -1:
-			if (afficher_image_ascii(win, "image/porte.txt") != EXIT_SUCCESS) {
-				printf("Erreur affichage image");
-				exit(EXIT_FAILURE);
-			}
-			break;
-        // case vide
+            image = "image/porte.txt";
+            break;
         case 0:
-			if (afficher_image_ascii(win, "image/sol.txt") != EXIT_SUCCESS) {
-				printf("Erreur affichage image");
-				exit(EXIT_FAILURE);
-			}
-			break;
-        // case avec personnage
+            image = "image/sol.txt";
+            break;
         case 1:
-			// choix image selon direction et frame
-			switch (perso.direction){
-			
-			// direction = haut
-			case 1:
-			
-				// frame 1 - 10 => image 1
-				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
-					image = "image/personnage/personnageHaut (1).txt";
-				}
-
-				// frame 11 - 20 => image 2
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
-					image = "src/image/personnage/personnageHaut (2).txt";
-				}
-
-				// frame 21 - 30 => image 3
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
-					image = "image/personnage/personnageHaut (3).txt";
-				}
-				// frame 31 - 40 => image 4
-				else {
-					image = "image/personnage/personnageHaut (4).txt";
-				}
-				break;
-
-			// direction = gauche
-			case 2:
-				
-				// frame 1 - 10 => image 1
-				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
-					image = "src/image/personnage/personnageGauche (1).txt";
-				}
-
-				// frame 11 - 20 => image 2
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
-					image = "src/image/personnage/personnageGauche (2).txt";
-				}
-
-				// frame 21 - 30 => image 3
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
-					image = "src/image/personnage/personnageGauche (3).txt";
-				}
-				// frame 31 - 40 => image 4
-				else {
-					image = "src/image/personnage/personnageGauche (4).txt";
-				}
-				break;
-
-			// direction = bas
-			case 3:
-				
-				// frame 1 - 10 => image 1
-				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
-					image = "image/personnage/personnageBas (1).txt";
-				}
-
-				// frame 11 - 20 => image 2
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
-					image = "image/personnage/personnageBas (2).txt";
-				}
-
-				// frame 21 - 30 => image 3
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
-					image = "image/personnage/personnageBas (3).txt";
-				}
-				// frame 31 - 40 => image 4
-				else {
-					image = "image/personnage/personnageBas (4).txt";
-				}
-				break;
-
-			// direction = droite
-			case 4:
-				
-				// frame 1 - 10 => image 1
-				if (perso.frameAnimation < FRAME_IN_ANIMATION + 1 ){
-					image = "image/personnage/personnageDroite (1).txt";
-				}
-
-				// frame 11 - 20 => image 2
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1 ){
-					image = "image/personnage/personnageDroite (2).txt";
-				}
-
-				// frame 21 - 30 => image 3
-				else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1 ){
-					image = "image/personnage/personnageDroite (3).txt";
-				}
-				// frame 31 - 40 => image 4
-				else {
-					image = "image/personnage/personnageDroite (4).txt";
-				}
-				break;
-			
-			default:
-				break;
-			}
-			if (afficher_image_ascii(win, image) != EXIT_SUCCESS) {
-				printf("Erreur affichage image");
-				exit(EXIT_FAILURE);
-			}
-			if (perso.frameAnimation >= FRAME_IN_ANIMATION * 4){
-				perso.frameAnimation = 0;
-			}
-			break;
-        // case avec monstre
+            switch (perso.direction) {
+                case 1:
+                    if (perso.frameAnimation < FRAME_IN_ANIMATION + 1)
+                        image = "image/personnage/personnageHaut (1).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1)
+                        image = "image/personnage/personnageHaut (2).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1)
+                        image = "image/personnage/personnageHaut (3).txt";
+                    else
+                        image = "image/personnage/personnageHaut (4).txt";
+                    break;
+                case 2:
+                    if (perso.frameAnimation < FRAME_IN_ANIMATION + 1)
+                        image = "image/personnage/personnageGauche (1).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1)
+                        image = "image/personnage/personnageGauche (2).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1)
+                        image = "image/personnage/personnageGauche (3).txt";
+                    else
+                        image = "image/personnage/personnageGauche (4).txt";
+                    break;
+                case 3:
+                    if (perso.frameAnimation < FRAME_IN_ANIMATION + 1)
+                        image = "image/personnage/personnageBas (1).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1)
+                        image = "image/personnage/personnageBas (2).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1)
+                        image = "image/personnage/personnageBas (3).txt";
+                    else
+                        image = "image/personnage/personnageBas (4).txt";
+                    break;
+                case 4:
+                    if (perso.frameAnimation < FRAME_IN_ANIMATION + 1)
+                        image = "image/personnage/personnageDroite (1).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 2 + 1)
+                        image = "image/personnage/personnageDroite (2).txt";
+                    else if (perso.frameAnimation < FRAME_IN_ANIMATION * 3 + 1)
+                        image = "image/personnage/personnageDroite (3).txt";
+                    else
+                        image = "image/personnage/personnageDroite (4).txt";
+                    break;
+                default:
+                    break;
+            }
+            if (perso.frameAnimation >= FRAME_IN_ANIMATION * 4) {
+                perso.frameAnimation = 0;
+            }
+            break;
         case 2:
-			if (afficher_image_ascii(win, "image/monstre.txt") != EXIT_SUCCESS) {
-				printf("Erreur affichage image");
-				exit(EXIT_FAILURE);
-			}
-			break;
-        // case avec machine
+            image = "image/monstre.txt";
+            break;
         case 3:
-			if (afficher_image_ascii(win, "image/machine.txt") != EXIT_SUCCESS) {
-				printf("Erreur affichage image");
-				exit(EXIT_FAILURE);
-			}
-        	break;
-		default:
-			break;
+            image = "image/machine.txt";
+            break;
+        default:
+            break;
+    }
+
+    if (afficher_image_ascii(win, image) != EXIT_SUCCESS) {
+        return EXIT_FAILURE;
     }
 
     wrefresh(win);
-    
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
 //texture de l'ui

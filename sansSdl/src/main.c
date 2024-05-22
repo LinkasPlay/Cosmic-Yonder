@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
     int start_x = 10;
     int x = 10;
     int y = 10;
+    int ch;
 
     WINDOW *win = newwin(10, 20, start_y, start_x);
     refresh();
@@ -119,6 +120,7 @@ int main(int argc, char **argv) {
 
     init_pair(1, COLOR_CYAN, COLOR_WHITE);
 
+    /*
     if (can_change_color()) {
         printw("on peut changer la couleur\n");
         init_color(COLOR_CYAN, 9, 999, 999);
@@ -127,7 +129,7 @@ int main(int argc, char **argv) {
     printw("texte de fou");
     attroff(COLOR_PAIR(1));
 
-    int ch;
+    ch = 0;
     // Boucle pour détecter l'appui sur la touche espace
     while ((ch = getch()) != ' ') {
         // Rien à faire, juste attendre l'appui sur espace
@@ -163,6 +165,8 @@ int main(int argc, char **argv) {
     }
 
     endwin();
+    */
+
     WINDOW *menu_win;
     int highlight = 1;
     int choice = 0;
@@ -268,6 +272,7 @@ int main(int argc, char **argv) {
             }
             free(room.cases);
             room.cases = NULL;
+            endwin();
             break;
             
         case 4:
@@ -296,18 +301,14 @@ int main(int argc, char **argv) {
 
         case 5:
             printf("Fin du jeu\n");
+            endwin();
             exit(EXIT_SUCCESS);
+            break;
         
         default:
             break;
     }
-    // Boucle pour détecter l'appui sur la touche espace
-    ch = 0;
-    while (ch != ' ') {
-        ch = getch();
-        // Rien à faire, juste attendre l'appui sur espace
-    }
-
+  
     endwin();
 
     return EXIT_SUCCESS;
