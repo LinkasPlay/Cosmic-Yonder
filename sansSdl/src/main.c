@@ -28,13 +28,14 @@ int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
 
 char *choices[] = { 
-			"Nouvelle partie.",
-			"Charger une partie.",
-			"Quitter le jeu.",
-		  };
-    
+    "Nouvelle partie",
+    "Charger partie",
+    "Option",
+    "Soundtrack",
+    "Exit",
+};
 
-int n_choices = 3;
+int n_choices = 5;
 
 void ncurses_initialiser() {
     initscr();          /* Démarre le mode ncurses */
@@ -128,6 +129,7 @@ int main(int argc, char **argv) {
     printw("texte de fou");
     attroff(COLOR_PAIR(1));
 
+    int ch;
     ch = 0;
     // Boucle pour détecter l'appui sur la touche espace
     while ((ch = getch()) != ' ') {
@@ -168,56 +170,45 @@ int main(int argc, char **argv) {
 
     WINDOW *menu_win;
     int highlight = 1;
-    int choice = 3;
+    int choice = 0;
     int c = 0;
 
-	start_x = 3;
-	start_y = 3;
-		
-	menu_win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, start_y, start_x);
-	keypad(menu_win, TRUE);
-	mvprintw(0, 55, "CoSmIC YoNdEr");
-	refresh();
-	print_menu(menu_win, highlight, n_choices, choices);
-	while(1)
-	{	c = wgetch(menu_win);
-		switch(c)
-		{	case KEY_UP:
-				if(highlight == 1)
-					highlight = n_choices;
-				else
-					highlight--;
-				break;
-			case KEY_DOWN:
-				if(highlight == n_choices)
-					highlight = 1;
-				else 
-					highlight++;
-				break;
-			case 10:
-				choice = highlight;
-				break;
-			default:
-				mvprintw(24, 0, "Charcter pressed is = %3d Hopefully it can be printed as '%c'", c, c);
-				refresh();
-				break;
-		}
-		print_menu(menu_win, highlight, n_choices, choices);
-		if(choice != 0){	/* User did a choice come out of the infinite loop */
-			break;
-	}	
-	mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
-	clrtoeol();
-	refresh();
-	endwin();
-    }
+    start_x = 10;
+    start_y = 10;
 
-
-    // Boucle pour détecter l'appui sur la touche espace
-    ch = 0;
-    while (ch != ' ') {
-        ch = getch();
-        // Rien à faire, juste attendre l'appui sur espace
+    menu_win = newwin(10, 30, start_y, start_x); // Dimensions ajustées pour WINDOW_HEIGHT et WINDOW_WIDTH
+    keypad(menu_win, TRUE);
+    mvprintw(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
+    refresh();
+    print_menu(menu_win, highlight, n_choices, choices);
+    
+    while (1) {
+        c = wgetch(menu_win);
+        switch (c) {
+            case KEY_UP:
+                if (highlight == 1)
+                    highlight = n_choices;
+                else
+                    highlight--;
+                break;
+            case KEY_DOWN:
+                if (highlight == n_choices)
+                    highlight = 1;
+                else
+                    highlight++;
+                break;
+            case 10:
+                choice = highlight;
+                break;
+            default:
+                mvprintw(24, 0, "Character pressed is = %3d Hopefully it can be printed as '%c'", c, c);
+                refresh();
+                break;
+        }
+        print_menu(menu_win, highlight, n_choices, choices);
+        if (choice != 0) { /* User did a choice come out of the infinite loop */
+            break;
+        }
     }
 
     mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
@@ -318,6 +309,13 @@ int main(int argc, char **argv) {
         default:
             break;
     }
+    // Boucle pour détecter l'appui sur la touche espace
+    ch = 0;
+    while (ch != ' ') {
+        ch = getch();
+        // Rien à faire, juste attendre l'appui sur espace
+    }
+
   
     endwin();
 
@@ -327,18 +325,18 @@ int main(int argc, char **argv) {
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]) {
     int x, y, i;    
 
-	x = 1;
-	y = 1;
-	box(menu_win, 0, 0);
-	for(i = 0; i < n_choices; i++)
-	{	if(highlight == i + 1) /* High light the present choice */
-		{	wattron(menu_win, A_REVERSE); 
-			mvwprintw(menu_win, y, x, "%s", choices[i]);
-			wattroff(menu_win, A_REVERSE);
-		}
-		else
-			mvwprintw(menu_win, y, x, "%s", choices[i]);
-		y++;
-	}
-	wrefresh(menu_win);
+    x = 2;
+    y = 2;
+    box(menu_win, 0, 0);
+    for (i = 0; i < n_choices; i++) {    
+        if (highlight == i + 1) { /* High light the present choice */
+            wattron(menu_win, A_REVERSE); 
+            mvwprintw(menu_win, y, x, "%s", choices[i]);
+            wattroff(menu_win, A_REVERSE);
+        } else {
+            mvwprintw(menu_win, y, x, "%s", choices[i]);
+        }
+        y++;
+    }
+    wrefresh(menu_win);
 }
