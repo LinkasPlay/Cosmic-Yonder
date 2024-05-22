@@ -11,11 +11,11 @@
 
 extern personnage perso;
 
-void afficher_image_ascii(WINDOW *win, const char *filename) {
+int afficher_image_ascii(WINDOW *win, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Erreur lors de l'ouverture du fichier");
-        return;
+        return EXIT_FAILURE;
     }
 
     int ch;
@@ -39,6 +39,7 @@ void afficher_image_ascii(WINDOW *win, const char *filename) {
 
     // Rafraîchir la fenêtre pour afficher l'image
     wrefresh(win);
+	return EXIT_SUCCESS;
 }
 
 int texture(WINDOW *win) {
@@ -51,19 +52,31 @@ int texture(WINDOW *win) {
     switch (contenuCase.contenu) {
 		// case avec espace
         case -5:
-            afficher_image_ascii(win, "image/espace.txt");
+            if (afficher_image_ascii(win, "image/espace.txt") != EXIT_SUCCESS) {
+				printf("Erreur affichage image");
+				exit(EXIT_FAILURE);
+			}
 			break;
         // case avec mur
         case -2:
-            afficher_image_ascii(win, "image/mur.txt");
+			if (afficher_image_ascii(win, "image/mur.txt") != EXIT_SUCCESS) {
+				printf("Erreur affichage image");
+				exit(EXIT_FAILURE);
+			}
         	break;
         // case avec porte
         case -1:
-            afficher_image_ascii(win, "image/porte.txt");
+			if (afficher_image_ascii(win, "image/porte.txt") != EXIT_SUCCESS) {
+				printf("Erreur affichage image");
+				exit(EXIT_FAILURE);
+			}
 			break;
         // case vide
         case 0:
-            afficher_image_ascii(win, "image/sol.txt");
+			if (afficher_image_ascii(win, "image/sol.txt") != EXIT_SUCCESS) {
+				printf("Erreur affichage image");
+				exit(EXIT_FAILURE);
+			}
 			break;
         // case avec personnage
         case 1:
@@ -165,18 +178,27 @@ int texture(WINDOW *win) {
 			default:
 				break;
 			}
-            afficher_image_ascii(win, image);
+			if (afficher_image_ascii(win, image) != EXIT_SUCCESS) {
+				printf("Erreur affichage image");
+				exit(EXIT_FAILURE);
+			}
 			if (perso.frameAnimation >= FRAME_IN_ANIMATION * 4){
 				perso.frameAnimation = 0;
 			}
 			break;
         // case avec monstre
         case 2:
-            afficher_image_ascii(win, "image/monstre.txt");
+			if (afficher_image_ascii(win, "image/monstre.txt") != EXIT_SUCCESS) {
+				printf("Erreur affichage image");
+				exit(EXIT_FAILURE);
+			}
 			break;
         // case avec machine
         case 3:
-            afficher_image_ascii(win, "image/machine.txt");
+			if (afficher_image_ascii(win, "image/machine.txt") != EXIT_SUCCESS) {
+				printf("Erreur affichage image");
+				exit(EXIT_FAILURE);
+			}
         	break;
 		default:
 			break;

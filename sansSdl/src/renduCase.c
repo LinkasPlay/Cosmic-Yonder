@@ -1,9 +1,13 @@
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <ncurses.h>
-
 #include "texture.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ncurses.h>
+#include <unistd.h>
+#include <string.h>
+
+#include <pthread.h>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 
 
 
@@ -27,22 +31,74 @@ extern int actualiserMap(void);
 
 int jeu (void) {
 
-    int caseLongueur = (WINDOW_WIDTH / 100);
-    int caseLargeur = (WINDOW_HEIGHT / 100);
-  
-	extern int Xcamera;
-	extern int Ycamera;
-	extern tile **map;
+    int LINES = getmaxy(stdscr);
+    int COLS = getmaxx(stdscr);
+
+    int winHauteur = (int)(LINES * 0.8);
+    int winLargeur = (int)(COLS * 0.8);
+    int winY = (LINES - winHauteur) / 2;
+    int winX = (COLS - winLargeur) / 2;
+
+    if (perso.lvl == 0) {
+        if (creeMap() != 0) {
+            printf("Impossible de créer la map\n");
+            endwin();
+            return 1;
+        }
+    }
+
+    WINDOW *win = newwin(winHauteur, winLargeur, winY, winX);
+    box(win, 0, 0); // Dessine le cadre de la fenêtre
+    mvwprintw(win, 1, 1, "Chokbar de 2 bz");
+    wrefresh(win);
+
+    // Boucle pour détecter l'appui sur la touche espace
+    int ch = 0;
+    while (ch != ' ') {
+        ch = getch();
+        // Rien à faire, juste attendre l'appui sur espace
+    }
+
+    // Texte centré
+    char *msg = "CHOKBAR DE GIGA BAISé";
+    int taille = strlen(msg);
+
+    while (1) {
+        // Mettre à jour les dimensions de l'écran
+        LINES = getmaxy(stdscr);
+        COLS = getmaxx(stdscr);
+
+        winHauteur = (int)(LINES * 0.8);
+        winLargeur = (int)(COLS * 0.8);
+        winY = (LINES - winHauteur) / 2;
+        winX = (COLS - winLargeur) / 2;
+
+        clear(); // Efface le contenu de la fenêtre principale
+        refresh(); // Rafraîchit la fenêtre principale
+
+        // Supprime l'ancienne fenêtre avant d'en créer une nouvelle
+        delwin(win);
+        
+        win = newwin(winHauteur, winLargeur, winY, winX);
+        box(win, 0, 0); // Dessine le cadre de la fenêtre
+        mvwprintw(win, winHauteur / 2, (winLargeur / 2) - (taille / 2), "%s", msg);
+        wrefresh(win);
+
+        if (getch() == ' ') // Touche pour sortir
+            break;
+    }
+
+    endwin();
 	
-	if (perso.lvl == 0){
-		if (creeMap() != 0){
-			printf("Impossible de cree la map");
-		}
-	}
+    return EXIT_SUCCESS;
 
 	if (camera() != EXIT_SUCCESS){
 		printf("Probleme fonction camera");
+		endwin();
+		exit(EXIT_FAILURE);
 	}
+
+	
 	
 	// Boucle de jeu ******************************************************************************** /
 
@@ -51,7 +107,7 @@ int jeu (void) {
 
 	//gestion des évènements
 
-	int ch;
+	ch = 0;
 
 	while (ch != KEY_EXIT) {
 		ch = getch();
@@ -129,6 +185,7 @@ int camera(void){
     		wrefresh(win);
 			if(texture(win) != EXIT_SUCCESS){
 				printf("Fonction texture interompue");
+				return EXIT_FAILURE;
 			}
 			
         }

@@ -101,8 +101,6 @@ int main(int argc, char **argv) {
     int start_x = 10;
     int x = 10;
     int y = 10;
-    char *msg = "Texte au centre";
-    int taille = strlen(msg);
 
     WINDOW *win = newwin(10, 20, start_y, start_x);
     refresh();
@@ -150,6 +148,11 @@ int main(int argc, char **argv) {
         ch = getch();
         // Rien à faire, juste attendre l'appui sur espace
     }
+
+    //texte centré
+
+    char *msg = "Texte au centre";
+    int taille = strlen(msg);
 
     while (1) {
         clear(); // Efface le contenu de la fenêtre
@@ -210,10 +213,15 @@ int main(int argc, char **argv) {
 
     switch (choice) {
         case 1:
+            endwin();
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
             }
+
+            endwin();
+
+            return EXIT_SUCCESS;
             break;
         case 2:
             if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
