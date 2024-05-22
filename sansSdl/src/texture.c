@@ -1,10 +1,13 @@
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <ncurses.h>
-
 #include "texture.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ncurses.h>
+#include <unistd.h>
+#include <string.h>
 
+#include <pthread.h>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 #define FRAME_IN_ANIMATION 2
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
@@ -37,7 +40,6 @@ int afficher_image_ascii(WINDOW *win, const char *filename) {
     fclose(file);
     wrefresh(win);
     return EXIT_SUCCESS;
-	return EXIT_SUCCESS;
 }
 
 int texture(WINDOW *win) {
@@ -100,6 +102,7 @@ int texture(WINDOW *win) {
                         image = "image/personnage/personnageDroite (4).txt";
                     break;
                 default:
+                    image = "image/espace.txt"; // Case défaut au cas ou il y a un pb
                     break;
             }
             if (perso.frameAnimation >= FRAME_IN_ANIMATION * 4) {
@@ -113,6 +116,7 @@ int texture(WINDOW *win) {
             image = "image/machine.txt";
             break;
         default:
+            image = "image/espace.txt"; // Case défaut au cas ou il y a un pb
             break;
     }
 
@@ -126,5 +130,56 @@ int texture(WINDOW *win) {
 
 //texture de l'ui
 
+int textureSimple(WINDOW *win, int i, int j) {
+    extern tile contenuCase;
+    char *image;
 
+    switch (contenuCase.contenu) {
+        case -5:
+            image = ".";
+            break;
+        case -2:
+            image = "#";
+            break;
+        case -1:
+            image = "%";
+            break;
+        case 0:
+            image = " ";
+            break;
+        case 1:
+            switch (perso.direction) {
+                case 1:
+                    image = "1";
+                    break;
+                case 2:
+                    image = "2";
+                    break;
+                case 3:
+                    image = "3";
+                    break;
+                case 4:
+                    image = "4";
+                    break;
+                default:
+                    image = "?"; // Case défaut au cas ou il y a un pb
+                    break;
+            }
+            break;
+        case 2:
+            image = "x";
+            break;
+        case 3:
+            image = "o";
+            break;
+        default:
+        	image = "?"; // Case défaut au cas ou il y a un pb
+        	break;
+    }
+
+	mvwprintw(win, i, j, "%s", image);
+
+    wrefresh(win);
+    return EXIT_SUCCESS;
+}
 

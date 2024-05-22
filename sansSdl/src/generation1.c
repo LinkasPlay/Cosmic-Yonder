@@ -39,55 +39,51 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
     return (unsigned int)rdn;
 }
 
-void nouvelleSalle(int longueur, int largeur, int num_salle, int cote){
-    room = NULL;
+int nouvelleSalle(int longueur, int largeur, int num_salle, int cote){
+
+    //réinitialisation room
+    room.num = 0;
+    room.largeur = 0;
+    room.longueur = 0;
+    room.posX = 0;
+    room.posY = 0;
+    room.cases = NULL;
 
     if (generation(longueur, largeur, num_salle, cote) != EXIT_SUCCESS) {
         printf("Erreur generation");
         return EXIT_FAILURE;
     }
 
-    switch (cote)
-    {
-    case 0:
-        room.posX = (perso.posX - entreeX);
-        room.posY = (perso.posy - entreey);
-        if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
-            map[perso.posX][perso.posY].contenu = -1;
-            mouvementBas();
-        }
-        break;
+    room.posX = (perso.posX - entreeX);
+    room.posY = (perso.posY - entreeY);
 
-    case 1:
-        room.posX = (perso.posX - entreeX);
-        room.posY = (perso.posy - entreey);
-        if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
-            map[perso.posX][perso.posY].contenu = -1;
-            mouvementDroite();
-        }
-        break;
+    if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
 
-    case 2:
-        room.posX = (perso.posX - entreeX);
-        room.posY = (perso.posy - entreey);
-        if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
-            map[perso.posX][perso.posY].contenu = -1;
-            mouvementHaut();
-        }
-        break;
+        map[perso.posX][perso.posY].contenu = -1;
 
-    case 3:
-        room.posX = (perso.posX - entreeX);
-        room.posY = (perso.posy - entreey);
-        if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
-            map[perso.posX][perso.posY].contenu = -1;
-            mouvementGauche();
+        switch (cote){
+            case 0:
+                mouvementBas();
+                break;
+
+            case 1:
+                mouvementDroite();
+                break;
+
+            case 2:
+                mouvementHaut();
+                break;
+
+            case 3:
+                mouvementGauche();
+                break;
+            
+            default:
+                break;
         }
-        break;
-    
-    default:
-        break;
     }
+
+    return EXIT_SUCCESS;
 
 }
 
