@@ -32,7 +32,7 @@ char *choices[] = {
     "Charger partie",
     "Option",
     "Soundtrack",
-    "Exit",
+    "Quitter le jeu",
 };
 
 int n_choices = 5;
@@ -178,11 +178,41 @@ int main(int argc, char **argv) {
 
     menu_win = newwin(10, 30, start_y, start_x); // Dimensions ajustées pour WINDOW_HEIGHT et WINDOW_WIDTH
     keypad(menu_win, TRUE);
-    mvprintw(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
+    mvprintw(0, 0, "Cosmic Yonder");
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
+
+    int LINES = getmaxy(stdscr);
+    int COLS = getmaxx(stdscr);
+
+    int winHauteur = (int)(LINES * 0.97);
+    int winLargeur = (int)(COLS * 0.8);
+
+
+    int winY = (LINES - winHauteur) / 2;
+    int winX = (COLS - winLargeur) / 2;
     
     while (1) {
+        // Mettre à jour les dimensions de l'écran
+        LINES = getmaxy(stdscr);
+        COLS = getmaxx(stdscr);
+
+        winHauteur = (int)(LINES * 0.97);
+        winLargeur = (int)(COLS * 0.8);
+
+        winY = (LINES - winHauteur) / 2;
+        winX = (COLS - winLargeur) / 2;
+
+        clear(); // Efface le contenu de la fenêtre principale
+        refresh(); // Rafraîchit la fenêtre principale
+
+        // Supprime l'ancienne fenêtre avant d'en créer une nouvelle
+        delwin(menu_win);
+        
+        menu_win = newwin(winHauteur, winLargeur, winY, winX);
+        box(menu_win, 0, 0); // Dessine le cadre de la fenêtre
+        print_menu(menu_win, highlight, n_choices, choices);
+
         c = wgetch(menu_win);
         switch (c) {
             case KEY_UP:
@@ -205,10 +235,10 @@ int main(int argc, char **argv) {
                 refresh();
                 break;
         }
-        print_menu(menu_win, highlight, n_choices, choices);
         if (choice != 0) { /* User did a choice come out of the infinite loop */
             break;
         }
+        
     }
 
     mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
