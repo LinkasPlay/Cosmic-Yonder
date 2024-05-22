@@ -30,6 +30,7 @@ extern int attaqueEpee(void);
 extern int texture(WINDOW *win);
 extern int creeMap(void);
 extern int actualiserMap(void);
+extern int textureSimple(WINDOW *win, int i, int j);
 
 int jeu (void) {
 
@@ -154,8 +155,8 @@ int jeu (void) {
 		ch = getch();
         switch (ch) {
             case 10: /*Pour quitter le jeu*/
-			printf("fin jeu\n");
-				break;
+				printf("fin jeu\n");
+					break;
 
 			//attaque
 			case 'e':
@@ -168,34 +169,74 @@ int jeu (void) {
 			//mvouvement haut
 			case 'z':
 			case KEY_UP:
-			if(mouvementHaut() != EXIT_SUCCESS){
-				printf("Erreur mouvement haut");
-			}
-			continue;
+				if(mouvementHaut() != EXIT_SUCCESS){
+					printf("Erreur mouvement haut");
+				}
+				continue;
             
 			//mvouvement gauche
 			case 'q':
 			case KEY_LEFT:
-			if(mouvementGauche() != EXIT_SUCCESS){
-				printf("Erreur mouvement gauche");
-			}
-			continue;
+				if(mouvementGauche() != EXIT_SUCCESS){
+					printf("Erreur mouvement gauche");
+				}
+				continue;
 
 			//mvouvement bas
 			case 's':
 			case KEY_DOWN:
-			if(mouvementBas() != EXIT_SUCCESS){
-				printf("Erreur mouvement bas");
-			}
-			continue;
+				if(mouvementBas() != EXIT_SUCCESS){
+					printf("Erreur mouvement bas");
+				}
+				continue;
 
 			//mvouvement droite
 			case 'd':
 			case KEY_RIGHT:
-			if(mouvementDroite() != EXIT_SUCCESS){
-				printf("Erreur mouvement droite");
-			}
-			continue;
+				if(mouvementDroite() != EXIT_SUCCESS){
+					printf("Erreur mouvement droite");
+				}
+				continue;
+
+			//affichage map
+			case 'a':
+				WINDOW *winTest = newwin(winHauteur, winLargeur, start_y, start_x);
+
+				box(winTest, 0, 0); // Dessine le cadre de la fenêtre
+
+				// Remplir la fenêtre avec les valeurs définies dans textureSimple
+				for (unsigned int i = 1; i < DIMENSION_MAP - 1; i++) {
+					for (unsigned int j = 1; j < DIMENSION_MAP - 1; j++) {
+						contenuCase = map[i][j];
+						if(textureSimple(winTest, i, j) != EXIT_SUCCESS){
+							printf("Erreur texture simple");
+							exit(EXIT_FAILURE);
+						}
+					}
+				}
+				
+				// Rafraîchir pour afficher les changements
+				wrefresh(winTest);
+
+				// Attendre une entrée de l'utilisateur avant de fermer
+				getch();
+
+				// Nettoyer et fermer ncurses
+				endwin();
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
+				}
+				break;
+
+			default:
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
+				}
+				break;
         }
     }
 
@@ -213,14 +254,12 @@ int camera(WINDOW *win) {
     WINDOW *boiteCase;
     tile contenuCase;
 
-    // Commence à afficher les textures à partir du bord gauche et en haut de la fenêtre
-
     for (Xcase = 0; Xcase < max_x / CASE_WIDTH; Xcase++) {
         for (Ycase = 0; Ycase < max_y / CASE_HEIGHT; Ycase++) {
 
             contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
             boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, start_y + Ycase * CASE_HEIGHT, start_x + Xcase * CASE_WIDTH);
-            box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
+            //box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
             wrefresh(boiteCase);
 
             if (texture(boiteCase) != EXIT_SUCCESS) {
