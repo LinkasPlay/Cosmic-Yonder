@@ -30,15 +30,13 @@ int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char * choices[]);
 
 char *choices[] = { 
-			"Choice 1",
-			"Choice 2",
-			"Choice 3",
-			"Choice 4",
-			"Exit",
+			"Nouvelle partie.",
+			"Charger une partie.",
+			"Quitter le jeu.",
 		  };
     
 
-int n_choices = 5;
+int n_choices = 3;
 
 void ncurses_initialiser() {
     initscr();          /* Démarre le mode ncurses */
@@ -165,15 +163,15 @@ int main(int argc, char ** argv){
     endwin();
     WINDOW *menu_win;
     int highlight = 1;
-    int choice = 0;
+    int choice = 3;
     int c = 0;
 
-	start_x = 10;
-	start_y = 10;
+	start_x = 3;
+	start_y = 3;
 		
 	menu_win = newwin(WINDOW_HEIGHT, WINDOW_WIDTH, start_y, start_x);
 	keypad(menu_win, TRUE);
-	mvprintw(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
+	mvprintw(0, 55, "CoSmIC YoNdEr");
 	refresh();
 	print_menu(menu_win, highlight, n_choices, choices);
 	while(1)
@@ -306,8 +304,8 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char * choices[]
 {
 	int x, y, i;	
 
-	x = 2;
-	y = 2;
+	x = 1;
+	y = 1;
 	box(menu_win, 0, 0);
 	for(i = 0; i < n_choices; i++)
 	{	if(highlight == i + 1) /* High light the present choice */
