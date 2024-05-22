@@ -62,6 +62,7 @@ extern int musique(int num_musique);
 extern int creeMap(void);
 extern int jeu(void);
 extern void* play_music(void* arg);
+extern int generation(int longueur, int largeur, int num_salle, int cote);
 
 extern tile contenuCase;
 extern int Xcamera;

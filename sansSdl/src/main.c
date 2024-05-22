@@ -17,9 +17,11 @@ void start_ncurses(bool useRaw, bool useNoecho);
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern void* play_music(void* arg);
+extern int liberationMap(void);
 
 extern int graine;
 extern bool stop_music;
+extern personnage perso;
 
 salle room;
 
@@ -248,8 +250,14 @@ int main(int argc, char **argv) {
     switch (choice) {
         case 1:
             endwin();
+            perso.lvl = 0;
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");
+                exit(EXIT_FAILURE);
+            }
+
+            if(liberationMap() != EXIT_SUCCESS){
+                printf("Erreur liberation map");
                 exit(EXIT_FAILURE);
             }
 
@@ -316,7 +324,7 @@ int main(int argc, char **argv) {
 
             // Boucle pour détecter l'appui sur la touche espace
             ch = 0;
-            while (ch != ' ') {
+            while (ch != 10) {
                 ch = getch();
                 // Rien à faire, juste attendre l'appui sur espace
             }

@@ -154,8 +154,8 @@ int jeu (void) {
 		ch = getch();
         switch (ch) {
             case 10: /*Pour quitter le jeu*/
-			printf("fin jeu\n");
-				break;
+				printf("fin jeu\n");
+					break;
 
 			//attaque
 			case 'e':
@@ -168,34 +168,42 @@ int jeu (void) {
 			//mvouvement haut
 			case 'z':
 			case KEY_UP:
-			if(mouvementHaut() != EXIT_SUCCESS){
-				printf("Erreur mouvement haut");
-			}
-			continue;
+				if(mouvementHaut() != EXIT_SUCCESS){
+					printf("Erreur mouvement haut");
+				}
+				continue;
             
 			//mvouvement gauche
 			case 'q':
 			case KEY_LEFT:
-			if(mouvementGauche() != EXIT_SUCCESS){
-				printf("Erreur mouvement gauche");
-			}
-			continue;
+				if(mouvementGauche() != EXIT_SUCCESS){
+					printf("Erreur mouvement gauche");
+				}
+				continue;
 
 			//mvouvement bas
 			case 's':
 			case KEY_DOWN:
-			if(mouvementBas() != EXIT_SUCCESS){
-				printf("Erreur mouvement bas");
-			}
-			continue;
+				if(mouvementBas() != EXIT_SUCCESS){
+					printf("Erreur mouvement bas");
+				}
+				continue;
 
 			//mvouvement droite
 			case 'd':
 			case KEY_RIGHT:
-			if(mouvementDroite() != EXIT_SUCCESS){
-				printf("Erreur mouvement droite");
-			}
-			continue;
+				if(mouvementDroite() != EXIT_SUCCESS){
+					printf("Erreur mouvement droite");
+				}
+				continue;
+
+			default:
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
+				}
+				break;
         }
     }
 
@@ -220,7 +228,7 @@ int camera(WINDOW *win) {
 
             contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
             boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, start_y + Ycase * CASE_HEIGHT, start_x + Xcase * CASE_WIDTH);
-            box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
+            //box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
             wrefresh(boiteCase);
 
             if (texture(boiteCase) != EXIT_SUCCESS) {
