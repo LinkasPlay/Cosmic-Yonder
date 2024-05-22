@@ -17,6 +17,7 @@ void start_ncurses(bool useRaw, bool useNoecho);
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern void* play_music(void* arg);
+extern int afficher_image_ascii(WINDOW *win, const char *filename);
 
 extern int graine;
 extern bool stop_music;
@@ -176,18 +177,31 @@ int main(int argc, char **argv) {
     int LINES = getmaxy(stdscr);
     int COLS = getmaxx(stdscr);
 
-    int winHauteur = (int)(LINES * 0.97);
-    int winLargeur = (int)(COLS * 0.8);
+    int winHauteur = (int)(LINES * 0.3);
+    int winLargeur = (int)(COLS * 0.6);
 
-    int winY = (LINES - winHauteur) / 2;
+    int titleY = ((LINES - 5)/6);
+    int titleX = (COLS - 69) / 2;
+
+    int winY = ((LINES - winHauteur) / 4) * 3;
     int winX = (COLS - winLargeur) / 2;
+    WINDOW *title = newwin(5, 69, titleY, titleX);
+
+    if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
+
+        printf("Erreur");
+        exit(EXIT_FAILURE);
+    }
+    wrefresh(title);
 
     menu_win = newwin(winHauteur, winLargeur, winY, winX);
     keypad(menu_win, TRUE);
-    mvprintw(0, 0, "Cosmic Yonder");
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
 
+
+
+    
     while (1) {
         // Check for terminal resize
         int new_LINES = getmaxy(stdscr);
@@ -196,11 +210,13 @@ int main(int argc, char **argv) {
             LINES = new_LINES;
             COLS = new_COLS;
 
-            winHauteur = (int)(LINES * 0.97);
-            winLargeur = (int)(COLS * 0.8);
+            winHauteur = (int)(LINES * 0.3);
+            winLargeur = (int)(COLS * 0.6);
 
             winY = (LINES - winHauteur) / 2;
             winX = (COLS - winLargeur) / 2;
+            titleY = ((LINES - 5)/6);
+            titleX = (COLS - 69) / 2;
 
             clear();
             refresh();
@@ -208,8 +224,14 @@ int main(int argc, char **argv) {
             // Delete the old window and create a new one
             delwin(menu_win);
             menu_win = newwin(winHauteur, winLargeur, winY, winX);
+            title = newwin(5, 69, titleY, titleX);
+            if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
+
+                printf("Erreur");
+                exit(EXIT_FAILURE);
+            }
+            wrefresh(title);
             keypad(menu_win, TRUE);
-            mvprintw(0, 0, "Cosmic Yonder");
             refresh();
         }
 
