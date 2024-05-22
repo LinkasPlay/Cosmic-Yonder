@@ -173,61 +173,62 @@ int main(int argc, char **argv) {
     int choice = 0;
     int c = 0;
 
-    start_x = 10;
-    start_y = 10;
-
-    menu_win = newwin(10, 30, start_y, start_x); // Dimensions ajustées pour WINDOW_HEIGHT et WINDOW_WIDTH
-    keypad(menu_win, TRUE);
-    mvprintw(0, 0, "Cosmic Yonder");
-    refresh();
-    print_menu(menu_win, highlight, n_choices, choices);
-
     int LINES = getmaxy(stdscr);
     int COLS = getmaxx(stdscr);
 
     int winHauteur = (int)(LINES * 0.97);
     int winLargeur = (int)(COLS * 0.8);
 
-
     int winY = (LINES - winHauteur) / 2;
     int winX = (COLS - winLargeur) / 2;
-    
+
+    menu_win = newwin(winHauteur, winLargeur, winY, winX);
+    keypad(menu_win, TRUE);
+    mvprintw(0, 0, "Cosmic Yonder");
+    refresh();
+    print_menu(menu_win, highlight, n_choices, choices);
+
     while (1) {
-        // Mettre à jour les dimensions de l'écran
-        LINES = getmaxy(stdscr);
-        COLS = getmaxx(stdscr);
+        // Check for terminal resize
+        int new_LINES = getmaxy(stdscr);
+        int new_COLS = getmaxx(stdscr);
+        if (new_LINES != LINES || new_COLS != COLS) {
+            LINES = new_LINES;
+            COLS = new_COLS;
 
-        winHauteur = (int)(LINES * 0.97);
-        winLargeur = (int)(COLS * 0.8);
+            winHauteur = (int)(LINES * 0.97);
+            winLargeur = (int)(COLS * 0.8);
 
-        winY = (LINES - winHauteur) / 2;
-        winX = (COLS - winLargeur) / 2;
+            winY = (LINES - winHauteur) / 2;
+            winX = (COLS - winLargeur) / 2;
 
-        clear(); // Efface le contenu de la fenêtre principale
-        refresh(); // Rafraîchit la fenêtre principale
+            clear();
+            refresh();
 
-        // Supprime l'ancienne fenêtre avant d'en créer une nouvelle
-        delwin(menu_win);
-        
-        menu_win = newwin(winHauteur, winLargeur, winY, winX);
-        box(menu_win, 0, 0); // Dessine le cadre de la fenêtre
+            // Delete the old window and create a new one
+            delwin(menu_win);
+            menu_win = newwin(winHauteur, winLargeur, winY, winX);
+            keypad(menu_win, TRUE);
+            mvprintw(0, 0, "Cosmic Yonder");
+            refresh();
+        }
+
         print_menu(menu_win, highlight, n_choices, choices);
-
         c = wgetch(menu_win);
         switch (c) {
             case KEY_UP:
                 if (highlight == 1)
                     highlight = n_choices;
                 else
-                    highlight--;
+                    --highlight;
                 break;
             case KEY_DOWN:
                 if (highlight == n_choices)
                     highlight = 1;
                 else
-                    highlight++;
+                    ++highlight;
                 break;
-            case 10:
+            case 10: // Enter key
                 choice = highlight;
                 break;
             default:
@@ -235,10 +236,8 @@ int main(int argc, char **argv) {
                 refresh();
                 break;
         }
-        if (choice != 0) { /* User did a choice come out of the infinite loop */
+        if (choice != 0) // User did a choice come out of the infinite loop
             break;
-        }
-        
     }
 
     mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
@@ -353,20 +352,18 @@ int main(int argc, char **argv) {
 }
 
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]) {
-    int x, y, i;    
-
+    int x, y, i;
     x = 2;
     y = 2;
     box(menu_win, 0, 0);
-    for (i = 0; i < n_choices; i++) {    
-        if (highlight == i + 1) { /* High light the present choice */
+    for (i = 0; i < n_choices; ++i) {
+        if (highlight == i + 1) { // Highlight the present choice
             wattron(menu_win, A_REVERSE); 
             mvwprintw(menu_win, y, x, "%s", choices[i]);
             wattroff(menu_win, A_REVERSE);
-        } else {
+        } else
             mvwprintw(menu_win, y, x, "%s", choices[i]);
-        }
-        y++;
+        ++y;
     }
     wrefresh(menu_win);
 }
