@@ -43,12 +43,11 @@ char *choices[] = {
 
 int n_choices = 5;
 
-void print_pause(WINDOW *menu_pause, int highlight1, int n_choicepause, char *choicepause[]);
 
 char *choicepause[] = { 
     "Reprendre la partie",
+    "Sauvegarder",
     "Option",
-    "Soundtrack",
     "Quitter la partie",
 };
 
@@ -346,7 +345,7 @@ int main(int argc, char **argv) {
             refresh();
         }
 
-        print_pause(menu_pause, highlight1, n_choicepause, choicepause);
+        print_menu(menu_pause, highlight1, n_choicepause, choicepause);
         c2 = wgetch(menu_pause);
         switch (c2) {
             case KEY_UP:
@@ -509,19 +508,3 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
     wrefresh(menu_win);
 }
 
-void print_pause(WINDOW *menu_pause, int highlight1, int n_choicepause, char *choicepause[]) {
-    int x, y, i;
-    x = 2;
-    y = 2;
-    box(menu_pause, 0, 0);
-    for (i = 0; i < n_choicepause; ++i) {
-        if (highlight1 == i + 1) { // Highlight the present choice
-            wattron(menu_pause, A_REVERSE); 
-            mvwprintw(menu_pause, y, x, "%s", choicepause[i]);
-            wattroff(menu_pause, A_REVERSE);
-        } else
-            mvwprintw(menu_pause, y, x, "%s", choicepause[i]);
-        ++y;
-    }
-    wrefresh(menu_pause);
-}
