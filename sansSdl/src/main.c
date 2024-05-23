@@ -43,6 +43,17 @@ char *choices[] = {
 
 int n_choices = 5;
 
+void print_pause(WINDOW *menu_pause, int highlight1, int n_choicepause, char *choicepause[]);
+
+char *choicepause[] = { 
+    "Reprendre la partie",
+    "Option",
+    "Soundtrack",
+    "Quitter la partie",
+};
+
+int n_choicepause = 4;
+
 void ncurses_initialiser() {
     initscr();          /* Démarre le mode ncurses */
     cbreak();           /* Pour les saisies clavier (désactive la mise en buffer) */
@@ -174,6 +185,7 @@ int main(int argc, char **argv) {
     endwin();
     */
 
+    //Création du menu principal
     WINDOW *menu_win;
     int highlight = 1;
     int choice = 0;
@@ -205,8 +217,6 @@ int main(int argc, char **argv) {
     print_menu(menu_win, highlight, n_choices, choices);
 
 
-
-    
     while (1) {
         // Check for terminal resize
         int new_LINES = getmaxy(stdscr);
@@ -272,6 +282,104 @@ int main(int argc, char **argv) {
     refresh();
     endwin();
 
+    //Création du menu pause
+    WINDOW *menu_pause;
+    int highlight1 = 1;
+    int choice2 = 0;
+    int c2 = 0;
+
+    int LINES2 = getmaxy(stdscr);
+    int COLS2 = getmaxx(stdscr);
+
+    int winHauteur2 = (int)(LINES2 * 0.3);
+    int winLargeur2 = (int)(COLS2 * 0.6);
+
+    int titleY2 = ((LINES2 - 5)/6);
+    int titleX2 = (COLS2 - 71) / 2;
+
+    int winY2 = ((LINES2 - winHauteur2) / 4) * 3;
+    int winX2 = (COLS2 - winLargeur2) / 2;
+    WINDOW *title2 = newwin(5, 71, titleY2, titleX2);
+
+    if(afficher_image_ascii(title2, "image/pause.txt") != EXIT_SUCCESS){
+
+        printf("Erreur");
+        exit(EXIT_FAILURE);
+    }
+    wrefresh(title2);
+
+    menu_pause = newwin(winHauteur2, winLargeur2, winY2, winX2);
+    keypad(menu_pause, TRUE);
+    refresh();
+    print_menu(menu_pause, highlight1, n_choicepause, choicepause);
+
+    while (1) {
+        // Check for terminal resize
+        int new_LINES2 = getmaxy(stdscr);
+        int new_COLS2 = getmaxx(stdscr);
+        if (new_LINES2 != LINES2 || new_COLS2 != COLS2) {
+            LINES2 = new_LINES2;
+            COLS2 = new_COLS2;
+
+            winHauteur2 = (int)(LINES2 * 0.3);
+            winLargeur2 = (int)(COLS2 * 0.6);
+
+            winY2 = (LINES2 - winHauteur2) / 2;
+            winX2 = (COLS2 - winLargeur2) / 2;
+            titleY2 = ((LINES2 - 5)/6);
+            titleX2 = (COLS2 - 71) / 2;
+
+            clear();
+            refresh();
+
+            // Delete the old window and create a new one
+            delwin(menu_pause);
+            menu_pause = newwin(winHauteur2, winLargeur2, winY2, winX2);
+            title2 = newwin(5, 71, titleY2, titleX2);
+            if(afficher_image_ascii(title2, "image/pause.txt") != EXIT_SUCCESS){
+
+                printf("Erreur");
+                exit(EXIT_FAILURE);
+            }
+            wrefresh(title2);
+            keypad(menu_pause, TRUE);
+            refresh();
+        }
+
+        print_pause(menu_pause, highlight1, n_choicepause, choicepause);
+        c2 = wgetch(menu_pause);
+        switch (c2) {
+            case KEY_UP:
+                if (highlight1 == 1)
+                    highlight1 = n_choicepause;
+                else
+                    --highlight1;
+                break;
+            case KEY_DOWN:
+                if (highlight1 == n_choicepause)
+                    highlight1 = 1;
+                else
+                    ++highlight1;
+                break;
+            case 10: // Enter key
+                choice2 = highlight1;
+                break;
+            default:
+                mvprintw(24, 0, "Character pressed is = %3d Hopefully it can be printed as '%c'", c2, c2);
+                refresh();
+                break;
+        }
+        if (choice2 != 0) // User did a choice come out of the infinite loop
+            break;
+    }
+
+    mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice2, choicepause[choice2 - 1]);
+    clrtoeol();
+    refresh();
+    endwin();
+
+
+    //Reste du jeu
     switch (choice) {
         case 1:
             endwin();
@@ -399,4 +507,21 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
         ++y;
     }
     wrefresh(menu_win);
+}
+
+void print_pause(WINDOW *menu_pause, int highlight1, int n_choicepause, char *choicepause[]) {
+    int x, y, i;
+    x = 2;
+    y = 2;
+    box(menu_pause, 0, 0);
+    for (i = 0; i < n_choicepause; ++i) {
+        if (highlight1 == i + 1) { // Highlight the present choice
+            wattron(menu_pause, A_REVERSE); 
+            mvwprintw(menu_pause, y, x, "%s", choicepause[i]);
+            wattroff(menu_pause, A_REVERSE);
+        } else
+            mvwprintw(menu_pause, y, x, "%s", choicepause[i]);
+        ++y;
+    }
+    wrefresh(menu_pause);
 }
