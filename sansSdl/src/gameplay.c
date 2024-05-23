@@ -46,6 +46,8 @@ Expliquation gameplay du jeu :
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
 extern int actualiserMap(void);
+extern int afficher_image_ascii(WINDOW *win, const char *filename);
+extern void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
 
 extern tile **map;
 
@@ -243,7 +245,9 @@ char *choicepause[] = {
 int n_choicepause = 4;
 
 int pause(){
-     //Création du menu pause
+    //Création du menu pause
+    endwin();
+    
     WINDOW *menu_pause;
     int highlight1 = 1;
     int choice2 = 0;
@@ -326,7 +330,6 @@ int pause(){
                 choice2 = highlight1;
                 break;
             default:
-                mvprintw(24, 0, "Character pressed is = %3d Hopefully it can be printed as '%c'", c2, c2);
                 refresh();
                 break;
         }
@@ -334,17 +337,16 @@ int pause(){
             break;
     }
 
-    mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice2, choicepause[choice2 - 1]);
     clrtoeol();
     refresh();
     endwin();
     
     switch (choice2) {
         case 1:
-            
+            return EXIT_SUCCESS;
             break;
         case 2:
-          
+            return EXIT_SUCCESS;
             break;
             
         case 4:

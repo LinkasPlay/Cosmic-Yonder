@@ -155,14 +155,19 @@ int jeu (void) {
 		ch = getch();
         switch (ch) {
 			case 27:
+				endwin();
+				refresh();
 				switch(pause()){
 					case -1:
 						ch = 10;
-					break;
+						break;
 					case EXIT_FAILURE:
 						printf("Erreur pause.");
-					break;
+						break;
 				}
+				ch = 27;
+				continue;
+				
             case 10: /*Pour quitter le jeu*/
 				printf("fin jeu\n");
 				break;
