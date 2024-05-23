@@ -165,7 +165,7 @@ int jeu (void) {
 				}
             case 10: /*Pour quitter le jeu*/
 				printf("fin jeu\n");
-					break;
+				break;
 
 			//attaque
 			case 'e':
