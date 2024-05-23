@@ -14,118 +14,19 @@
 #define LIGNES 5
 #define COLONNES 5
 
+extern int mouvementHaut(void);
+extern int mouvementGauche(void);
+extern int mouvementBas(void);
+extern int mouvementDroite(void);
+
 int porteLibre = 0;
+extern personnage perso;
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
-
-//message erreur
-
-/*
-void erreur(char message){
-	printf("ERREUR : %s\n",message);
-	exit(0);
-}
-
-int creeTab(void) {
-
-    int largeurTab, longueurTab;
-    printf("Quelle est la largeur du carré ?");
-    scanf("%d",(&largeurTab) - 1);
-    printf("Quelle est la longueur du carré ?");
-    scanf("%d",(&longueurTab) - 1);
-
-    int **p = malloc(sizeof(int*[largeurTab]));
-
-    if (p == NULL) {
-        printf("Échec de l'allocation\n");
-        return EXIT_FAILURE;
-    }
-
-    for (unsigned i = 0; i < longueurTab; ++i) {
-        p[i] = malloc(sizeof(int[longueurTab]));
-
-        if (p[i] == NULL) {
-            printf("Échec de l'allocation\n");
-            return EXIT_FAILURE;
-        }
-    }
-
-    for (unsigned i = 0; i < largeurTab; ++i) {
-        for (unsigned j = 0; j < longueurTab; ++j) {
-            p[i][j] = (i * longueurTab) + j;
-            printf("p[%u][%u] = %d\n", i, j, p[i][j]);
-        }
-    }
-
-    for (unsigned i = 0; i < 3; ++i) {
-        free(p[i]);
-    }
-
-    free(p);
-    return 0;
-}
-
-/*
-J'ai fais un programme qui va creer un tableau de 5 par 5 ou chaque element va etre remplacer par une image.
-Aussi la case au centre tout en haut est une porte pour acceder au niveau suivant.
-*/
-
-<<<<<<< HEAD
-/*
-salle generation () {
-
-    for (int i = 0; i < LIGNES; i++) {
-        for (int j = 0; j < COLONNES; j++) {
-            if (i == 2 && j == 0 || i==0 && j==2 || i==2 && j==4 || i=4 && j==2) {
-                tableau[i][j] = -1;
-            } else {
-                tableau[i][j] = -2
-            }
-        }
-    }
-
-    printf("Tableau de 5 par 5 :\n");
-    for (int i = 0; i < LIGNES; i++) {
-        for (int j = 0; j < COLONNES; j++) {
-            if (tableau[i][j] == image) {
-                printf("porte");
-            } else {
-                printf("autre_image");
-            }
-        }
-        printf("\n");
-    }
-
-    for (int i = 0; i < LIGNES; i++) {
-        for (int j = 0; j < COLONNES; j++) {
-            if (tableau[i][j] != image) {
-                SDL_FreeSurface(tableau[i][j]);
-            }
-        }
-    }
-
-    SDL_Quit();
-
-    return 0;
-}
-*/
-
-    /*
-unsigned int genererGraine(int parametre1, int parametre2) {
-    unsigned int graine = parametre1 * parametre2;
-
-    rdn = (cos(salle + graine) + 1) / 2; // Valeur entre 0 et 1
-    rdn = rdn * (max - min) + min; // Réajustement de la plage
-    return (unsigned int)rdn;
-}
-
-    */
-=======
->>>>>>> d078f7c62bf6c09c6c159309b92eec0a3365cde1
-
-
 int graine=69; 
+int entreeX;
+int entreeY;
 
 extern salle room;
 
@@ -136,6 +37,54 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
     rdn = (cos(salle + graine) + 1) / 2; // Valeur entre 0 et 1
     rdn = rdn * (max - min) + min; // Réajustement de la plage
     return (unsigned int)rdn;
+}
+
+int nouvelleSalle(int longueur, int largeur, int num_salle, int cote){
+
+    //réinitialisation room
+    room.num = 0;
+    room.largeur = 0;
+    room.longueur = 0;
+    room.posX = 0;
+    room.posY = 0;
+    room.cases = NULL;
+
+    if (generation(longueur, largeur, num_salle, cote) != EXIT_SUCCESS) {
+        printf("Erreur generation");
+        return EXIT_FAILURE;
+    }
+
+    room.posX = (perso.posX - entreeX);
+    room.posY = (perso.posY - entreeY);
+
+    if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
+
+        map[perso.posX][perso.posY].contenu = -1;
+
+        switch (cote){
+            case 0:
+                mouvementBas();
+                break;
+
+            case 1:
+                mouvementDroite();
+                break;
+
+            case 2:
+                mouvementHaut();
+                break;
+
+            case 3:
+                mouvementGauche();
+                break;
+            
+            default:
+                break;
+        }
+    }
+
+    return EXIT_SUCCESS;
+
 }
 
 int generation(int longueur, int largeur, int num_salle, int cote){
@@ -168,7 +117,6 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     }
     
     for(unsigned i=0 ; i<4 ; i++){
-        printf("\ni = %d \n", i);
         if (num_salle == 1){
             porteLibre = 4;
             p[0][2].contenu = -1;
@@ -203,30 +151,46 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                     al = aleatoire(i * num_salle, graine * 6, 1, largeur-2);
                     p[0][al].contenu = -1;
                     p[0][al].spe.type = 0;
+                    if(i == cote){
+                        entreeX = 0;
+                        entreeY = al;
+                    }
                     break;
 
                 case 1:
                     al = aleatoire(i * num_salle, graine * 4, 1, longueur-2);
                     p[al][0].contenu = -1;
                     p[al][0].spe.type = 1;
+                    if(i == cote){
+                        entreeX = al;
+                        entreeY = 0;
+                    }
                     break;
 
                 case 2:
                     al = aleatoire(i * num_salle, graine * 7, 1, largeur-2);
                     p[longueur-1][al].contenu = -1;
                     p[longueur-1][al].spe.type = 2;
+                    if(i == cote){
+                        entreeX = longueur-1;
+                        entreeY = al;
+                    }
                     break;
 
                 case 3:
                     al = aleatoire(i * num_salle, graine * 2, 1, longueur-2);
                     p[al][largeur-1].contenu = -1;
                     p[al][largeur-1].spe.type = 3;
+                    if(i == cote){
+                        entreeX = al;
+                        entreeY = largeur-1;
+                    }
                     break;
                 
                 default:
                     break;
                 }
-                printf("\nal = %d (nsal = %d, gr = %d, la-2 = %d \n\n", al, num_salle, graine, largeur-2);
+                
             }
         }
     }
@@ -294,14 +258,14 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                     case 7:                    
                     case 8:
                         p[i][j].contenu=3;
-                        p[i][j].tile.spe.type=2;
+                        p[i][j].spe.type=2;
                     case 9:
                         p[i][j].contenu=3;
-                        p[i][j].tile.spe.type=3;    
+                        p[i][j].spe.type=3;    
                     
                     case 10:
                         p[i][j].contenu=3;
-                        p[i][j].tile.spe.type=1;
+                        p[i][j].spe.type=1;
 
                         break;
                     
@@ -318,8 +282,6 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     room.num = num_salle;
     room.largeur = largeur;
     room.longueur = longueur;
-    room.posX = 10;
-    room.posY = 10;
     room.cases = p;
     return EXIT_SUCCESS;
 }   

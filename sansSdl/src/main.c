@@ -18,8 +18,14 @@ extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern void* play_music(void* arg);
 
+extern int afficher_image_ascii(WINDOW *win, const char *filename);
+
+extern int liberationMap(void);
+
+
 extern int graine;
 extern bool stop_music;
+extern personnage perso;
 
 salle room;
 
@@ -32,7 +38,7 @@ char *choices[] = {
     "Charger partie",
     "Option",
     "Soundtrack",
-    "Exit",
+    "Quitter le jeu",
 };
 
 int n_choices = 5;
@@ -101,8 +107,7 @@ int main(int argc, char **argv) {
     int start_x = 10;
     int x = 10;
     int y = 10;
-    char *msg = "Texte au centre";
-    int taille = strlen(msg);
+    int ch;
 
     WINDOW *win = newwin(10, 20, start_y, start_x);
     refresh();
@@ -121,6 +126,7 @@ int main(int argc, char **argv) {
 
     init_pair(1, COLOR_CYAN, COLOR_WHITE);
 
+    /*
     if (can_change_color()) {
         printw("on peut changer la couleur\n");
         init_color(COLOR_CYAN, 9, 999, 999);
@@ -130,6 +136,7 @@ int main(int argc, char **argv) {
     attroff(COLOR_PAIR(1));
 
     int ch;
+    ch = 0;
     // Boucle pour détecter l'appui sur la touche espace
     while ((ch = getch()) != ' ') {
         // Rien à faire, juste attendre l'appui sur espace
@@ -151,6 +158,11 @@ int main(int argc, char **argv) {
         // Rien à faire, juste attendre l'appui sur espace
     }
 
+    //texte centré
+
+    char *msg = "Texte au centre";
+    int taille = strlen(msg);
+
     while (1) {
         clear(); // Efface le contenu de la fenêtre
         mvprintw(LINES / 2, (COLS / 2) - (taille / 2), "%s", msg);
@@ -160,36 +172,90 @@ int main(int argc, char **argv) {
     }
 
     endwin();
+    */
+
     WINDOW *menu_win;
     int highlight = 1;
     int choice = 0;
     int c = 0;
 
-    start_x = 10;
-    start_y = 10;
+    int LINES = getmaxy(stdscr);
+    int COLS = getmaxx(stdscr);
 
-    menu_win = newwin(10, 30, start_y, start_x); // Dimensions ajustées pour WINDOW_HEIGHT et WINDOW_WIDTH
+    int winHauteur = (int)(LINES * 0.3);
+    int winLargeur = (int)(COLS * 0.6);
+
+    int titleY = ((LINES - 5)/6);
+    int titleX = (COLS - 69) / 2;
+
+    int winY = ((LINES - winHauteur) / 4) * 3;
+    int winX = (COLS - winLargeur) / 2;
+    WINDOW *title = newwin(5, 69, titleY, titleX);
+
+    if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
+
+        printf("Erreur");
+        exit(EXIT_FAILURE);
+    }
+    wrefresh(title);
+
+    menu_win = newwin(winHauteur, winLargeur, winY, winX);
     keypad(menu_win, TRUE);
-    mvprintw(0, 0, "Use arrow keys to go up and down, Press enter to select a choice");
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
+
+
+
     
     while (1) {
+        // Check for terminal resize
+        int new_LINES = getmaxy(stdscr);
+        int new_COLS = getmaxx(stdscr);
+        if (new_LINES != LINES || new_COLS != COLS) {
+            LINES = new_LINES;
+            COLS = new_COLS;
+
+            winHauteur = (int)(LINES * 0.3);
+            winLargeur = (int)(COLS * 0.6);
+
+            winY = (LINES - winHauteur) / 2;
+            winX = (COLS - winLargeur) / 2;
+            titleY = ((LINES - 5)/6);
+            titleX = (COLS - 69) / 2;
+
+            clear();
+            refresh();
+
+            // Delete the old window and create a new one
+            delwin(menu_win);
+            menu_win = newwin(winHauteur, winLargeur, winY, winX);
+            title = newwin(5, 69, titleY, titleX);
+            if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
+
+                printf("Erreur");
+                exit(EXIT_FAILURE);
+            }
+            wrefresh(title);
+            keypad(menu_win, TRUE);
+            refresh();
+        }
+
+        print_menu(menu_win, highlight, n_choices, choices);
         c = wgetch(menu_win);
         switch (c) {
             case KEY_UP:
                 if (highlight == 1)
                     highlight = n_choices;
                 else
-                    highlight--;
+                    --highlight;
                 break;
             case KEY_DOWN:
                 if (highlight == n_choices)
                     highlight = 1;
                 else
-                    highlight++;
+                    ++highlight;
                 break;
-            case 10:
+            case 10: // Enter key
                 choice = highlight;
                 break;
             default:
@@ -197,10 +263,8 @@ int main(int argc, char **argv) {
                 refresh();
                 break;
         }
-        print_menu(menu_win, highlight, n_choices, choices);
-        if (choice != 0) { /* User did a choice come out of the infinite loop */
+        if (choice != 0) // User did a choice come out of the infinite loop
             break;
-        }
     }
 
     mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
@@ -210,10 +274,21 @@ int main(int argc, char **argv) {
 
     switch (choice) {
         case 1:
+            endwin();
+            perso.lvl = 0;
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
             }
+
+            if(liberationMap() != EXIT_SUCCESS){
+                printf("Erreur liberation map");
+                exit(EXIT_FAILURE);
+            }
+
+            endwin();
+
+            return EXIT_SUCCESS;
             break;
         case 2:
             if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
@@ -260,6 +335,7 @@ int main(int argc, char **argv) {
             }
             free(room.cases);
             room.cases = NULL;
+            endwin();
             break;
             
         case 4:
@@ -273,7 +349,7 @@ int main(int argc, char **argv) {
 
             // Boucle pour détecter l'appui sur la touche espace
             ch = 0;
-            while (ch != ' ') {
+            while (ch != 10) {
                 ch = getch();
                 // Rien à faire, juste attendre l'appui sur espace
             }
@@ -288,7 +364,9 @@ int main(int argc, char **argv) {
 
         case 5:
             printf("Fin du jeu\n");
+            endwin();
             exit(EXIT_SUCCESS);
+            break;
         
         default:
             break;
@@ -300,26 +378,25 @@ int main(int argc, char **argv) {
         // Rien à faire, juste attendre l'appui sur espace
     }
 
+  
     endwin();
 
     return EXIT_SUCCESS;
 }
 
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]) {
-    int x, y, i;    
-
+    int x, y, i;
     x = 2;
     y = 2;
     box(menu_win, 0, 0);
-    for (i = 0; i < n_choices; i++) {    
-        if (highlight == i + 1) { /* High light the present choice */
+    for (i = 0; i < n_choices; ++i) {
+        if (highlight == i + 1) { // Highlight the present choice
             wattron(menu_win, A_REVERSE); 
             mvwprintw(menu_win, y, x, "%s", choices[i]);
             wattroff(menu_win, A_REVERSE);
-        } else {
+        } else
             mvwprintw(menu_win, y, x, "%s", choices[i]);
-        }
-        y++;
+        ++y;
     }
     wrefresh(menu_win);
 }

@@ -43,7 +43,6 @@ Expliquation gameplay du jeu :
 
 */
 
-extern void SDL_ExitWithError(const char *message);
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
 extern int actualiserMap(void);

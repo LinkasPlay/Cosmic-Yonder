@@ -4,6 +4,10 @@
 #define DIMENSION_MAP 300
 #define WINDOW_WIDTH 1500
 #define WINDOW_HEIGHT 900
+
+#define CASE_WIDTH 18
+#define CASE_HEIGHT 7
+
 #define FPS_LIMIT 16
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
@@ -58,6 +62,7 @@ extern int musique(int num_musique);
 extern int creeMap(void);
 extern int jeu(void);
 extern void* play_music(void* arg);
+extern int generation(int longueur, int largeur, int num_salle, int cote);
 
 extern tile contenuCase;
 extern int Xcamera;

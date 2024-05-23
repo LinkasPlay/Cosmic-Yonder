@@ -9,6 +9,8 @@
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 //message erreur
 
+extern int generation(int longueur, int largeur, int num_salle, int cote);
+
 personnage perso;
 personnage persoPast;
 extern int room;
@@ -30,7 +32,7 @@ int creeMap(void) {
     perso.xp = 0;
 
     // Allocation de mémoire pour map
-    map = malloc(sizeof(int*[DIMENSION_MAP]));
+    map = malloc(sizeof(tile*[DIMENSION_MAP]));
 
     if (map == NULL) {
         printf("Échec de l'allocation\n");
@@ -38,7 +40,7 @@ int creeMap(void) {
     }
 
     for (unsigned i = 0; i < DIMENSION_MAP; ++i) {
-        map[i] = malloc(sizeof(int[DIMENSION_MAP]));
+        map[i] = malloc(sizeof(tile[DIMENSION_MAP]));
 
         if (map[i] == NULL) {
             printf("Échec de l'allocation\n");
@@ -55,6 +57,11 @@ int creeMap(void) {
         }
     }
 
+    if (generation(5, 5, 1, 0) != EXIT_SUCCESS){
+        printf("Erreur generation salle 1");
+        return EXIT_FAILURE;
+    }
+
     return EXIT_SUCCESS;
 }
 
@@ -64,7 +71,7 @@ int liberationMap(void){
     }
 
     free(map);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int actualiserMap(void){
