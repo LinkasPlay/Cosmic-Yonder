@@ -1,21 +1,22 @@
+#include "texture.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ncurses.h>
+#include <unistd.h>
+#include <string.h>
 
-typedef struct personnage personnage;
-typedef struct monstre monstre;
-typedef struct special special;
-typedef struct tile tile;
-typedef struct salle salle;
+#include <pthread.h>
+#include <pulse/simple.h>
+#include <pulse/error.h>
 
 extern int creeMap(void);
-extern int jeu(int argc, char **argv);
+extern int jeu(void);
 extern tile contenuCase;
 extern int Xcamera;
 extern int Ycamera;
 extern tile **map;
-extern personnage hero;
-extern salle *salles;
-extern int nbSalles;
+extern personnage perso;
+extern salle room;
 
 void save_game(const char *filename) {
     FILE *file = fopen(filename, "wb");
@@ -24,24 +25,26 @@ void save_game(const char *filename) {
         return;
     }
 
-    fwrite(&hero.direction, sizeof(int), 1, file);
-    fwrite(&hero.posX, sizeof(int), 1, file);
-    fwrite(&hero.posY, sizeof(int), 1, file);
-    fwrite(&hero.frameAnimation, sizeof(int), 1, file);
-    fwrite(&hero.xp, sizeof(int), 1, file);
-    fwrite(&hero.lvl, sizeof(int), 1, file);
+    fwrite(&perso.direction, sizeof(int), 1, file);
+    fwrite(&perso.posX, sizeof(int), 1, file);
+    fwrite(&perso.posY, sizeof(int), 1, file);
+    fwrite(&perso.frameAnimation, sizeof(int), 1, file);
+    fwrite(&perso.xp, sizeof(int), 1, file);
+    fwrite(&perso.lvl, sizeof(int), 1, file);
 
     int invSize = 10;
     fwrite(&invSize, sizeof(int), 1, file);
-    fwrite(hero.inv, sizeof(int), invSize, file);
+    fwrite(perso.inv, sizeof(int), invSize, file);
 
     fwrite(&Xcamera, sizeof(int), 1, file);
     fwrite(&Ycamera, sizeof(int), 1, file);
 
-    fwrite(&nbSalles, sizeof(int), 1, file);
+    //fwrite(&nbSalles, sizeof(int), 1, file);
+
+    /*
 
     for (int i = 0; i < nbSalles; ++i) {
-        salle *s = &salles[i];
+        salle *s = room.cases[i];
         fwrite(&s->num, sizeof(int), 1, file);
         fwrite(&s->largeur, sizeof(int), 1, file);
         fwrite(&s->longueur, sizeof(int), 1, file);
@@ -61,6 +64,8 @@ void save_game(const char *filename) {
             }
         }
     }
+
+    */
 
     fclose(file);
 }
