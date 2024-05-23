@@ -17,11 +17,11 @@ void start_ncurses(bool useRaw, bool useNoecho);
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern void* play_music(void* arg);
-<<<<<<< HEAD
+
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
-=======
+
 extern int liberationMap(void);
->>>>>>> dcf8ce634748f2c9dd7b002f2fa7e3b2296b514a
+
 
 extern int graine;
 extern bool stop_music;
