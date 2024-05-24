@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 
-#include "texture.h"
+#include "cosmicYonder.h"
 
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
@@ -92,4 +92,19 @@ int actualiserMap(void){
 
 }
 
+void afficherMap(void) {
+    FILE *fichier = fopen("map.txt", "w");
+    if (fichier == NULL) {
+        printf("Impossible d'ouvrir le fichier.\n");
+        return;
+    }
 
+    for (int i = 0; i < DIMENSION_MAP; i++) {
+        for (int j = 0; j < DIMENSION_MAP; j++) {
+            fprintf(fichier, "%d ", map[i][j].contenu);
+        }
+        fprintf(fichier, "\n");
+    }
+
+    fclose(fichier);
+}

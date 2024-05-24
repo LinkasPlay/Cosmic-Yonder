@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "cosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -125,54 +125,6 @@ int main(int argc, char **argv) {
     */
 
     init_pair(1, COLOR_CYAN, COLOR_WHITE);
-
-    /*
-    if (can_change_color()) {
-        printw("on peut changer la couleur\n");
-        init_color(COLOR_CYAN, 9, 999, 999);
-    }
-    attron(COLOR_PAIR(1));
-    printw("texte de fou");
-    attroff(COLOR_PAIR(1));
-
-    int ch;
-    ch = 0;
-    // Boucle pour détecter l'appui sur la touche espace
-    while ((ch = getch()) != ' ') {
-        // Rien à faire, juste attendre l'appui sur espace
-    }
-
-    box(win, 0, 0); // Dessine le cadre de la fenêtre
-    mvwprintw(win, 1, 1, "Chokbar de bz");
-    wrefresh(win);
-
-    win = newwin(10, 20, start_y + 0, start_x + 20);
-    box(win, 0, 0); // Dessine le cadre de la fenêtre
-    mvwprintw(win, 1, 1, "Chokbar de 2 bz");
-    wrefresh(win);
-
-    // Boucle pour détecter l'appui sur la touche espace
-    ch = 0;
-    while (ch != ' ') {
-        ch = getch();
-        // Rien à faire, juste attendre l'appui sur espace
-    }
-
-    //texte centré
-
-    char *msg = "Texte au centre";
-    int taille = strlen(msg);
-
-    while (1) {
-        clear(); // Efface le contenu de la fenêtre
-        mvprintw(LINES / 2, (COLS / 2) - (taille / 2), "%s", msg);
-        refresh();
-        if (getch() != 410)
-            break;
-    }
-
-    endwin();
-    */
 
     //Création du menu principal
     WINDOW *menu_win;

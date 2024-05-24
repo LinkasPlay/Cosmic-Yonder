@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "cosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -8,7 +8,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
-#include "texture.h"
+#include "cosmicYonder.h"
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
@@ -80,6 +80,40 @@ int degatMonstre(int dmg, monstre mstr){
             perso.inv[mstr.loot] ++;
         }
     }
+}
+
+int monstreMouvement(int x, int y){
+    int x2 = x, y2 = y;
+    for(unsigned i = x-2; i < x+3; i++){
+        for(unsigned j = y-2; i < y+3; i++){
+            if (map[i][j].contenu == 1){
+                if (i <= x){
+                    x2 = x - 1;
+                }
+                else if (i > x){
+                    x2 = x + 1;
+                }
+                else if (j < y){
+                    y2 = y - 1;
+                }
+                else{
+                    y2 = y + 1;
+                }
+                map[x2][y2].contenu = map[x][y].contenu;
+                map[x2][y2].mstr = map[x][y].mstr;
+                map[x][y].contenu = 0;
+                map[x][y].mstr.frameAnimation = 0;
+                map[x][y].mstr.hp = 0;
+                map[x][y].mstr.xp = 0;
+                map[x][y].mstr.loot = 0;
+                return EXIT_SUCCESS;
+            }
+        }
+    }
+    
+    return EXIT_SUCCESS;
+
+
 }
 
 int attaqueEpee(void){

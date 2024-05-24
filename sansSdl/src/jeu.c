@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "cosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -26,11 +26,13 @@ extern int mouvementGauche(void);
 extern int mouvementBas(void);
 extern int mouvementDroite(void);
 extern int attaqueEpee(void);
+extern int monstreMouvement(int x, int y);
 
 extern int texture(WINDOW *win);
 extern int creeMap(void);
 extern int actualiserMap(void);
 extern int textureSimple(WINDOW *win, int i, int j);
+extern void afficherMap(void);
 
 int jeu (void) {
 
@@ -129,12 +131,6 @@ int jeu (void) {
 	start_y = winY;
     start_x = winX;
 
-    //endwin();
-	//wclear(win); // Efface le contenu de la fenêtre principale
-    //refresh(); // Rafraîchit la fenêtre principale
-    //printf("\n\n\n\n\n\n\nnbCaseHauteur = %d \nnbCaseLargeur = %d\n", winHauteur / CASE_HEIGHT, winLargeur / CASE_WIDTH);
-	//printf("Hauteur = %d \nLargeur = %d\n\n", winHauteur, winLargeur );
-
     //return EXIT_SUCCESS;
 
 	if (camera(win) != EXIT_SUCCESS){
@@ -155,8 +151,6 @@ int jeu (void) {
 		ch = getch();
         switch (ch) {
 			case 27:
-				endwin();
-				refresh();
 				switch(pause()){
 					case -1:
 						ch = 10;
@@ -166,11 +160,19 @@ int jeu (void) {
 						break;
 				}
 				ch = 27;
+				win = newwin(winHauteur, winLargeur, winY, winX);
+        		box(win, 0, 0); // Dessine le cadre de la fenêtre
+				wrefresh(win);
 				continue;
 				
             case 10: /*Pour quitter le jeu*/
 				printf("fin jeu\n");
 				break;
+
+			//afficher la carte
+			case 'm':
+				afficherMap();
+				continue;
 
 			//attaque
 			case 'e':
@@ -219,12 +221,15 @@ int jeu (void) {
 				box(winTest, 0, 0); // Dessine le cadre de la fenêtre
 
 				// Remplir la fenêtre avec les valeurs définies dans textureSimple
-				for (unsigned int i = 1; i < DIMENSION_MAP - 1; i++) {
-					for (unsigned int j = 1; j < DIMENSION_MAP - 1; j++) {
-						contenuCase = map[i][j];
-						if(textureSimple(winTest, i, j) != EXIT_SUCCESS){
-							printf("Erreur texture simple");
-							exit(EXIT_FAILURE);
+				for (unsigned int i = perso.posY - 15; i <= perso.posY + 15; i++) {
+					for (unsigned int j = perso.posX - 25; j <= perso.posX + 25; j++) {
+						// Vérifiez que les indices ne dépassent pas les limites du tableau map
+						if (i >= 0 && i < DIMENSION_MAP && j >= 0 && j < DIMENSION_MAP) {
+							contenuCase = map[i][j];
+							if (textureSimple(winTest, i, j) != EXIT_SUCCESS) {
+								printf("Erreur texture simple");
+								exit(EXIT_FAILURE);
+							}
 						}
 					}
 				}
@@ -276,6 +281,12 @@ int camera(WINDOW *win) {
             boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, start_y + Ycase * CASE_HEIGHT, start_x + Xcase * CASE_WIDTH);
             //box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
             wrefresh(boiteCase);
+			if(contenuCase.contenu == 2){
+				if (monstreMouvement(Xcamera + Xcase, Ycamera + Ycase) != EXIT_SUCCESS){
+					printf("Erreur mouvement monstre");
+					return EXIT_FAILURE;
+				}
+			}
 
             if (texture(boiteCase) != EXIT_SUCCESS) {
                 mvwprintw(win, 1, 1, "Fonction texture interrompue");

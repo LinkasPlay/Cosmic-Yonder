@@ -1,5 +1,5 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef COSMICYONDER_H
+#define COSMICYONDER_H
 
 #define DIMENSION_MAP 300
 #define WINDOW_WIDTH 1500
