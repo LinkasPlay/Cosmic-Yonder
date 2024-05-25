@@ -242,6 +242,7 @@ int main(int argc, char **argv) {
 
             endwin();
             return EXIT_SUCCESS;
+            
         case 2:
             if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
                 printf("Erreur generation salle\n");
