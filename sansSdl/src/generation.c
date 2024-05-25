@@ -108,7 +108,7 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     int al = 1;
     int portes[4];
 
-    portes[cote] = 1;
+    portes[cote] = -1;
     if (porteLibre == 1){
         portes[0] = 1;
         portes[1] = 1;
@@ -132,7 +132,7 @@ int generation(int longueur, int largeur, int num_salle, int cote){
             p[2][4].spe.type = 0;  
         }
         else{
-            if (portes[i] != 1){
+            if (portes[i] == 0){
                 if(aleatoire(i * num_salle, graine * i - num_salle, 1, 100)<=60){
                     portes[i] = 1;
                     porteLibre ++;
@@ -286,3 +286,11 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     return EXIT_SUCCESS;
 }   
 
+
+int ajouterSalle (void){
+    for(unsigned int i = room.posX; i <= room.largeur; i++){
+        for(unsigned int i = room.posX; i <= room.largeur; i++){
+        
+        }
+    }
+}
