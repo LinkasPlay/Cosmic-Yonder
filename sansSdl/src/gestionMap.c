@@ -121,3 +121,16 @@ void afficherMap(void) {
     wrefresh(coeur_win);
 
 }
+
+void debug(char * msg) {
+    FILE *fichier = fopen("debug.txt", "w");
+    if (fichier == NULL) {
+        printf("Impossible d'ouvrir le fichier.\n");
+        return;
+    }
+    
+    fprintf(fichier, "%s \n", msg);
+
+    fclose(fichier);
+
+}

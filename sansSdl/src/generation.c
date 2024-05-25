@@ -30,6 +30,8 @@ int entreeY;
 
 extern salle room;
 
+void ajouterSalle (void);
+
 unsigned int aleatoire(int salle, int graine, int min, int max){
     double rdn;
     max++;
@@ -82,6 +84,9 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote){
                 break;
         }
     }
+
+    ajouterSalle ();
+    map[perso.posX][perso.posY].contenu = 1;
 
     return EXIT_SUCCESS;
 
@@ -287,10 +292,23 @@ int generation(int longueur, int largeur, int num_salle, int cote){
 }   
 
 
-int ajouterSalle (void){
+void ajouterSalle (void){
+    int n = 0,m = 0;
     for(unsigned int i = room.posX; i <= room.largeur; i++){
-        for(unsigned int i = room.posX; i <= room.largeur; i++){
-        
+        for(unsigned int j = room.posY; i <= room.longueur; i++){
+            map[i][j].contenu = room.cases[n][m].contenu;
+
+            map[i][j].mstr.hp = room.cases[n][m].mstr.hp;
+            map[i][j].mstr.xp = room.cases[n][m].mstr.xp;
+            map[i][j].mstr.loot = room.cases[n][m].mstr.loot;
+            map[i][j].mstr.frameAnimation = room.cases[n][m].mstr.frameAnimation;
+
+            map[i][j].spe.type = room.cases[n][m].spe.type;
+            map[i][j].spe.inv = room.cases[n][m].spe.inv;
+
+            n++;
         }
+        n = 0;
+        m++;
     }
 }

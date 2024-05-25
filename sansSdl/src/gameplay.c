@@ -48,14 +48,19 @@ extern int creeMap(void);
 extern int actualiserMap(void);
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
 extern void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
+extern int nouvelleSalle(int longueur, int largeur, int num_salle, int cote);
+extern unsigned int aleatoire(int salle, int graine, int min, int max);
 
 extern tile **map;
+extern int graine;
 
 extern int Xcamera;
 extern int Ycamera;
 
 extern personnage perso;
 extern personnage persoPast;
+
+int num_salle;
 
 void lvlMaj(monstre mstr){
     perso.xp = perso.xp + mstr.xp;
@@ -65,6 +70,30 @@ void lvlMaj(monstre mstr){
     }
 }
 
+int testSol(int x, int y,int cote){
+    switch (map[x][y].contenu){
+
+    case -2:
+    case 3:
+        return 0;
+        break;
+
+    case -1:
+        int largeur = aleatoire(15 * num_salle, graine * 7, 5, 11);
+        int longueur = aleatoire(9 * num_salle, graine * 2, 5, 11);
+        nouvelleSalle(longueur, largeur, num_salle, cote);
+        return 1;
+        break;
+
+    case 2:
+        return 2;
+        break;
+    
+    default:
+        return 1;
+        break;
+    }
+}
 
 int degatMonstre(int dmg, monstre mstr){
     mstr.hp = mstr.hp - dmg;
@@ -206,67 +235,112 @@ int attaqueEpee(void){
 }
 
 int mouvementHaut(void){
-    if ( (Ycamera != 0) ){
-        Ycamera = Ycamera - 1;
+    switch (testSol(perso.posX, perso.posY - 1, 2)) {
+    case 1:
+    case -1:
+        if ( (Ycamera != 0) ){
+            Ycamera = Ycamera - 1;
+        }
+        if (perso.posY > 1){
+            persoPast.posX = perso.posX;
+            persoPast.posY = perso.posY;
+            perso.direction = 1;
+            perso.posY = perso.posY - 1;
+        }
+        if (actualiserMap() != EXIT_SUCCESS){
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+        break;
+
+    case 2:
+        //degats
+        break;
+    
+    default:
+        break;
     }
-    if (perso.posY > 1){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 1;
-        perso.posY = perso.posY - 1;
-    }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
 }
 
 int mouvementGauche(void){
-    if ( (Xcamera != 0) ) {
-        Xcamera = Xcamera - 1;
+    switch (testSol(perso.posX - 1, perso.posY, 3)) {
+        case 1:
+        case -1:
+            if ( (Xcamera != 0) ) {
+                Xcamera = Xcamera - 1;
+            }
+            if (perso.posX > 1){
+                persoPast.posX = perso.posX;
+                persoPast.posY = perso.posY;
+                perso.direction = 2;
+                perso.posX = perso.posX - 1;
+            }
+            if (actualiserMap() != EXIT_SUCCESS){
+                return EXIT_FAILURE;
+            }
+            return EXIT_SUCCESS;
+
+        case 2:
+
+            break;
+    
+        default:
+            break;
     }
-    if (perso.posX > 1){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 2;
-        perso.posX = perso.posX - 1;
-    }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
 }
 
 int mouvementBas(void){
-    if ( (Ycamera < (DIMENSION_MAP - (WINDOW_HEIGHT / 100) ) ) ){
-        Ycamera = Ycamera + 1;
+    switch (testSol(perso.posX, perso.posY + 1, 0)) {
+        case 1:
+        case -1:
+            if ( (Ycamera < (DIMENSION_MAP - (WINDOW_HEIGHT / 100) ) ) ){
+                Ycamera = Ycamera + 1;
+            }
+            if (perso.posY < DIMENSION_MAP - 2){
+                persoPast.posX = perso.posX;
+                persoPast.posY = perso.posY;
+                perso.direction = 3;
+                perso.posY = perso.posY + 1;
+            }
+            if (actualiserMap() != EXIT_SUCCESS){
+                return EXIT_FAILURE;
+            }
+            return EXIT_SUCCESS;
+
+        case 2:
+
+            break;
+    
+        default:
+            break;
     }
-    if (perso.posY < DIMENSION_MAP - 2){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 3;
-        perso.posY = perso.posY + 1;
-    }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
 }
 
 int mouvementDroite(void){
-    if ( (Xcamera < (DIMENSION_MAP - (WINDOW_WIDTH / 100) ) ) ) {
-        Xcamera = Xcamera + 1;
+    switch (testSol(perso.posX + 1, perso.posY, 1)) {
+        case 1:
+        case -1:
+            if ( (Xcamera < (DIMENSION_MAP - (WINDOW_WIDTH / 100) ) ) ) {
+                Xcamera = Xcamera + 1;
+            }
+            if (perso.posX < DIMENSION_MAP - 2){
+                persoPast.posX = perso.posX;
+                persoPast.posY = perso.posY;
+                perso.direction = 4;
+                perso.posX = perso.posX + 1;
+            }
+            if (actualiserMap() != EXIT_SUCCESS){
+                return EXIT_FAILURE;
+            }
+            return EXIT_SUCCESS;
+
+        case 2:
+
+            break;
+    
+        default:
+            break;
     }
-    if (perso.posX < DIMENSION_MAP - 2){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 4;
-        perso.posX = perso.posX + 1;
-    }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
 }
 
 char *choicepause[] = { 

@@ -33,6 +33,7 @@ extern int creeMap(void);
 extern int actualiserMap(void);
 extern int textureSimple(WINDOW *win, int i, int j);
 extern void afficherMap(void);
+extern void debug(char * msg);
 
 int jeu (void) {
 
@@ -50,14 +51,6 @@ int jeu (void) {
 
     int winY = (LINES - winHauteur) / 2;
     int winX = (COLS - winLargeur) / 2;
-
-    if (perso.lvl == 0) {
-        if (creeMap() != 0) {
-            printf("Impossible de créer la map\n");
-            endwin();
-            return 1;
-        }
-    }
 
     WINDOW *win = newwin(winHauteur, winLargeur, winY, winX);
 
@@ -131,7 +124,14 @@ int jeu (void) {
 	start_y = winY;
     start_x = winX;
 
-    //return EXIT_SUCCESS;
+    if (perso.lvl == 0) {
+        if (creeMap() != 0) {
+            printf("Impossible de créer la map\n");
+            endwin();
+            return 1;
+        }
+		debug("Map créé");
+    }
 
 	if (camera(win) != EXIT_SUCCESS){
 		printf("Probleme fonction camera");
@@ -267,6 +267,7 @@ int jeu (void) {
 
 // afficher les images de la camera
 int camera(WINDOW *win) {
+	debug("Camerara");
     int max_y, max_x;
     getmaxyx(win, max_y, max_x);
 
