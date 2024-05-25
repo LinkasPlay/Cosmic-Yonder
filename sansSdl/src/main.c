@@ -161,10 +161,12 @@ int main(int argc, char **argv) {
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
 
-
-    pthread_t music_thread;
-    int music_choice = 0; // Default music choice, change as needed
-    pthread_create(&music_thread, NULL, play_music, &music_choice);
+    pthread_t music_th;
+    
+    while(1){
+        int music_choice = 0; // Default music choice, change as needed
+        pthread_create(&music_th, NULL, play_music, &music_choice);
+    }
 
 
     while (1) {
@@ -228,7 +230,7 @@ int main(int argc, char **argv) {
 
     // Stoper the music 
     stop_music = true;
-    pthread_join(music_thread, NULL);
+    pthread_join(music_th, NULL);
 
     clrtoeol();
     refresh();

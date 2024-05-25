@@ -14,6 +14,8 @@
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 tile contenuCase;
+extern void* play_music(void* arg);
+extern bool stop_music;
 
 extern personnage perso;
 int start_y;
@@ -92,6 +94,11 @@ int jeu (void) {
         wrefresh(win);
 
         if (getch() == 10) {// Touche pour sortir = entrée
+			while(1){
+    			pthread_t music_thread;
+    			int music_choice = 1; // La musique sélectionner
+    			pthread_create(&music_thread, NULL, play_music, &music_choice);
+    		}
 			if(winHauteur < CASE_HEIGHT * 5 || winLargeur < CASE_WIDTH * 7){ // verif taille écran
 
 				clear(); // Efface le contenu de la fenêtre principale
@@ -103,10 +110,10 @@ int jeu (void) {
 				msg3 = "Vous vous apprété à lancer le jeu dans une fenètre réduite.";
     			taille3 = strlen(msg3);
 				mvwprintw(win, winHauteur / 2 - 1, (winLargeur / 2) - (taille3 / 2), "%s", msg3);
-				msg3 = "Ce qui risque de le rendre très complex.";
+				msg3 = "Ce qui risque de le rendre très complexe.";
     			taille3 = strlen(msg3);
 				mvwprintw(win, winHauteur / 2 , (winLargeur / 2) - (taille3 / 2), "%s", msg3);
-				msg3 = "Appuyez sur entré pour confirmé.";
+				msg3 = "Appuyez sur entrer pour confirmé.";
     			taille3 = strlen(msg3);
 				mvwprintw(win, winHauteur / 2 + 1, (winLargeur / 2) - (taille3 / 2), "%s", msg3);
 				wrefresh(win);
