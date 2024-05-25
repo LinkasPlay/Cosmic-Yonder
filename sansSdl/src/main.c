@@ -12,7 +12,7 @@
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 void start_ncurses(bool useRaw, bool useNoecho);
-void demander_nom_et_graine(char *nom, int *graine);
+void demander_nom_et_graine(void);
 //void printMenu(WINDOW * menu, stdin choices[], int size, int highlight);
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
@@ -240,7 +240,7 @@ int main(int argc, char **argv) {
             //mettre nom + graine + musique vaisseau
             // j'ai essayé plusieurs programme mais ca affiche rien
             perso.lvl = 0;
-            demander_nom_et_graine(char *nom, int *graine);
+            demander_nom_et_graine();
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
@@ -366,7 +366,7 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
     wrefresh(menu_win);
 }
 
-void demander_nom_et_graine(char *nom, int *graine) {
+void demander_nom_et_graine(void) {
     // Taille maximale du nom
     const int nom_max_len = 50;
 
@@ -388,12 +388,13 @@ void demander_nom_et_graine(char *nom, int *graine) {
     wrefresh(input_win);
 
     // Lire le nom du joueur
+    char * nom;
     mvwgetnstr(input_win, 2, 1, nom, nom_max_len);
     
     // Lire la graine
     char graine_str[10];
     mvwgetnstr(input_win, 4, 1, graine_str, 10);
-    *graine = atoi(graine_str);
+    int graine = atoi(graine_str);
 
     // Nettoyer la fenêtre
     delwin(input_win);
