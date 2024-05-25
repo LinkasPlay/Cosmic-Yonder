@@ -42,79 +42,113 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
     return (unsigned int)rdn;
 }
 
-int nouvelleSalle(int longueur, int largeur, int num_salle, int cote){
-
-    //réinitialisation room
-    extern int entreeX;
-    extern int entreeY;
+int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
+    // réinitialisation room
+    if (room.cases != NULL) {
+        for (unsigned i = 0; i < room.largeur; i++) {
+            free(room.cases[i]);
+        }
+        free(room.cases);
+        room.cases = NULL;
+    }
 
     room.num = 0;
     room.largeur = 0;
     room.longueur = 0;
     room.posX = 0;
     room.posY = 0;
-    room.cases = NULL;
 
     if (generation(longueur, largeur, num_salle, cote) != EXIT_SUCCESS) {
         printf("Erreur generation");
         return EXIT_FAILURE;
     }
-    if (num_salle == 1){
-        room.posX = (perso.posX - 2);
-        room.posY = (perso.posY - 2); 
-    }
-    else {
-        room.posX = (perso.posX - entreeX);
-        room.posY = (perso.posY - entreeY);
-    }
 
-    if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
-
-        map[perso.posX][perso.posY].contenu = -1;
-
-        switch (cote){
+    if (num_salle == 1) {
+        room.posX = perso.posX - 2;
+        room.posY = perso.posY - 2;
+    } else {
+        switch (cote) {
             case 0:
-                mouvementBas();
+                room.posX = perso.posX - entreeX;
+                room.posY = perso.posY - longueur;
                 break;
-
             case 1:
-                mouvementDroite();
+                room.posX = perso.posX - largeur;
+                room.posY = perso.posY - entreeY;
                 break;
-
             case 2:
-                mouvementHaut();
+                room.posX = perso.posX - entreeX;
+                room.posY = perso.posY;
                 break;
-
             case 3:
-                mouvementGauche();
+                room.posX = perso.posX;
+                room.posY = perso.posY - entreeY;
                 break;
-            
             default:
                 break;
         }
     }
 
-    ajouterSalle ();
+    // Verify room boundaries
+    if (room.posX < 0 || room.posX + room.largeur >= DIMENSION_MAP || room.posY < 0 || room.posY + room.longueur >= DIMENSION_MAP) {
+        map[perso.posX][perso.posY].contenu = -1;
+
+        switch (cote) {
+            case 0:
+                mouvementBas();
+                break;
+            case 1:
+                mouvementDroite();
+                break;
+            case 2:
+                mouvementHaut();
+                break;
+            case 3:
+                mouvementGauche();
+                break;
+            default:
+                break;
+        }
+    }
+
+    ajouterSalle();
     map[perso.posX][perso.posY].contenu = 1;
 
     return EXIT_SUCCESS;
-
 }
 
 int generation(int longueur, int largeur, int num_salle, int cote){
 
-    tile **p = malloc(sizeof(tile *)*largeur);
-    if(p==NULL){
+    tile **p = malloc(sizeof(tile *) * largeur);
+    if (p == NULL) {
         printf("Echec de l'allocation\n");
         return EXIT_FAILURE;
     }
     
-    for(unsigned i = 0 ; i<largeur ; i++){
-        p[i]=malloc(sizeof(tile)*longueur);
+    for (unsigned i = 0; i < largeur; i++) {
+        p[i] = malloc(sizeof(tile) * longueur);
         
-        if(p[i]==NULL){
+        if (p[i] == NULL) {
             printf("Echec de l'allocation\n");
+            // Free previously allocated memory to prevent memory leaks
+            for (unsigned j = 0; j < i; j++) {
+                free(p[j]);
+            }
+            free(p);
             return EXIT_FAILURE;
+        }
+    }
+
+    // Initialize the tiles to some default state
+    for (unsigned i = 0; i < largeur; i++) {
+        for (unsigned j = 0; j < longueur; j++) {
+            p[i][j].contenu = 0;
+            p[i][j].mstr.hp = 0;
+            p[i][j].mstr.xp = 0;
+            p[i][j].mstr.loot = 0;
+            p[i][j].mstr.frameAnimation = 0;
+            p[i][j].spe.type = 0;
+            p[i][j].spe.inv = 0;
         }
     }
 
@@ -216,6 +250,7 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     for(unsigned i = 0 ; i<largeur ; i++){
         for(unsigned j = 0 ; j<largeur ; j++){
             if(j==0 || j==largeur-1 || i==0 || i==longueur-1){
+                
                 if (p[i][j].contenu != -1){
                     p[i][j].contenu = -2;
                 }
@@ -288,6 +323,28 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                     }
 
                 }
+                else {
+
+                    p[i][j].contenu = 0;
+                    p[i][j].mstr.hp = 0;
+                    p[i][j].mstr.xp = 0;
+                    p[i][j].mstr.loot = 0;
+                    p[i][j].mstr.frameAnimation = 0;
+                    p[i][j].spe.type = 0;
+                    p[i][j].spe.inv = 0;
+
+                }
+            }
+            else {
+                
+                p[i][j].contenu = 0;
+                p[i][j].mstr.hp = 0;
+                p[i][j].mstr.xp = 0;
+                p[i][j].mstr.loot = 0;
+                p[i][j].mstr.frameAnimation = 0;
+                p[i][j].spe.type = 0;
+                p[i][j].spe.inv = 0;
+
             }
             
         }
@@ -301,29 +358,29 @@ int generation(int longueur, int largeur, int num_salle, int cote){
 }   
 
 
-void ajouterSalle (void){
-    int n = 0,m = 0;
+void ajouterSalle(void) {
+    int n = 0, m = 0;
     char str[20];
-    sprintf(str,"%d, %d | %d, %d",room.posX, room.posX + room.largeur, room.posY, room.posY + room.longueur);
+    sprintf(str, "%d, %d | %d, %d", room.posX, room.posX + room.largeur, room.posY, room.posY + room.longueur);
     debug(str);
-    for(unsigned int i = room.posX; i < room.posX + room.largeur; i++){
-        for(unsigned int j = room.posY; j < room.posY + room.longueur; j++){
-            map[i][j].contenu = room.cases[n][m].contenu;
 
+    for (unsigned int i = room.posX; i < room.posX + room.largeur; i++) {
+        for (unsigned int j = room.posY; j < room.posY + room.longueur; j++) {
+            map[i][j].contenu = room.cases[n][m].contenu;
             map[i][j].mstr.hp = room.cases[n][m].mstr.hp;
             map[i][j].mstr.xp = room.cases[n][m].mstr.xp;
             map[i][j].mstr.loot = room.cases[n][m].mstr.loot;
             map[i][j].mstr.frameAnimation = room.cases[n][m].mstr.frameAnimation;
-
             map[i][j].spe.type = room.cases[n][m].spe.type;
             map[i][j].spe.inv = room.cases[n][m].spe.inv;
-            sprintf(str,"%d, %d | %d, %d",i, j, map[i][j].contenu, room.cases[n][m].contenu);
+
+            sprintf(str, "%d, %d | %d, %d", i, j, map[i][j].contenu, room.cases[n][m].contenu);
             debug(str);
 
-            n++;
+            m++;
         }
-        n = 0;
-        m++;
+        m = 0;
+        n++;
     }
 }
 
