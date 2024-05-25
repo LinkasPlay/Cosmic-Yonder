@@ -368,25 +368,76 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
 }
 
 void new_game_screen(WINDOW *menu_win) {
-    int width = 50;
+
+   int width = 50;
     int height = 10;
     int startx = (COLS - width) / 2;
     int starty = (LINES - height) / 2;
 
     WINDOW *new_game_win = newwin(height, width, starty, startx);
     box(new_game_win, 0, 0);
+    refresh();
 
-    char player_name[50];
-    int seed;
+    char player_name[50] = "";
+    char seed_str[10] = "";
+    int step = 0;
+    int ch;
 
-    mvwprintw(new_game_win, 1, 2, "Enter Player Name:");
-    mvwgetnstr(new_game_win, 2, 2, player_name, sizeof(player_name) - 1);
+    while (1) {
+        wclear(new_game_win);
+        box(new_game_win, 0, 0);
 
-    mvwprintw(new_game_win, 4, 2, "Enter Seed:");
-    wscanw(new_game_win, "%d", &seed);
+        switch (step) {
+            case 0:
+                mvwprintw(new_game_win, 1, 2, "Enter Player Name:");
+                mvwprintw(new_game_win, 2, 2, "%s", player_name);
+                break;
+            case 1:
+                mvwprintw(new_game_win, 1, 2, "Enter Seed:");
+                mvwprintw(new_game_win, 2, 2, "%s", seed_str);
+                break;
+        }
+        wrefresh(new_game_win);
 
-    wrefresh(new_game_win);
+        ch = getch();
+        switch (ch) {
+            case 10: // Enter key
+                if (step == 0) {
+                    step = 1;
+                } else if (step == 1) {
+                    step = 2;
+                }
+                break;
+            case KEY_BACKSPACE:
+            case 127:
+                if (step == 0 && strlen(player_name) > 0) {
+                    player_name[strlen(player_name) - 1] = '\0';
+                } else if (step == 1 && strlen(seed_str) > 0) {
+                    seed_str[strlen(seed_str) - 1] = '\0';
+                }
+                break;
+            default:
+                if (step == 0 && strlen(player_name) < sizeof(player_name) - 1 && isprint(ch)) {
+                    player_name[strlen(player_name)] = ch;
+                    player_name[strlen(player_name) + 1] = '\0';
+                } else if (step == 1 && strlen(seed_str) < sizeof(seed_str) - 1 && isdigit(ch)) {
+                    seed_str[strlen(seed_str)] = ch;
+                    seed_str[strlen(seed_str) + 1] = '\0';
+                }
+                break;
+        }
+
+        if (step == 2) {
+            break;
+        }
+    }
+
+    int seed = atoi(seed_str);
+
     delwin(new_game_win);
+
+    // Continue with the game setup using player_name and seed
+}
 
     // Continue with the game setup using player_name and seed
 }
