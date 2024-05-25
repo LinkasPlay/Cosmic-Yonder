@@ -1,4 +1,4 @@
-#include "cosmicyonder.h"
+#include "cosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>

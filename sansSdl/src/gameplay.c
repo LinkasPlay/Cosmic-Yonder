@@ -8,7 +8,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
-#include "cosmicYonder.h"
+
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
