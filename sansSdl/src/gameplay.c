@@ -71,6 +71,7 @@ void lvlMaj(monstre mstr){
 }
 
 int testSol(int x, int y,int cote){
+    /*
     switch (map[x][y].contenu){
 
     case -2:
@@ -93,6 +94,8 @@ int testSol(int x, int y,int cote){
         return 1;
         break;
     }
+    */
+   return 1;
 }
 
 int degatMonstre(int dmg, monstre mstr){

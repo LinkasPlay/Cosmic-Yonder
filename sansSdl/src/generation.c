@@ -24,7 +24,7 @@ extern personnage perso;
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
-int graine=69; 
+extern int graine;
 int entreeX;
 int entreeY;
 
