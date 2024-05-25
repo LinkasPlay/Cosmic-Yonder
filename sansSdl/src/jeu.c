@@ -19,6 +19,9 @@ extern personnage perso;
 int start_y;
 int start_x;
 
+extern int Xcamera;
+extern int Ycamera;
+
 int camera(WINDOW * win);
 
 extern int mouvementHaut(void);
@@ -133,13 +136,57 @@ int jeu (void) {
 		debug("Map créé");
     }
 
+	char str[20];
+	sprintf(str, "%d, %d, %d", map[perso.posX][perso.posY].contenu, perso.posX, perso.posY);
+	debug(str);
+	getch();
+
+	Xcamera = perso.posX - 4;
+	Ycamera = perso.posY - 1;
+
+	sprintf(str, "%d, %d", Xcamera, Ycamera);
+	debug(str);
+	getch();
+	
+	for (unsigned int i = perso.posY - 15; i <= perso.posY + 15; i++) {
+		for (unsigned int j = perso.posX - 25; j <= perso.posX + 25; j++) {
+			// Vérifiez que les indices ne dépassent pas les limites du tableau map
+			if (i >= 0 && i < DIMENSION_MAP && j >= 0 && j < DIMENSION_MAP) {
+				contenuCase = map[i][j];
+			}
+		}
+	}
+
+	// Rafraîchir pour afficher les changements
+	wrefresh(win);
+	
+
 	if (camera(win) != EXIT_SUCCESS){
 		printf("Probleme fonction camera");
 		endwin();
 		exit(EXIT_FAILURE);
 	}
 
-	
+	wrefresh(win);
+
+	getch();
+	/*
+	WINDOW *boiteCase;
+
+	boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, 3 * CASE_HEIGHT, 5 * CASE_WIDTH);
+    //box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
+    wrefresh(boiteCase);
+	contenuCase.contenu = 1;
+	if (texture(boiteCase) != EXIT_SUCCESS) {
+        mvwprintw(win, 1, 1, "Fonction texture interrompue");
+        delwin(boiteCase);
+        return EXIT_FAILURE;
+    }
+	wrefresh(boiteCase);
+	*/
+
+	// Attendre une entrée de l'utilisateur avant de fermer
+	getch();
 	
 	// Boucle de jeu ******************************************************************************** /
 
@@ -269,6 +316,7 @@ int jeu (void) {
 int camera(WINDOW *win) {
 	debug("Camerara");
     int max_y, max_x;
+	char str[20];
     getmaxyx(win, max_y, max_x);
 
     int Xcase, Ycase;
@@ -278,7 +326,7 @@ int camera(WINDOW *win) {
     for (Xcase = 0; Xcase < max_x / CASE_WIDTH; Xcase++) {
         for (Ycase = 0; Ycase < max_y / CASE_HEIGHT; Ycase++) {
 
-            contenuCase = map[Xcamera + Xcase][Ycamera + Ycase];
+            contenuCase.contenu = map[Xcamera + Xcase][Ycamera + Ycase].contenu;
             boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, start_y + Ycase * CASE_HEIGHT, start_x + Xcase * CASE_WIDTH);
             //box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
             wrefresh(boiteCase);
@@ -288,6 +336,9 @@ int camera(WINDOW *win) {
 					return EXIT_FAILURE;
 				}
 			}
+			sprintf(str, "%d, %d, %d", contenuCase.contenu, Xcamera + Xcase, Ycamera + Ycase);
+			debug(str);
+			getch();
 
             if (texture(boiteCase) != EXIT_SUCCESS) {
                 mvwprintw(win, 1, 1, "Fonction texture interrompue");

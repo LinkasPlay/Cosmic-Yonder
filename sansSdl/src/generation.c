@@ -113,13 +113,14 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     int al = 1;
     int portes[4];
 
-    portes[cote] = -1;
+    
     if (porteLibre == 1){
         portes[0] = 1;
         portes[1] = 1;
         portes[2] = 1;
         portes[3] = 1;
     }
+    portes[cote] = -1;
     
     for(unsigned i=0 ; i<4 ; i++){
         if (num_salle == 1){

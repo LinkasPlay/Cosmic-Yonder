@@ -11,14 +11,16 @@
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
+extern int nouvelleSalle(int longueur, int largeur, int num_salle, int cote);
+extern void debug(char * msg);
 
 personnage perso;
 personnage persoPast;
 extern int room;
 int inv[7];
 
-int Xcamera = (DIMENSION_MAP / 2) - 7;
-int Ycamera = (DIMENSION_MAP / 2) - 4;
+int Xcamera = 0;
+int Ycamera = 0;
 tile **map;
 
 int creeMap(void) {
@@ -58,7 +60,7 @@ int creeMap(void) {
         }
     }
 
-    if (generation(5, 5, 1, 0) != EXIT_SUCCESS){
+    if (nouvelleSalle(5, 5, 1, 0) != EXIT_SUCCESS){
         printf("Erreur generation salle 1");
         return EXIT_FAILURE;
     }
@@ -128,9 +130,7 @@ void debug(char * msg) {
         printf("Impossible d'ouvrir le fichier.\n");
         return;
     }
-    
     fprintf(fichier, "%s \n", msg);
 
     fclose(fichier);
-
 }

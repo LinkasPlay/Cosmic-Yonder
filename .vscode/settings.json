@@ -8,7 +8,8 @@
     "pthread.h": "c",
     "stdio.h": "c",
     "cosmicyonder.h": "c",
-    "math.h": "c"
+    "math.h": "c",
+    "limits": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
