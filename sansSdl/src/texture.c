@@ -62,6 +62,7 @@ int texture(WINDOW *win) {
             image = "image/sol.txt";
             break;
         case 1:
+            /*
             switch (perso.direction) {
                 case 1:
                     if (perso.frameAnimation < FRAME_IN_ANIMATION + 1)
@@ -104,12 +105,14 @@ int texture(WINDOW *win) {
                         image = "image/personnage/personnageDroite (4).txt";
                     break;
                 default:
-                    image = "image/espace.txt"; // Case défaut au cas ou il y a un pb
+                    image = "image/personnage/personnageHaut (1).txt"; // Case défaut au cas ou il y a un pb
                     break;
             }
             if (perso.frameAnimation >= FRAME_IN_ANIMATION * 4) {
                 perso.frameAnimation = 0;
             }
+            */
+            image = "image/personnage/personnageHaut (1).txt";
             break;
         case 2:
             image = "image/monstre.txt";

@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "CosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -12,6 +12,7 @@
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 void start_ncurses(bool useRaw, bool useNoecho);
+void demander_nom_et_graine(void);
 //void printMenu(WINDOW * menu, stdin choices[], int size, int highlight);
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
@@ -19,6 +20,7 @@ extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern void* play_music(void* arg);
 
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
+
 
 extern int liberationMap(void);
 
@@ -32,6 +34,7 @@ salle room;
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
+
 
 char *choices[] = { 
     "Nouvelle partie",
@@ -96,6 +99,7 @@ int click_souris() {
     return 0;
 }
 
+
 int main(int argc, char **argv) {
     ncurses_initialiser();
     ncurses_couleurs();
@@ -126,54 +130,7 @@ int main(int argc, char **argv) {
 
     init_pair(1, COLOR_CYAN, COLOR_WHITE);
 
-    /*
-    if (can_change_color()) {
-        printw("on peut changer la couleur\n");
-        init_color(COLOR_CYAN, 9, 999, 999);
-    }
-    attron(COLOR_PAIR(1));
-    printw("texte de fou");
-    attroff(COLOR_PAIR(1));
-
-    int ch;
-    ch = 0;
-    // Boucle pour détecter l'appui sur la touche espace
-    while ((ch = getch()) != ' ') {
-        // Rien à faire, juste attendre l'appui sur espace
-    }
-
-    box(win, 0, 0); // Dessine le cadre de la fenêtre
-    mvwprintw(win, 1, 1, "Chokbar de bz");
-    wrefresh(win);
-
-    win = newwin(10, 20, start_y + 0, start_x + 20);
-    box(win, 0, 0); // Dessine le cadre de la fenêtre
-    mvwprintw(win, 1, 1, "Chokbar de 2 bz");
-    wrefresh(win);
-
-    // Boucle pour détecter l'appui sur la touche espace
-    ch = 0;
-    while (ch != ' ') {
-        ch = getch();
-        // Rien à faire, juste attendre l'appui sur espace
-    }
-
-    //texte centré
-
-    char *msg = "Texte au centre";
-    int taille = strlen(msg);
-
-    while (1) {
-        clear(); // Efface le contenu de la fenêtre
-        mvprintw(LINES / 2, (COLS / 2) - (taille / 2), "%s", msg);
-        refresh();
-        if (getch() != 410)
-            break;
-    }
-
-    endwin();
-    */
-
+    //Création du menu principal
     WINDOW *menu_win;
     int highlight = 1;
     int choice = 0;
@@ -204,9 +161,14 @@ int main(int argc, char **argv) {
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
 
-
-
+    pthread_t music_th;
     
+    while(1){
+        int music_choice = 0; // Default music choice, change as needed
+        pthread_create(&music_th, NULL, play_music, &music_choice);
+    }
+
+
     while (1) {
         // Check for terminal resize
         int new_LINES = getmaxy(stdscr);
@@ -259,7 +221,6 @@ int main(int argc, char **argv) {
                 choice = highlight;
                 break;
             default:
-                mvprintw(24, 0, "Character pressed is = %3d Hopefully it can be printed as '%c'", c, c);
                 refresh();
                 break;
         }
@@ -267,15 +228,21 @@ int main(int argc, char **argv) {
             break;
     }
 
-    mvprintw(23, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
+    // Stoper the music 
+    stop_music = true;
+    pthread_join(music_th, NULL);
+
     clrtoeol();
     refresh();
     endwin();
 
+    //Reste du jeu
     switch (choice) {
         case 1:
-            endwin();
+            //mettre nom + graine + musique vaisseau
+            // j'ai essayé plusieurs programme mais ca affiche rien
             perso.lvl = 0;
+            demander_nom_et_graine();
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
@@ -400,3 +367,49 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
     }
     wrefresh(menu_win);
 }
+
+void demander_nom_et_graine(void) {
+    // Taille maximale du nom
+    const int nom_max_len = 50;
+
+    int LINES = getmaxy(stdscr);
+    int COLS = getmaxx(stdscr);
+
+    // Calculer les positions de la fenêtre et de l'entrée
+    int winHauteur = 10;
+    int winLargeur = 40;
+    int winY = (LINES - winHauteur) / 2;
+    int winX = (COLS - winLargeur) / 2;
+
+    WINDOW *input_win = newwin(winHauteur, winLargeur, winY, winX);
+    box(input_win, 0, 0);
+    mvwprintw(input_win, 1, 1, "Entrez votre nom:");
+    mvwprintw(input_win, 3, 1, "Entrez une graine:");
+
+    // Afficher la fenêtre
+    wrefresh(input_win);
+
+    // Lire le nom du joueur
+    char * nom;
+    mvwgetnstr(input_win, 2, 1, nom, nom_max_len);
+    
+    // Lire la graine
+    char graine_str[10];
+    mvwgetnstr(input_win, 4, 1, graine_str, 10);
+    int graine = atoi(graine_str);
+
+    // Nettoyer la fenêtre
+    delwin(input_win);
+
+    // Terminer ncurses
+    endwin();
+}
+
+
+
+
+
+
+
+
+
