@@ -81,6 +81,7 @@ int testSol(int x, int y,int cote){
         break;
 
     case -1:
+        num_salle ++;
         int largeur = aleatoire(15 * num_salle, graine * 7, 5, 11);
         int longueur = aleatoire(9 * num_salle, graine * 2, 5, 11);
         nouvelleSalle(longueur, largeur, num_salle, cote);
@@ -473,5 +474,3 @@ int pause(){
     }
     return EXIT_SUCCESS;
 }
-
-//etstetsttdcudsufichuezjdkjxfophuviberudijsxghuibvuicejdsjx,nbfhjcuizehbzjerfohvfuibjoevdfhubjndkciodvjfio vhjnkfdvk,rfdbjig vbjkc,dfkregokjitgbnb bvfkdfezfijgrbn vc
