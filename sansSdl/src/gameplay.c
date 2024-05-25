@@ -10,6 +10,7 @@
 
 
 
+
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 /*
@@ -50,6 +51,7 @@ extern int afficher_image_ascii(WINDOW *win, const char *filename);
 extern void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
 extern int nouvelleSalle(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
+extern void save_game(const char *filename);
 
 extern tile **map;
 extern int graine;
@@ -455,6 +457,8 @@ int pause(){
             return EXIT_SUCCESS;
             break;
         case 2:
+            save_game("Fichierdesauvegarde.txt");
+            // mettre un texte pour dire si la sauvegarde s'est lancé ou pas
             return EXIT_SUCCESS;
             break;
             

@@ -39,9 +39,9 @@ void save_game(const char *filename) {
     fwrite(&Xcamera, sizeof(int), 1, file);
     fwrite(&Ycamera, sizeof(int), 1, file);
 
-    //fwrite(&nbSalles, sizeof(int), 1, file);
+    fwrite(&nbSalles, sizeof(int), 1, file);
 
-    /*
+    
 
     for (int i = 0; i < nbSalles; ++i) {
         salle *s = room.cases[i];
@@ -65,7 +65,7 @@ void save_game(const char *filename) {
         }
     }
 
-    */
+    
 
     fclose(file);
 }
