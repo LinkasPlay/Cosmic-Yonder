@@ -211,7 +211,7 @@ void afficher_coeur(WINDOW *win, const char *filename, int start_y, int start_x)
 
 // Fonction pour afficher trois coeurs
 void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x) {
-    int decalage = 10; // Décalage entre les coeurs
+    int decalage = 6; // Décalage entre les coeurs
 
     // Afficher les trois coeurs
     for (int i = 0; i < 3; i++) {

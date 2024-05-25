@@ -350,8 +350,8 @@ int camera(WINDOW *win) {
     }
 	wrefresh(boiteCase);
     perso.frameAnimation++;
-
-	afficher_coeurs(win,"coeur.txt", 0, 0);
+	boiteCase = newwin(3, 20, 0, 0);
+	afficher_coeurs(boiteCase,"image/coeur.txt", 0, 0);
     return EXIT_SUCCESS;
 }
 
