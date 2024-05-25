@@ -4,7 +4,7 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include <string.h>
-
+#include "sauvegarde.h"
 #include <pthread.h>
 #include <pulse/simple.h>
 #include <pulse/error.h>
@@ -41,10 +41,11 @@ char *choices[] = {
     "Charger partie",
     "Option",
     "Soundtrack",
+    "Sauvegarder la partie", // Nouvelle option pour sauvegarder
     "Quitter le jeu",
 };
 
-int n_choices = 5;
+int n_choices = 6;
 
 void ncurses_initialiser() {
     initscr();          /* Démarre le mode ncurses */
@@ -239,24 +240,19 @@ int main(int argc, char **argv) {
     //Reste du jeu
     switch (choice) {
         case 1:
-            //mettre nom + graine + musique vaisseau
-            // j'ai essayé plusieurs programme mais ca affiche rien
             perso.lvl = 0;
             demander_nom_et_graine();
-            if(jeu() != EXIT_SUCCESS){
+            if (jeu() != EXIT_SUCCESS) {
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
             }
 
-            if(liberationMap() != EXIT_SUCCESS){
+            if (liberationMap() != EXIT_SUCCESS) {
                 printf("Erreur liberation map");
                 exit(EXIT_FAILURE);
             }
-
             endwin();
-
             return EXIT_SUCCESS;
-            break;
         case 2:
             if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
                 printf("Erreur generation salle\n");
@@ -271,32 +267,28 @@ int main(int argc, char **argv) {
             }
 
             int tabLa, tabLo;
-
             printf("Valeur de la longueur puis de la largeur de la salle : \n");
             scanf("%d", &tabLa);
 
-            // Libération de la mémoire de la première génération
             for (unsigned i = 0; i < 5; ++i) {
                 free(room.cases[i]);
             }
             free(room.cases);
-            room.cases = NULL; // Réinitialisation de room.cases pour éviter la double libération
+            room.cases = NULL;
 
             scanf("%d", &tabLo);
-
             if (generation(tabLa, tabLo, 5, 2) != EXIT_SUCCESS) {
                 printf("Erreur generation salle\n");
                 exit(EXIT_FAILURE);
             }
 
             for (unsigned i = 0; i < tabLa; ++i) {
-                for (unsigned j = 0; j < tabLo; ++j) {
+                for (unsigned j = 0; ++j < tabLo) {
                     printf("[ %d ] ", room.cases[i][j].contenu);
                 }
                 printf("\n");
             }
 
-            // Libération de la mémoire de la deuxième génération
             for (unsigned i = 0; i < tabLa; ++i) {
                 free(room.cases[i]);
             }
@@ -304,40 +296,36 @@ int main(int argc, char **argv) {
             room.cases = NULL;
             endwin();
             break;
-            
         case 4:
             printf("debut musique ==================== \n");
             printf("Quelle musique ?");
             scanf("%d", &x);
 
-            // Créer un thread pour jouer la musique
             pthread_t music_thread;
             pthread_create(&music_thread, NULL, play_music, &x);
 
-            // Boucle pour détecter l'appui sur la touche espace
             ch = 0;
             while (ch != 10) {
                 ch = getch();
-                // Rien à faire, juste attendre l'appui sur espace
             }
 
-            // Arrêter la musique et attendre la fin du thread
             stop_music = true;
             pthread_join(music_thread, NULL);
-
-            // Terminer ncurses
             endwin();
             break;
-
         case 5:
             printf("Fin du jeu\n");
             endwin();
             exit(EXIT_SUCCESS);
             break;
-        
+        case 5: // Nouvelle option pour sauvegarder la partie
+            save_game("savegame.dat");
+            printf("Jeu sauvegardé.\n");
+            break;
         default:
             break;
-    }
+}
+
     // Boucle pour détecter l'appui sur la touche espace
     ch = 0;
     while (ch != ' ') {
