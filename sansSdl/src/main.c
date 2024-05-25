@@ -1,4 +1,4 @@
-#include "cosmicYonder.h"
+#include "cosmicyonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -157,6 +157,12 @@ int main(int argc, char **argv) {
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
 
+    //Musique du menu
+    pthread_t music_thread;
+    int music_choice = 0; // Choisissez un numéro de musique pour le menu
+    stop_music = false;
+    pthread_create(&music_thread, NULL, play_music, &music_choice);
+
 
     while (1) {
         // Check for terminal resize
@@ -220,6 +226,10 @@ int main(int argc, char **argv) {
     clrtoeol();
     refresh();
     endwin();
+
+    // Arrêter la musique du menu
+    stop_music = true;
+    pthread_join(music_thread, NULL);
 
     //Reste du jeu
     switch (choice) {
