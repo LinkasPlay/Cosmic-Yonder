@@ -12,6 +12,7 @@
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 void start_ncurses(bool useRaw, bool useNoecho);
+void demander_nom_et_graine(char *nom, int *graine);
 //void printMenu(WINDOW * menu, stdin choices[], int size, int highlight);
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
@@ -33,7 +34,7 @@ salle room;
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
-void new_game_screen(WINDOW *menu_win);
+
 
 char *choices[] = { 
     "Nouvelle partie",
@@ -239,9 +240,7 @@ int main(int argc, char **argv) {
             //mettre nom + graine + musique vaisseau
             // j'ai essayé plusieurs programme mais ca affiche rien
             perso.lvl = 0;
-            ncurses_initialiser();
-            new_game_screen(menu_win);
-            endwin();
+            demander_nom_et_graine(char *nom, int *graine);
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
@@ -367,27 +366,47 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
     wrefresh(menu_win);
 }
 
-void new_game_screen(WINDOW *menu_win) {
-    int width = 50;
-    int height = 10;
-    int startx = (COLS - width) / 2;
-    int starty = (LINES - height) / 2;
+void demander_nom_et_graine(char *nom, int *graine) {
+    // Taille maximale du nom
+    const int nom_max_len = 50;
 
-    WINDOW *new_game_win = newwin(height, width, starty, startx);
-    box(new_game_win, 0, 0);
+    int LINES = getmaxy(stdscr);
+    int COLS = getmaxx(stdscr);
 
-    char player_name[50];
-    int seed;
+    // Calculer les positions de la fenêtre et de l'entrée
+    int winHauteur = 10;
+    int winLargeur = 40;
+    int winY = (LINES - winHauteur) / 2;
+    int winX = (COLS - winLargeur) / 2;
 
-    mvwprintw(new_game_win, 1, 2, "Enter Player Name:");
-    mvwgetnstr(new_game_win, 2, 2, player_name, sizeof(player_name) - 1);
+    WINDOW *input_win = newwin(winHauteur, winLargeur, winY, winX);
+    box(input_win, 0, 0);
+    mvwprintw(input_win, 1, 1, "Entrez votre nom:");
+    mvwprintw(input_win, 3, 1, "Entrez une graine:");
 
-    mvwprintw(new_game_win, 4, 2, "Enter Seed:");
-    wscanw(new_game_win, "%d", &seed);
+    // Afficher la fenêtre
+    wrefresh(input_win);
 
-    wrefresh(new_game_win);
-    delwin(new_game_win);
+    // Lire le nom du joueur
+    mvwgetnstr(input_win, 2, 1, nom, nom_max_len);
+    
+    // Lire la graine
+    char graine_str[10];
+    mvwgetnstr(input_win, 4, 1, graine_str, 10);
+    *graine = atoi(graine_str);
 
-    // Continue with the game setup using player_name and seed
+    // Nettoyer la fenêtre
+    delwin(input_win);
+
+    // Terminer ncurses
+    endwin();
 }
+
+
+
+
+
+
+
+
 
