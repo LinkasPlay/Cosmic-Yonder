@@ -9,6 +9,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 #define FRAME_IN_ANIMATION 2
+#define MAX_LINE_LEN 100
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
@@ -188,4 +189,33 @@ int textureSimple(WINDOW *win, int i, int j) {
     return EXIT_SUCCESS;
 }
 
+// Fonction pour afficher le contenu d'un fichier ASCII à une position donnée
+void afficher_coeur(WINDOW *win, const char *filename, int start_y, int start_x) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Erreur d'ouverture de fichier");
+        return;
+    }
+
+    char line[MAX_LINE_LEN];
+    int y = start_y;
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        mvwprintw(win, y, start_x, "%s", line);
+        y++;
+    }
+
+    fclose(file);
+    wrefresh(win);
+}
+
+// Fonction pour afficher trois coeurs
+void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x) {
+    int decalage = 10; // Décalage entre les coeurs
+
+    // Afficher les trois coeurs
+    for (int i = 0; i < 3; i++) {
+        afficher_coeur(win, filename, start_y, start_x + i * decalage);
+    }
+}
 //test
