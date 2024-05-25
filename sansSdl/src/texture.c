@@ -218,4 +218,29 @@ void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x
         afficher_coeur(win, filename, start_y, start_x + i * decalage);
     }
 }
+
+void afficher_inventaire(WINDOW *win) {
+    // Liste des objets et leurs quantités
+    char *objets[] = {"Epee", "Pistolet", "Potions de vie", "Potion d'expérience", "Clé à molette", "Clés pour les portes", "Grande clé"};
+    int n_objets = sizeof(objets) / sizeof(objets[0]);
+
+    int x = 2;
+    int y = 2;
+
+    // Effacer la fenêtre précédente
+    werase(win);
+
+    // Réimprimer la bordure de la fenêtre
+    box(win, 0, 0);
+
+    // Afficher les objets et leurs quantités
+    for (int i = 0; i < n_objets; ++i) {
+        mvwprintw(win, y, x, "%s: %d", objets[i], n_objets);
+        ++y;
+    }
+
+    // Actualiser la fenêtre
+    wrefresh(win);
+}
+
 //test
