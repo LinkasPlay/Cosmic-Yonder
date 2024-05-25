@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <ncurses.h>
@@ -78,5 +77,3 @@ void* play_music(void* arg) {
 
     return NULL;
 }
-
-//test

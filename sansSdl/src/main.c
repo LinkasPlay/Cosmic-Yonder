@@ -98,11 +98,18 @@ int click_souris() {
 
 
 int main(int argc, char **argv) {
-    ncurses_initialiser();
-    ncurses_couleurs();
-    ncurses_souris();
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+    refresh();
+    curs_set(FALSE);
 
-    raw(); // Utiliser raw pour obtenir les touches directement
+    if (has_colors()) {
+        start_color();
+    }
+
+    raw();
 
     int start_y = 10;
     int start_x = 10;
@@ -113,22 +120,16 @@ int main(int argc, char **argv) {
     WINDOW *win = newwin(10, 20, start_y, start_x);
     refresh();
 
-    /*
-        COLOR_PAIR(n)
-        COLOR_BLACK 0
-        COLOR_RED 1
-        COLOR_GREEN 2
-        COLOR_YELLOW 3
-        COLOR_BLUE 4
-        COLOR_MAGENTA 5
-        COLOR_CYAN 6
-        COLOR_WHITE 7
-    */
-
     init_pair(1, COLOR_CYAN, COLOR_WHITE);
 
-    //Création du menu principal
-    WINDOW *menu_win;
+    char *choices[] = { 
+        "Nouvelle partie",
+        "Charger partie",
+        "Option",
+        "Soundtrack",
+        "Quitter le jeu",
+    };
+    int n_choices = sizeof(choices) / sizeof(choices[0]);
     int highlight = 1;
     int choice = 0;
     int c = 0;
@@ -139,35 +140,29 @@ int main(int argc, char **argv) {
     int winHauteur = (int)(LINES * 0.3);
     int winLargeur = (int)(COLS * 0.6);
 
-    int titleY = ((LINES - 5)/6);
+    int titleY = ((LINES - 5) / 6);
     int titleX = (COLS - 69) / 2;
 
     int winY = ((LINES - winHauteur) / 4) * 3;
     int winX = (COLS - winLargeur) / 2;
     WINDOW *title = newwin(5, 69, titleY, titleX);
 
-    if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
-
+    if (afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS) {
         printf("Erreur");
         exit(EXIT_FAILURE);
     }
     wrefresh(title);
 
-    menu_win = newwin(winHauteur, winLargeur, winY, winX);
+    WINDOW *menu_win = newwin(winHauteur, winLargeur, winY, winX);
     keypad(menu_win, TRUE);
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
 
     pthread_t music_th;
-    
-    while(1){
-        int music_choice = 0; // Default music choice, change as needed
-        pthread_create(&music_th, NULL, play_music, &music_choice);
-    }
-
+    int music_choice = 0;
+    pthread_create(&music_th, NULL, play_music, &music_choice);
 
     while (1) {
-        // Check for terminal resize
         int new_LINES = getmaxy(stdscr);
         int new_COLS = getmaxx(stdscr);
         if (new_LINES != LINES || new_COLS != COLS) {
@@ -179,18 +174,17 @@ int main(int argc, char **argv) {
 
             winY = (LINES - winHauteur) / 2;
             winX = (COLS - winLargeur) / 2;
-            titleY = ((LINES - 5)/6);
+            titleY = ((LINES - 5) / 6);
             titleX = (COLS - 69) / 2;
 
             clear();
             refresh();
 
-            // Delete the old window and create a new one
             delwin(menu_win);
             menu_win = newwin(winHauteur, winLargeur, winY, winX);
+            delwin(title);
             title = newwin(5, 69, titleY, titleX);
-            if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
-
+            if (afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS) {
                 printf("Erreur");
                 exit(EXIT_FAILURE);
             }
@@ -221,11 +215,10 @@ int main(int argc, char **argv) {
                 refresh();
                 break;
         }
-        if (choice != 0) // User did a choice come out of the infinite loop
+        if (choice != 0) // User made a choice, break out of the loop
             break;
     }
 
-    // Stoper the music 
     stop_music = true;
     pthread_join(music_th, NULL);
 
@@ -233,27 +226,22 @@ int main(int argc, char **argv) {
     refresh();
     endwin();
 
-    //Reste du jeu
     switch (choice) {
         case 1:
-            //mettre nom + graine + musique vaisseau
-            // j'ai essayé plusieurs programme mais ca affiche rien
             perso.lvl = 0;
             demander_nom_et_graine();
-            if(jeu() != EXIT_SUCCESS){
+            if (jeu() != EXIT_SUCCESS) {
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
             }
 
-            if(liberationMap() != EXIT_SUCCESS){
+            if (liberationMap() != EXIT_SUCCESS) {
                 printf("Erreur liberation map");
                 exit(EXIT_FAILURE);
             }
 
             endwin();
-
             return EXIT_SUCCESS;
-            break;
         case 2:
             if (generation(5, 5, 1, 0) != EXIT_SUCCESS) {
                 printf("Erreur generation salle\n");
@@ -267,82 +255,48 @@ int main(int argc, char **argv) {
                 printf("\n");
             }
 
-            int tabLa, tabLo;
-
-            printf("Valeur de la longueur puis de la largeur de la salle : \n");
-            scanf("%d", &tabLa);
-
-            // Libération de la mémoire de la première génération
             for (unsigned i = 0; i < 5; ++i) {
-                free(room.cases[i]);
-            }
-            free(room.cases);
-            room.cases = NULL; // Réinitialisation de room.cases pour éviter la double libération
-
-            scanf("%d", &tabLo);
-
-            if (generation(tabLa, tabLo, 5, 2) != EXIT_SUCCESS) {
-                printf("Erreur generation salle\n");
-                exit(EXIT_FAILURE);
-            }
-
-            for (unsigned i = 0; i < tabLa; ++i) {
-                for (unsigned j = 0; j < tabLo; ++j) {
-                    printf("[ %d ] ", room.cases[i][j].contenu);
-                }
-                printf("\n");
-            }
-
-            // Libération de la mémoire de la deuxième génération
-            for (unsigned i = 0; i < tabLa; ++i) {
                 free(room.cases[i]);
             }
             free(room.cases);
             room.cases = NULL;
             endwin();
             break;
-            
+        case 3:
+            printf("Options\n");
+            break;
         case 4:
             printf("debut musique ==================== \n");
             printf("Quelle musique ?");
             scanf("%d", &x);
 
-            // Créer un thread pour jouer la musique
             pthread_t music_thread;
             pthread_create(&music_thread, NULL, play_music, &x);
 
-            // Boucle pour détecter l'appui sur la touche espace
             ch = 0;
-            while (ch != 10) {
+            while (ch != 10) { // Enter key
                 ch = getch();
-                // Rien à faire, juste attendre l'appui sur espace
             }
 
-            // Arrêter la musique et attendre la fin du thread
             stop_music = true;
             pthread_join(music_thread, NULL);
 
-            // Terminer ncurses
             endwin();
             break;
-
         case 5:
             printf("Fin du jeu\n");
             endwin();
             exit(EXIT_SUCCESS);
             break;
-        
         default:
             break;
     }
-    // Boucle pour détecter l'appui sur la touche espace
+
     ch = 0;
     while (ch != ' ') {
         ch = getch();
-        // Rien à faire, juste attendre l'appui sur espace
     }
 
-  
     endwin();
 
     return EXIT_SUCCESS;
