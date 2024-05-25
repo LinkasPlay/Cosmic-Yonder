@@ -18,6 +18,7 @@ extern int mouvementHaut(void);
 extern int mouvementGauche(void);
 extern int mouvementBas(void);
 extern int mouvementDroite(void);
+extern void debug(char * msg);
 
 int porteLibre = 0;
 extern personnage perso;
@@ -55,9 +56,14 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote){
         printf("Erreur generation");
         return EXIT_FAILURE;
     }
-
-    room.posX = (perso.posX - entreeX);
-    room.posY = (perso.posY - entreeY);
+    if (num_salle == 1){
+        room.posX = (perso.posX - 2);
+        room.posY = (perso.posY - 2); 
+    }
+    else {
+        room.posX = (perso.posX - entreeX);
+        room.posY = (perso.posY - entreeY);
+    }
 
     if (room.posX < 0 || room.posX >= DIMENSION_MAP - room.largeur || room.posY < 0 || room.posY >= DIMENSION_MAP - room.longueur){
 
@@ -149,7 +155,6 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                 
                 
             }
-            printf("portes %d = %d \n", i, portes[i]);
             if (portes[i] == 1){
                 switch (i){
 
@@ -217,7 +222,7 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                 p[i][j].mstr.loot = 0;
                 p[i][j].mstr.frameAnimation = 0;
 
-                 p[i][j].spe.inv = 0;
+                p[i][j].spe.inv = 0;
 
             }
             else if (num_salle == 1){
@@ -295,8 +300,11 @@ int generation(int longueur, int largeur, int num_salle, int cote){
 
 void ajouterSalle (void){
     int n = 0,m = 0;
-    for(unsigned int i = room.posX; i <= room.largeur; i++){
-        for(unsigned int j = room.posY; i <= room.longueur; i++){
+    char str[20];
+    sprintf(str,"%d, %d | %d, %d",room.posX, room.posX + room.largeur, room.posY, room.posY + room.longueur);
+    debug(str);
+    for(unsigned int i = room.posX; i < room.posX + room.largeur; i++){
+        for(unsigned int j = room.posY; j < room.posY + room.longueur; j++){
             map[i][j].contenu = room.cases[n][m].contenu;
 
             map[i][j].mstr.hp = room.cases[n][m].mstr.hp;
@@ -306,6 +314,8 @@ void ajouterSalle (void){
 
             map[i][j].spe.type = room.cases[n][m].spe.type;
             map[i][j].spe.inv = room.cases[n][m].spe.inv;
+            sprintf(str,"%d, %d | %d, %d",i, j, map[i][j].contenu, room.cases[n][m].contenu);
+            debug(str);
 
             n++;
         }

@@ -30,6 +30,7 @@ int creeMap(void) {
     perso.posY = (DIMENSION_MAP / 2);
     perso.direction = 3;
     perso.frameAnimation = 0;
+    perso.hp = 3;
     perso.inv = inv;
     perso.lvl = 1;
     perso.xp = 0;
