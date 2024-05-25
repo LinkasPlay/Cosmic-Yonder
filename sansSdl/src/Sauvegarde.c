@@ -45,28 +45,21 @@ void save_game(const char *filename) {
     // fwrite(&nbSalles, sizeof(int), 1, file);  // Commenté, peut-être à décommenter si nécessaire
 
     // Boucle sur les salles du jeu pour écrire leurs données dans le fichier
-    for (int i = 0; i < num_salle; ++i) {
-        salle *s = room.cases[i];  // Récupération de la salle actuelle
-        fwrite(&s->num, sizeof(int), 1, file);  // Écriture des données de la salle
-        fwrite(&s->largeur, sizeof(int), 1, file);
-        fwrite(&s->longueur, sizeof(int), 1, file);
-        fwrite(&s->posX, sizeof(int), 1, file);
-        fwrite(&s->posY, sizeof(int), 1, file);
-
         // Boucle sur les cases de la salle pour écrire leurs données dans le fichier
-        for (int j = 0; j < s->largeur; ++j) {
-            for (int k = 0; k < s->longueur; ++k) {
-                tile *t = &s->cases[j][k];  // Récupération de la case actuelle
-                fwrite(&t->contenu, sizeof(int), 1, file);  // Écriture du contenu de la case
-                fwrite(&t->mstr.hp, sizeof(int), 1, file);  // Écriture de la santé du monstre
-                fwrite(&t->mstr.xp, sizeof(int), 1, file);  // Écriture de l'expérience du monstre
-                fwrite(&t->mstr.loot, sizeof(int), 1, file);  // Écriture du butin du monstre
-                fwrite(&t->mstr.frameAnimation, sizeof(int), 1, file);  // Écriture de l'animation du monstre
-                fwrite(&t->spe.type, sizeof(int), 1, file);  // Écriture du type spécial de la case
-                fwrite(&t->spe.inv, sizeof(int), 1, file);  // Écriture de l'inventaire spécial de la case
-            }
+        
+    for (int j = 0; j < DIMENSION_MAP; ++j) {
+        for (int k = 0; k < DIMENSION_MAP; ++k) {
+                
+            fwrite(&map[j][k].contenu, sizeof(int), 1, file);  // Écriture du contenu de la case
+            fwrite(&map[j][k].mstr.hp, sizeof(int), S1, file);  // Écriture de la santé du monstre
+            fwrite(&map[j][k].mstr.xp, sizeof(int), 1, file);  // Écriture de l'expérience du monstre
+            fwrite(&map[j][k].mstr.loot, sizeof(int), 1, file);  // Écriture du butin du monstre
+            fwrite(&map[j][k].mstr.frameAnimation, sizeof(int), 1, file);  // Écriture de l'animation du monstre
+            fwrite(&map[j][k].spe.type, sizeof(int), 1, file);  // Écriture du type spécial de la case
+            fwrite(&map[j][k].spe.inv, sizeof(int), 1, file);  // Écriture de l'inventaire spécial de la case
         }
     }
+
 
     fclose(file);  // Fermeture du fichier
 }
