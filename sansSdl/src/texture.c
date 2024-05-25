@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "CosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -15,6 +15,7 @@
 //Taille des cases = 5 x 10
 
 extern personnage perso;
+extern void debug(char * msg);
 
 int afficher_image_ascii(WINDOW *win, const char *filename) {
     FILE *file = fopen(filename, "r");
@@ -49,6 +50,7 @@ int texture(WINDOW *win) {
     switch (contenuCase.contenu) {
         case -5:
             image = "image/espace.txt";
+            debug("aaaaaaaaaaaaa");
             break;
         case -2:
             image = "image/mur.txt";

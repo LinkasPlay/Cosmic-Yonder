@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "CosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -8,7 +8,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
-#include "texture.h"
+
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
@@ -46,14 +46,21 @@ Expliquation gameplay du jeu :
 extern int texture( int argc, char **argv);
 extern int creeMap(void);
 extern int actualiserMap(void);
+extern int afficher_image_ascii(WINDOW *win, const char *filename);
+extern void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
+extern int nouvelleSalle(int longueur, int largeur, int num_salle, int cote);
+extern unsigned int aleatoire(int salle, int graine, int min, int max);
 
 extern tile **map;
+extern int graine;
 
 extern int Xcamera;
 extern int Ycamera;
 
 extern personnage perso;
 extern personnage persoPast;
+
+int num_salle;
 
 void lvlMaj(monstre mstr){
     perso.xp = perso.xp + mstr.xp;
@@ -63,6 +70,30 @@ void lvlMaj(monstre mstr){
     }
 }
 
+int testSol(int x, int y,int cote){
+    switch (map[x][y].contenu){
+
+    case -2:
+    case 3:
+        return 0;
+        break;
+
+    case -1:
+        int largeur = aleatoire(15 * num_salle, graine * 7, 5, 11);
+        int longueur = aleatoire(9 * num_salle, graine * 2, 5, 11);
+        nouvelleSalle(longueur, largeur, num_salle, cote);
+        return 1;
+        break;
+
+    case 2:
+        return 2;
+        break;
+    
+    default:
+        return 1;
+        break;
+    }
+}
 
 int degatMonstre(int dmg, monstre mstr){
     mstr.hp = mstr.hp - dmg;
@@ -78,6 +109,40 @@ int degatMonstre(int dmg, monstre mstr){
             perso.inv[mstr.loot] ++;
         }
     }
+}
+
+int monstreMouvement(int x, int y){
+    int x2 = x, y2 = y;
+    for(unsigned i = x-2; i < x+3; i++){
+        for(unsigned j = y-2; i < y+3; i++){
+            if (map[i][j].contenu == 1){
+                if (i <= x){
+                    x2 = x - 1;
+                }
+                else if (i > x){
+                    x2 = x + 1;
+                }
+                else if (j < y){
+                    y2 = y - 1;
+                }
+                else{
+                    y2 = y + 1;
+                }
+                map[x2][y2].contenu = map[x][y].contenu;
+                map[x2][y2].mstr = map[x][y].mstr;
+                map[x][y].contenu = 0;
+                map[x][y].mstr.frameAnimation = 0;
+                map[x][y].mstr.hp = 0;
+                map[x][y].mstr.xp = 0;
+                map[x][y].mstr.loot = 0;
+                return EXIT_SUCCESS;
+            }
+        }
+    }
+    
+    return EXIT_SUCCESS;
+
+
 }
 
 int attaqueEpee(void){
@@ -170,65 +235,236 @@ int attaqueEpee(void){
 }
 
 int mouvementHaut(void){
-    if ( (Ycamera != 0) ){
-        Ycamera = Ycamera - 1;
+    switch (testSol(perso.posX, perso.posY - 1, 2)) {
+    case 1:
+    case -1:
+        if ( (Ycamera != 0) ){
+            Ycamera = Ycamera - 1;
+        }
+        if (perso.posY > 1){
+            persoPast.posX = perso.posX;
+            persoPast.posY = perso.posY;
+            perso.direction = 1;
+            perso.posY = perso.posY - 1;
+        }
+        if (actualiserMap() != EXIT_SUCCESS){
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+        break;
+
+    case 2:
+        //degats
+        break;
+    
+    default:
+        break;
     }
-    if (perso.posY > 1){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 1;
-        perso.posY = perso.posY - 1;
-    }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
 }
 
 int mouvementGauche(void){
-    if ( (Xcamera != 0) ) {
-        Xcamera = Xcamera - 1;
+    switch (testSol(perso.posX - 1, perso.posY, 3)) {
+        case 1:
+        case -1:
+            if ( (Xcamera != 0) ) {
+                Xcamera = Xcamera - 1;
+            }
+            if (perso.posX > 1){
+                persoPast.posX = perso.posX;
+                persoPast.posY = perso.posY;
+                perso.direction = 2;
+                perso.posX = perso.posX - 1;
+            }
+            if (actualiserMap() != EXIT_SUCCESS){
+                return EXIT_FAILURE;
+            }
+            return EXIT_SUCCESS;
+
+        case 2:
+
+            break;
+    
+        default:
+            break;
     }
-    if (perso.posX > 1){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 2;
-        perso.posX = perso.posX - 1;
-    }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
 }
 
 int mouvementBas(void){
-    if ( (Ycamera < (DIMENSION_MAP - (WINDOW_HEIGHT / 100) ) ) ){
-        Ycamera = Ycamera + 1;
+    switch (testSol(perso.posX, perso.posY + 1, 0)) {
+        case 1:
+        case -1:
+            if ( (Ycamera < (DIMENSION_MAP - (WINDOW_HEIGHT / 100) ) ) ){
+                Ycamera = Ycamera + 1;
+            }
+            if (perso.posY < DIMENSION_MAP - 2){
+                persoPast.posX = perso.posX;
+                persoPast.posY = perso.posY;
+                perso.direction = 3;
+                perso.posY = perso.posY + 1;
+            }
+            if (actualiserMap() != EXIT_SUCCESS){
+                return EXIT_FAILURE;
+            }
+            return EXIT_SUCCESS;
+
+        case 2:
+
+            break;
+    
+        default:
+            break;
     }
-    if (perso.posY < DIMENSION_MAP - 2){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 3;
-        perso.posY = perso.posY + 1;
-    }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
 }
 
 int mouvementDroite(void){
-    if ( (Xcamera < (DIMENSION_MAP - (WINDOW_WIDTH / 100) ) ) ) {
-        Xcamera = Xcamera + 1;
+    switch (testSol(perso.posX + 1, perso.posY, 1)) {
+        case 1:
+        case -1:
+            if ( (Xcamera < (DIMENSION_MAP - (WINDOW_WIDTH / 100) ) ) ) {
+                Xcamera = Xcamera + 1;
+            }
+            if (perso.posX < DIMENSION_MAP - 2){
+                persoPast.posX = perso.posX;
+                persoPast.posY = perso.posY;
+                perso.direction = 4;
+                perso.posX = perso.posX + 1;
+            }
+            if (actualiserMap() != EXIT_SUCCESS){
+                return EXIT_FAILURE;
+            }
+            return EXIT_SUCCESS;
+
+        case 2:
+
+            break;
+    
+        default:
+            break;
     }
-    if (perso.posX < DIMENSION_MAP - 2){
-        persoPast.posX = perso.posX;
-        persoPast.posY = perso.posY;
-        perso.direction = 4;
-        perso.posX = perso.posX + 1;
+}
+
+char *choicepause[] = { 
+    "Reprendre la partie",
+    "Sauvegarder",
+    "Option",
+    "Quitter la partie",
+};
+
+int n_choicepause = 4;
+
+int pause(){
+    //Création du menu pause
+    endwin();
+    
+    WINDOW *menu_pause;
+    int highlight1 = 1;
+    int choice2 = 0;
+    int c2 = 0;
+
+    int LINES2 = getmaxy(stdscr);
+    int COLS2 = getmaxx(stdscr);
+
+    int winHauteur2 = (int)(LINES2 * 0.3);
+    int winLargeur2 = (int)(COLS2 * 0.6);
+
+    int titleY2 = ((LINES2 - 5)/6);
+    int titleX2 = (COLS2 - 71) / 2;
+
+    int winY2 = ((LINES2 - winHauteur2) / 4) * 3;
+    int winX2 = (COLS2 - winLargeur2) / 2;
+    WINDOW *title2 = newwin(5, 71, titleY2, titleX2);
+
+    if(afficher_image_ascii(title2, "image/pause.txt") != EXIT_SUCCESS){
+
+        printf("Erreur");
+        exit(EXIT_FAILURE);
     }
-    if (actualiserMap() != EXIT_SUCCESS){
-        return EXIT_FAILURE;
+    wrefresh(title2);
+
+    menu_pause = newwin(winHauteur2, winLargeur2, winY2, winX2);
+    keypad(menu_pause, TRUE);
+    refresh();
+    print_menu(menu_pause, highlight1, n_choicepause, choicepause);
+
+    while (1) {
+        // Check for terminal resize
+        int new_LINES2 = getmaxy(stdscr);
+        int new_COLS2 = getmaxx(stdscr);
+        if (new_LINES2 != LINES2 || new_COLS2 != COLS2) {
+            LINES2 = new_LINES2;
+            COLS2 = new_COLS2;
+
+            winHauteur2 = (int)(LINES2 * 0.3);
+            winLargeur2 = (int)(COLS2 * 0.6);
+
+            winY2 = (LINES2 - winHauteur2) / 2;
+            winX2 = (COLS2 - winLargeur2) / 2;
+            titleY2 = ((LINES2 - 5)/6);
+            titleX2 = (COLS2 - 71) / 2;
+
+            clear();
+            refresh();
+
+            // Delete the old window and create a new one
+            delwin(menu_pause);
+            menu_pause = newwin(winHauteur2, winLargeur2, winY2, winX2);
+            title2 = newwin(5, 71, titleY2, titleX2);
+            if(afficher_image_ascii(title2, "image/pause.txt") != EXIT_SUCCESS){
+
+                printf("Erreur");
+                exit(EXIT_FAILURE);
+            }
+            wrefresh(title2);
+            keypad(menu_pause, TRUE);
+            refresh();
+        }
+
+        print_menu(menu_pause, highlight1, n_choicepause, choicepause);
+        c2 = wgetch(menu_pause);
+        switch (c2) {
+            case KEY_UP:
+                if (highlight1 == 1)
+                    highlight1 = n_choicepause;
+                else
+                    --highlight1;
+                break;
+            case KEY_DOWN:
+                if (highlight1 == n_choicepause)
+                    highlight1 = 1;
+                else
+                    ++highlight1;
+                break;
+            case 10: // Enter key
+                choice2 = highlight1;
+                break;
+            default:
+                refresh();
+                break;
+        }
+        if (choice2 != 0) // User did a choice come out of the infinite loop
+            break;
+    }
+
+    clrtoeol();
+    refresh();
+    endwin();
+    
+    switch (choice2) {
+        case 1:
+            return EXIT_SUCCESS;
+            break;
+        case 2:
+            return EXIT_SUCCESS;
+            break;
+            
+        case 4:
+            printf("Fin du jeu\n");
+            endwin();
+            return -1;
+            break;
+        
+        default:
+            break;
     }
     return EXIT_SUCCESS;
 }
