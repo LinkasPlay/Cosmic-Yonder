@@ -40,6 +40,8 @@ extern int textureSimple(WINDOW *win, int i, int j);
 extern void afficherMap(void);
 extern void debug(char * msg);
 
+void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x);
+
 int jeu (void) {
 
     int LINES = getmaxy(stdscr);
@@ -348,6 +350,8 @@ int camera(WINDOW *win) {
     }
 	wrefresh(boiteCase);
     perso.frameAnimation++;
+
+	afficher_coeurs(win,"coeur.txt", 0, 0);
     return EXIT_SUCCESS;
 }
 
