@@ -146,19 +146,6 @@ int jeu (void) {
 	Xcamera = perso.posX - 4;
 	Ycamera = perso.posY - 3;
 
-	sprintf(str, "%d, %d", Xcamera, Ycamera);
-	debug(str);
-	getch();
-	
-	for (unsigned int i = perso.posY - 15; i <= perso.posY + 15; i++) {
-		for (unsigned int j = perso.posX - 25; j <= perso.posX + 25; j++) {
-			// Vérifiez que les indices ne dépassent pas les limites du tableau map
-			if (i >= 0 && i < DIMENSION_MAP && j >= 0 && j < DIMENSION_MAP) {
-				contenuCase = map[i][j];
-			}
-		}
-	}
-
 	// Rafraîchir pour afficher les changements
 	wrefresh(win);
 	
@@ -170,25 +157,6 @@ int jeu (void) {
 	}
 
 	wrefresh(win);
-
-	getch();
-	/*
-	WINDOW *boiteCase;
-
-	boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, 3 * CASE_HEIGHT, 5 * CASE_WIDTH);
-    //box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
-    wrefresh(boiteCase);
-	contenuCase.contenu = 1;
-	if (texture(boiteCase) != EXIT_SUCCESS) {
-        mvwprintw(win, 1, 1, "Fonction texture interrompue");
-        delwin(boiteCase);
-        return EXIT_FAILURE;
-    }
-	wrefresh(boiteCase);
-	*/
-
-	// Attendre une entrée de l'utilisateur avant de fermer
-	getch();
 	
 	// Boucle de jeu ******************************************************************************** /
 

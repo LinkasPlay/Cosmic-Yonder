@@ -26,6 +26,7 @@ typedef struct personnage {
     int posX;
     int posY;
     int frameAnimation; // 4 frames , -5 = dégat, -10 = dcd
+    int hp;
     int xp;
     int lvl;
     int * inv;
