@@ -20,11 +20,9 @@ extern void* play_music(void* arg);
 
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
 
-
 extern int liberationMap(void);
 
-
-extern int graine;
+int graine;
 extern bool stop_music;
 extern personnage perso;
 
