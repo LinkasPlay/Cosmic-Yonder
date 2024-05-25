@@ -108,7 +108,7 @@ int jeu (void) {
 				msg3 = "Vous vous apprété à lancer le jeu dans une fenètre réduite.";
     			taille3 = strlen(msg3);
 				mvwprintw(win, winHauteur / 2 - 1, (winLargeur / 2) - (taille3 / 2), "%s", msg3);
-				msg3 = "Ce qui risque de le rendre très complexe.";
+				msg3 = "Ce qui risque de le rendre très instable.";
     			taille3 = strlen(msg3);
 				mvwprintw(win, winHauteur / 2 , (winLargeur / 2) - (taille3 / 2), "%s", msg3);
 				msg3 = "Appuyez sur entrer pour confirmé.";

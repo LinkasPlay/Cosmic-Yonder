@@ -62,7 +62,7 @@ int texture(WINDOW *win) {
             image = "image/sol.txt";
             break;
         case 1:
-            /*
+            
             switch (perso.direction) {
                 case 1:
                     if (perso.frameAnimation < FRAME_IN_ANIMATION + 1)
@@ -111,7 +111,7 @@ int texture(WINDOW *win) {
             if (perso.frameAnimation >= FRAME_IN_ANIMATION * 4) {
                 perso.frameAnimation = 0;
             }
-            */
+            
             image = "image/personnage/personnageHaut (1).txt";
             break;
         case 2:
