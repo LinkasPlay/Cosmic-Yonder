@@ -33,6 +33,7 @@ salle room;
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
+void new_game_screen(WINDOW *menu_win);
 
 char *choices[] = { 
     "Nouvelle partie",
@@ -159,7 +160,7 @@ int main(int argc, char **argv) {
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
 
-    // Start playing background music
+
     pthread_t music_thread;
     int music_choice = 0; // Default music choice, change as needed
     pthread_create(&music_thread, NULL, play_music, &music_choice);
@@ -224,7 +225,7 @@ int main(int argc, char **argv) {
             break;
     }
 
-     // Stop the music before proceeding
+    // Stoper the music 
     stop_music = true;
     pthread_join(music_thread, NULL);
 
@@ -235,8 +236,12 @@ int main(int argc, char **argv) {
     //Reste du jeu
     switch (choice) {
         case 1:
-
+            //mettre nom + graine + musique vaisseau
+            // j'ai essayé plusieurs programme mais ca affiche rien
             perso.lvl = 0;
+            ncurses_initialiser();
+            new_game_screen(menu_win);
+            endwin();
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
@@ -360,5 +365,29 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
         ++y;
     }
     wrefresh(menu_win);
+}
+
+void new_game_screen(WINDOW *menu_win) {
+    int width = 50;
+    int height = 10;
+    int startx = (COLS - width) / 2;
+    int starty = (LINES - height) / 2;
+
+    WINDOW *new_game_win = newwin(height, width, starty, startx);
+    box(new_game_win, 0, 0);
+
+    char player_name[50];
+    int seed;
+
+    mvwprintw(new_game_win, 1, 2, "Enter Player Name:");
+    mvwgetnstr(new_game_win, 2, 2, player_name, sizeof(player_name) - 1);
+
+    mvwprintw(new_game_win, 4, 2, "Enter Seed:");
+    wscanw(new_game_win, "%d", &seed);
+
+    wrefresh(new_game_win);
+    delwin(new_game_win);
+
+    // Continue with the game setup using player_name and seed
 }
 
