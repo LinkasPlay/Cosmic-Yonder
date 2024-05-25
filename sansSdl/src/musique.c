@@ -6,7 +6,7 @@
 #include <pulse/error.h>
 #include <stdbool.h>
 
-#include "cosmicYonder.h"
+#include "CosmicYonder.h"
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 

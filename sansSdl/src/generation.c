@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 
-#include "cosmicYonder.h"
+#include "CosmicYonder.h"
 #include <math.h>
 
 #define OBJ_MAX 9

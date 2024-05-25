@@ -1,4 +1,4 @@
-#include "cosmicYonder.h"
+#include "CosmicYonder.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -19,6 +19,7 @@ extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern void* play_music(void* arg);
 
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
+
 
 extern int liberationMap(void);
 
@@ -96,6 +97,7 @@ int click_souris() {
     return 0;
 }
 
+
 int main(int argc, char **argv) {
     ncurses_initialiser();
     ncurses_couleurs();
@@ -157,10 +159,9 @@ int main(int argc, char **argv) {
     refresh();
     print_menu(menu_win, highlight, n_choices, choices);
 
-    //Musique du menu
+    // Start playing background music
     pthread_t music_thread;
-    int music_choice = 0; // Choisissez un numéro de musique pour le menu
-    stop_music = false;
+    int music_choice = 0; // Default music choice, change as needed
     pthread_create(&music_thread, NULL, play_music, &music_choice);
 
 
@@ -223,18 +224,18 @@ int main(int argc, char **argv) {
             break;
     }
 
+     // Stop the music before proceeding
+    stop_music = true;
+    pthread_join(music_thread, NULL);
+
     clrtoeol();
     refresh();
     endwin();
 
-    // Arrêter la musique du menu
-    stop_music = true;
-    pthread_join(music_thread, NULL);
-
     //Reste du jeu
     switch (choice) {
         case 1:
-            endwin();
+
             perso.lvl = 0;
             if(jeu() != EXIT_SUCCESS){
                 printf("Erreur jeu");

@@ -10,6 +10,7 @@
 //message erreur
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
+extern int afficher_image_ascii(WINDOW *win, const char *filename);
 
 personnage perso;
 personnage persoPast;
@@ -107,4 +108,16 @@ void afficherMap(void) {
     }
 
     fclose(fichier);
+
+    // Afficher le fichier ASCII "coeur.txt" en haut à gauche de la fenêtre
+    WINDOW *coeur_win = newwin(0, 0, Xcamera, Ycamera); // Crée une fenêtre pour afficher le coeur
+
+    // Affichage du contenu du fichier ASCII "coeur.txt"
+    if (afficher_image_ascii(coeur_win, "coeur.txt") != EXIT_SUCCESS) {
+        printf("Erreur lors de l'affichage du fichier ASCII.\n");
+        return;
+    }
+
+    wrefresh(coeur_win);
+
 }
