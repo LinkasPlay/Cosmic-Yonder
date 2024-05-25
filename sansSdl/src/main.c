@@ -4,7 +4,6 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include <string.h>
-#include "sauvegarde.h"
 #include <pthread.h>
 #include <pulse/simple.h>
 #include <pulse/error.h>
@@ -13,30 +12,23 @@
 
 void start_ncurses(bool useRaw, bool useNoecho);
 void demander_nom_et_graine(void);
-//void printMenu(WINDOW * menu, stdin choices[], int size, int highlight);
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
 extern void* play_music(void* arg);
-
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
-
-
 extern int liberationMap(void);
 
-
-extern int graine;
+int graine;
 extern bool stop_music;
 extern personnage perso;
-
 salle room;
 
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
 
-
-char *choices[] = { 
+char *choices[] = {
     "Nouvelle partie",
     "Charger partie",
     "Option",
@@ -100,7 +92,6 @@ int click_souris() {
     return 0;
 }
 
-
 int main(int argc, char **argv) {
     ncurses_initialiser();
     ncurses_couleurs();
@@ -116,18 +107,6 @@ int main(int argc, char **argv) {
 
     WINDOW *win = newwin(10, 20, start_y, start_x);
     refresh();
-
-    /*
-        COLOR_PAIR(n)
-        COLOR_BLACK 0
-        COLOR_RED 1
-        COLOR_GREEN 2
-        COLOR_YELLOW 3
-        COLOR_BLUE 4
-        COLOR_MAGENTA 5
-        COLOR_CYAN 6
-        COLOR_WHITE 7
-    */
 
     init_pair(1, COLOR_CYAN, COLOR_WHITE);
 
@@ -150,8 +129,7 @@ int main(int argc, char **argv) {
     int winX = (COLS - winLargeur) / 2;
     WINDOW *title = newwin(5, 69, titleY, titleX);
 
-    if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
-
+    if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS) {
         printf("Erreur");
         exit(EXIT_FAILURE);
     }
@@ -163,12 +141,8 @@ int main(int argc, char **argv) {
     print_menu(menu_win, highlight, n_choices, choices);
 
     pthread_t music_th;
-    
-    while(1){
-        int music_choice = 0; // Default music choice, change as needed
-        pthread_create(&music_th, NULL, play_music, &music_choice);
-    }
-
+    int music_choice = 0; // Default music choice, change as needed
+    pthread_create(&music_th, NULL, play_music, &music_choice);
 
     while (1) {
         // Check for terminal resize
@@ -193,8 +167,7 @@ int main(int argc, char **argv) {
             delwin(menu_win);
             menu_win = newwin(winHauteur, winLargeur, winY, winX);
             title = newwin(5, 69, titleY, titleX);
-            if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS){
-
+            if(afficher_image_ascii(title, "image/cosmicyonder.txt") != EXIT_SUCCESS) {
                 printf("Erreur");
                 exit(EXIT_FAILURE);
             }
@@ -225,11 +198,11 @@ int main(int argc, char **argv) {
                 refresh();
                 break;
         }
-        if (choice != 0) // User did a choice come out of the infinite loop
+        if (choice != 0) // User did a choice, come out of the infinite loop
             break;
     }
 
-    // Stoper the music 
+    // Stoper the music
     stop_music = true;
     pthread_join(music_th, NULL);
 
@@ -318,13 +291,10 @@ int main(int argc, char **argv) {
             endwin();
             exit(EXIT_SUCCESS);
             break;
-        case 5: // Nouvelle option pour sauvegarder la partie
-            save_game("savegame.dat");
-            printf("Jeu sauvegardé.\n");
-            break;
+
         default:
             break;
-}
+    }
 
     // Boucle pour détecter l'appui sur la touche espace
     ch = 0;
@@ -333,9 +303,7 @@ int main(int argc, char **argv) {
         // Rien à faire, juste attendre l'appui sur espace
     }
 
-  
     endwin();
-
     return EXIT_SUCCESS;
 }
 
@@ -346,7 +314,7 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
     box(menu_win, 0, 0);
     for (i = 0; i < n_choices; ++i) {
         if (highlight == i + 1) { // Highlight the present choice
-            wattron(menu_win, A_REVERSE); 
+            wattron(menu_win, A_REVERSE);
             mvwprintw(menu_win, y, x, "%s", choices[i]);
             wattroff(menu_win, A_REVERSE);
         } else
@@ -378,9 +346,9 @@ void demander_nom_et_graine(void) {
     wrefresh(input_win);
 
     // Lire le nom du joueur
-    char * nom;
+    char nom[nom_max_len];
     mvwgetnstr(input_win, 2, 1, nom, nom_max_len);
-    
+
     // Lire la graine
     char graine_str[10];
     mvwgetnstr(input_win, 4, 1, graine_str, 10);
@@ -392,12 +360,3 @@ void demander_nom_et_graine(void) {
     // Terminer ncurses
     endwin();
 }
-
-
-
-
-
-
-
-
-

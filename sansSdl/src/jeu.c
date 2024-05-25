@@ -97,11 +97,6 @@ int jeu (void) {
         wrefresh(win);
 
         if (getch() == 10) {// Touche pour sortir = entrée
-			while(1){
-    			pthread_t music_thread;
-    			int music_choice = 1; // La musique sélectionner
-    			pthread_create(&music_thread, NULL, play_music, &music_choice);
-    		}
 			if(winHauteur < CASE_HEIGHT * 5 || winLargeur < CASE_WIDTH * 7){ // verif taille écran
 
 				clear(); // Efface le contenu de la fenêtre principale
@@ -149,7 +144,7 @@ int jeu (void) {
 	getch();
 
 	Xcamera = perso.posX - 4;
-	Ycamera = perso.posY - 1;
+	Ycamera = perso.posY - 3;
 
 	sprintf(str, "%d, %d", Xcamera, Ycamera);
 	debug(str);
@@ -234,6 +229,11 @@ int jeu (void) {
 				if(attaqueEpee() != EXIT_SUCCESS){
 					printf("Erreur attaque");
 				}
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
+				}
 				continue;
 
 			//mvouvement haut
@@ -241,6 +241,11 @@ int jeu (void) {
 			case KEY_UP:
 				if(mouvementHaut() != EXIT_SUCCESS){
 					printf("Erreur mouvement haut");
+				}
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
 				}
 				continue;
             
@@ -250,6 +255,11 @@ int jeu (void) {
 				if(mouvementGauche() != EXIT_SUCCESS){
 					printf("Erreur mouvement gauche");
 				}
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
+				}
 				continue;
 
 			//mvouvement bas
@@ -258,6 +268,11 @@ int jeu (void) {
 				if(mouvementBas() != EXIT_SUCCESS){
 					printf("Erreur mouvement bas");
 				}
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
+				}
 				continue;
 
 			//mvouvement droite
@@ -265,6 +280,11 @@ int jeu (void) {
 			case KEY_RIGHT:
 				if(mouvementDroite() != EXIT_SUCCESS){
 					printf("Erreur mouvement droite");
+				}
+				if (camera(win) != EXIT_SUCCESS){
+					printf("Probleme fonction camera");
+					endwin();
+					exit(EXIT_FAILURE);
 				}
 				continue;
 
@@ -328,15 +348,17 @@ int camera(WINDOW *win) {
 
     int Xcase, Ycase;
     WINDOW *boiteCase;
-    tile contenuCase;
+
+	//contenuCase.contenu = 1;
 
     for (Xcase = 0; Xcase < max_x / CASE_WIDTH; Xcase++) {
         for (Ycase = 0; Ycase < max_y / CASE_HEIGHT; Ycase++) {
 
-            contenuCase.contenu = map[Xcamera + Xcase][Ycamera + Ycase].contenu;
+			contenuCase.contenu = map[Xcamera + Xcase][Ycamera + Ycase].contenu;
+			
             boiteCase = newwin(CASE_HEIGHT, CASE_WIDTH, start_y + Ycase * CASE_HEIGHT, start_x + Xcase * CASE_WIDTH);
             //box(boiteCase, 0, 0); // Dessine le cadre de la fenêtre
-            wrefresh(boiteCase);
+            //wrefresh(boiteCase);
 			if(contenuCase.contenu == 2){
 				if (monstreMouvement(Xcamera + Xcase, Ycamera + Ycase) != EXIT_SUCCESS){
 					printf("Erreur mouvement monstre");
@@ -345,17 +367,18 @@ int camera(WINDOW *win) {
 			}
 			sprintf(str, "%d, %d, %d", contenuCase.contenu, Xcamera + Xcase, Ycamera + Ycase);
 			debug(str);
-			getch();
+			//getch();
 
             if (texture(boiteCase) != EXIT_SUCCESS) {
                 mvwprintw(win, 1, 1, "Fonction texture interrompue");
                 delwin(boiteCase);
                 return EXIT_FAILURE;
             }
-            wrefresh(boiteCase);
+            
             delwin(boiteCase);
         }
     }
+	wrefresh(boiteCase);
     perso.frameAnimation++;
     return EXIT_SUCCESS;
 }
