@@ -350,3 +350,5 @@ int camera(WINDOW *win) {
     perso.frameAnimation++;
     return EXIT_SUCCESS;
 }
+
+//test

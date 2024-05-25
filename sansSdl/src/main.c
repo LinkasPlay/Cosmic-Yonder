@@ -401,3 +401,5 @@ void demander_nom_et_graine(void) {
     // Terminer ncurses
     endwin();
 }
+
+//test

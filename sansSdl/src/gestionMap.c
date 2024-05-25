@@ -135,3 +135,5 @@ void debug(char * msg) {
 
     fclose(fichier);
 }
+
+//test

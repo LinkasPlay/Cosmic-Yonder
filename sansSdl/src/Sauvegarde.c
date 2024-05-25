@@ -69,3 +69,5 @@ void save_game(const char *filename) {
 
     fclose(file);
 }
+
+//test

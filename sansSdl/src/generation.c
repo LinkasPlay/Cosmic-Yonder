@@ -326,3 +326,5 @@ void ajouterSalle (void){
         m++;
     }
 }
+
+//test

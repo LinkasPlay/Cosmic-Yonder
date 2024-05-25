@@ -188,3 +188,4 @@ int textureSimple(WINDOW *win, int i, int j) {
     return EXIT_SUCCESS;
 }
 
+//test

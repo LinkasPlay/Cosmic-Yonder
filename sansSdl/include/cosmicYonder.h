@@ -71,3 +71,5 @@ extern int Ycamera;
 extern tile **map;
 
 #endif
+
+//test
