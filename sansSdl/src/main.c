@@ -256,7 +256,7 @@ int main(int argc, char **argv) {
             }
 
             for (unsigned i = 0; i < tabLa; ++i) {
-                for (unsigned j = 0; ++j < tabLo) {
+                for (unsigned j = 0; j < tabLo; j++) {
                     printf("[ %d ] ", room.cases[i][j].contenu);
                 }
                 printf("\n");

@@ -45,6 +45,9 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
 int nouvelleSalle(int longueur, int largeur, int num_salle, int cote){
 
     //réinitialisation room
+    extern int entreeX;
+    extern int entreeY;
+
     room.num = 0;
     room.largeur = 0;
     room.longueur = 0;
