@@ -8,6 +8,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 #include <time.h>
+
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 /*
@@ -475,7 +476,16 @@ int pause(){
 typedef struct {
     int minutes;
     WINDOW *win;
-}my_timer_t;
+} my_timer_t;
+
+void afficher_temps_restante(WINDOW *win, int secondes_restantes) {
+    int minutes_restantes = secondes_restantes / 60;
+    int secondes = secondes_restantes % 60;
+
+    werase(win);
+    mvwprintw(win, 0, 0, "Temps restant : %d min %d s", minutes_restantes, secondes);
+    wrefresh(win);
+}
 
 // Fonction du thread du timer
 void* timer_thread(void* arg) {
@@ -499,7 +509,6 @@ void* timer_thread(void* arg) {
     return NULL;
 }
 
-
 // Fonction pour démarrer le timer
 void start_timer(my_timer_t* timer_data) {
     pthread_t timer_tid;
@@ -517,12 +526,11 @@ void start_timer(my_timer_t* timer_data) {
     }
 }
 
-//Fonction pour afficher le timer
+// Fonction pour afficher le timer
 void afficher_timer(WINDOW *win, int minutes) {
     my_timer_t timer_data;
     timer_data.minutes = minutes;
     timer_data.win = win;
-
     start_timer(&timer_data);
 }
 
