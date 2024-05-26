@@ -522,4 +522,13 @@ void start_timer(int *minutes) {
     }
 }
 
+void affiche_timer(int minutes) {
+    int secondes_restantes = minutes * 60;
+    int minutes_restantes = secondes_restantes / 60;
+    int secondes = secondes_restantes % 60;
+
+    printf("Temps restant: %02d:%02d\n", minutes_restantes, secondes);
+}
+
+
 
