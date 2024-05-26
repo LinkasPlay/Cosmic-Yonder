@@ -481,12 +481,12 @@ typedef struct {
 // Fonction du thread du timer
 void* timer_thread(void* arg) {
     TimerArgs* timer_args = (TimerArgs*)arg;
-    int minutes = timer_args->minutes;
-    timer_args->end_time = time(NULL) + minutes * 60;
+    int minutes = timer_args.minutes;
+    timer_args.end_time = time(NULL) + minutes * 60;
 
     printf("Le timer de %d minutes commence maintenant...\n", minutes);
 
-    while (time(NULL) < timer_args->end_time) {
+    while (time(NULL) < timer_args.end_time) {
         sleep(1); // Attendre une seconde
     }
 
