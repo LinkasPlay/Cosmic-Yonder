@@ -522,7 +522,7 @@ void start_timer(int *minutes) {
     }
 }
 
-void affiche_timer(WINDOW *win, int minutes) {
+void afficher_timer(WINDOW *win, int minutes) {
     int secondes_restantes = minutes * 60;
     int minutes_restantes = secondes_restantes / 60;
     int secondes = secondes_restantes % 60;
