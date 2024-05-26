@@ -226,31 +226,36 @@ int jeu (void){
 
 				case 3:
 					if(perso.inv[3]!=0){
-						perso.hp+=
+						if(perso.hp<3){
+							perso.hp+=1;
+							perso.inv[3]-=1;
+						}
 					}
 				break;
 
 				case 4:
+					if(perso.inv[4]!=0){
+						perso.xp+=200;
+						perso.inv[4]-=1;
+					}
 				break;
 
 				case 5:
+					if(perso.inv[5]!=0){
+					}
 				break;
 
 				case 6:
+					if(perso.inv[6]!=0){
+					}
 				break;
 
 				case 7:
+					if(perso.inv[7]!=0){
+					}
 				break;
 
-				case 8:
-				break; 
-
-				case 9:
-				break;
-
-				case 10:
-				break;
-
+				
 
 
 
@@ -418,7 +423,6 @@ int camera(WINDOW *win){
 	wrefresh(boiteCase);
     perso.frameAnimation++;
 	
-<<<<<<< Updated upstream
 	// Obtenir les dimensions de la fenêtre principale
     int my, mx;
     getmaxyx(stdscr, my, mx);
@@ -434,8 +438,6 @@ int camera(WINDOW *win){
     //display_timer(timer_win);
 
     delwin(timer_win);
-=======
->>>>>>> Stashed changes
 
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
     afficher_coeurs(status_win, "image/coeur.txt", 0, 0);

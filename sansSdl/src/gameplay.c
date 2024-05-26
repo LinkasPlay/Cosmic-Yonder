@@ -176,10 +176,35 @@ int interaction_obj(void) {
             return EXIT_FAILURE;
     }
 
+    
     // Vérifier si la case cible contient un monstre
-    if (map[targetX][targetY].contenu == 2) {
-        degatMonstre(perso.lvl * 10 + 40, map[targetX][targetY].mstr);
+    if(map[targetX][targetY].contenu==3){
+        switch(map[targetX][targetY].spe.type){
+        
+            case 1:
+                if(perso.inv[5]!=0){
+                    int al = aleatoire(num_salle, i * j, 1, 10);
+                    if (al <= 4) {
+                        p[i][j].contenu = 2;
+                        p[i][j].mstr.hp = 80;
+                        p[i][j].mstr.xp = 10;
+                    } else if (al <= 7) {
+                        p[i][j].contenu = 2;
+                        p[i][j].mstr.hp = 180;
+                        p[i][j].mstr.xp = 20;
+                    } else {
+                        p[i][j].contenu = 3;
+                        p[i][j].spe.type = 1;
+                    }
+                }
+            break;
+
+        }
+
     }
+   
+
+        degatMonstre(perso.lvl * 10 + 40, map[targetX][targetY].mstr);
 
     return EXIT_SUCCESS;
 }
@@ -511,17 +536,12 @@ int pause(){
     return EXIT_SUCCESS;
 }
 
-<<<<<<< Updated upstream
 // Structure pour passer les arguments au thread du timer
-=======
-/*
->>>>>>> Stashed changes
 typedef struct {
     int minutes;
     time_t end_time;
 } TimerArgs;
 
-<<<<<<< Updated upstream
 // Fonction du thread du timer
 void* timer_thread(void* arg) {
     TimerArgs* timer_args = (TimerArgs*)arg;
@@ -537,8 +557,6 @@ void* timer_thread(void* arg) {
     printf("\nLe temps de %d minutes est écoulé !\n", minutes);
     return NULL;
 }
-=======
->>>>>>> Stashed changes
 
 // Fonction pour démarrer le timer
 TimerArgs* start_timer(int minutes) {
@@ -546,13 +564,8 @@ TimerArgs* start_timer(int minutes) {
     TimerArgs* timer_args = (TimerArgs*)malloc(sizeof(TimerArgs));
     timer_args->minutes = minutes;
 
-<<<<<<< Updated upstream
     // Créer le thread du timer
     if (pthread_create(&timer_tid, NULL, timer_thread, timer_args) != 0) {
-=======
-    // Créer le thread du timer en mode détaché
-    if (pthread_create(&timer_tid, NULL, timer_tid, timer_data) != 0) {
->>>>>>> Stashed changes
         fprintf(stderr, "Erreur de création du thread du timer\n");
         free(timer_args); // Libérer la mémoire en cas d'erreur
         return NULL;
@@ -581,19 +594,6 @@ void display_timer(TimerArgs* timer_args) {
     }
 }
 
-<<<<<<< Updated upstream
-=======
-// Fonction pour afficher le timer
-void afficher_timer(WINDOW *win, int minutes) {
-    my_timer_t timer_data;
-    timer_data.minutes = minutes;
-    timer_data.win = win;
-    start_timer(&timer_data);
-}
-*/
-
-
->>>>>>> Stashed changes
 void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire) {
     // Calcule le pourcentage d'expérience par rapport à l'expérience nécessaire pour passer au niveau suivant
     double pourcentage_experience = ((double)experience / (double)experience_necessaire) * 100;
