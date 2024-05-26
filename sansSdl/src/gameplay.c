@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <pulse/simple.h>
 #include <pulse/error.h>
+#include <time.h>
 
 
 
@@ -473,4 +474,66 @@ int pause(){
             break;
     }
     return EXIT_SUCCESS;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <time.h>
+
+// Structure pour passer le temps au thread du timer
+typedef struct {
+    int minutes;
+} TimerArgs;
+
+// Fonction du thread du timer
+
+void* timer_thread(void* arg) {
+    TimerArgs* args = (TimerArgs*)arg;
+    int minutes = args->minutes;
+    time_t debut = time(NULL); // Moment de début du timer
+    time_t fin = debut + minutes * 60; // Minutes spécifiées par l'utilisateur plus tard
+
+    printf("Le timer de %d minutes commence maintenant...\n", minutes);
+
+    while (time(NULL) < fin) {
+        time_t maintenant = time(NULL);
+        int secondes_restantes = fin - maintenant;
+        int minutes_restantes = secondes_restantes / 60;
+        int secondes = secondes_restantes % 60;
+
+        printf("\rTemps restant: %02d:%02d", minutes_restantes, secondes); // Affichage du temps restant
+        fflush(stdout);
+
+        sleep(1); // Attendre une seconde
+    }
+
+    printf("\nLe temps de %d minutes est écoulé !\n", minutes);
+    return NULL;
+}
+
+// Fonction pour démarrer le timer
+void start_timer() {
+    int timer_duration;
+    printf("Entrez la durée du timer en minutes: ");
+    scanf("%d", &timer_duration);
+
+    pthread_t timer_tid;
+
+    // Préparation des arguments pour le thread du timer
+    TimerArgs timer_args;
+    timer_args.minutes = timer_duration;
+
+    // Créer le thread du timer
+    if (pthread_create(&timer_tid, NULL, timer_thread, &timer_args) != 0) {
+        fprintf(stderr, "Erreur de création du thread du timer\n");
+        return;
+    }
+
+    // Attendre la fin du thread du timer
+    if (pthread_join(timer_tid, NULL) != 0) {
+        fprintf(stderr, "Erreur de jointure du thread du timer\n");
+        return;
+    }
 }
