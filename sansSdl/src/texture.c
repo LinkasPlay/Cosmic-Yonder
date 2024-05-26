@@ -243,4 +243,36 @@ void afficher_inventaire(WINDOW *win) {
     wrefresh(win);
 }
 
+typedef struct {
+    int lvl;
+    int exp;
+    int exp_next_level;
+    // Autres attributs du personnage...
+} personnage;
+
+personnage perso = {1, 0, 100}; // Niveau 1, 0 XP, 100 XP pour le prochain niveau
+
+void afficher_barre_experience(WINDOW *win, int start_y, int start_x) {
+    int largeur_barre = 20; // Largeur de la barre d'expérience
+    int exp = perso.exp;
+    int exp_next_level = perso.exp_next_level;
+    int pourcentage = (exp * 100) / exp_next_level;
+    int filled = (largeur_barre * pourcentage) / 100;
+
+    // Dessiner la barre d'expérience
+    mvwprintw(win, start_y, start_x, "[");
+    for (int i = 0; i < largeur_barre; i++) {
+        if (i < filled) {
+            waddch(win, ACS_CKBOARD); // Utiliser un caractère rempli pour représenter l'expérience
+        } else {
+            waddch(win, ' ');
+        }
+    }
+    wprintw(win, "] %d%%", pourcentage);
+
+    // Rafraîchir la fenêtre pour afficher la barre d'expérience
+    wrefresh(win);
+}
+
+
 //test
