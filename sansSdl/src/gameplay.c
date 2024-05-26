@@ -489,11 +489,10 @@ typedef struct {
 
 // Fonction du thread du timer
 
-void* timer_thread(void* arg) {
-    TimerArgs* args = (TimerArgs*)arg;
-    int minutes = args->minutes;
+// Nouvelle signature de la fonction timer_thread prenant un entier comme argument
+void* timer_thread(int minutes) {
     time_t debut = time(NULL); // Moment de début du timer
-    time_t fin = debut + minutes * 60; // Minutes spécifiées par l'utilisateur plus tard
+    time_t fin = debut + minutes * 60; // Temps de fin calculé
 
     printf("Le timer de %d minutes commence maintenant...\n", minutes);
 
@@ -512,6 +511,7 @@ void* timer_thread(void* arg) {
     printf("\nLe temps de %d minutes est écoulé !\n", minutes);
     return NULL;
 }
+
 
 // Fonction pour démarrer le timer
 void start_timer() {
