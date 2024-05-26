@@ -111,9 +111,6 @@ void afficherMap(void) {
         fprintf(fichier, "\n");
     }
     
-    pthread_t music_th;
-    int music_choix = 1;
-    pthread_create(&music_th, NULL, play_music, &music_choix);
 
     fclose(fichier);
 
