@@ -100,19 +100,19 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
         room.posY = perso.posY - 2;
     } else {
         switch (cote) {
-            case 2:
+            case 0:
                 room.posX = perso.posX - entreeX;
                 room.posY = perso.posY - longueur;
                 break;
-            case 3:
+            case 1:
                 room.posX = perso.posX - largeur;
                 room.posY = perso.posY - entreeY;
                 break;
-            case 0:
+            case 2:
                 room.posX = perso.posX - entreeX;
                 room.posY = perso.posY + 1;
                 break;
-            case 1:
+            case 3:
                 room.posX = perso.posX + 1;
                 room.posY = perso.posY - entreeY;
                 break;

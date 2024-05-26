@@ -427,6 +427,7 @@ int camera(WINDOW *win){
     WINDOW *map_win = newwin(my, mx / 2, 0, 0);
     box(map_win, 0, 0);
     wrefresh(map_win);
+	delwin(map_win);
 
     // Créer une fenêtre pour afficher le timer dans le coin supérieur droit
     int timer_win_height = 1;
@@ -438,11 +439,6 @@ int camera(WINDOW *win){
     // Afficher le timer avec une durée de 5 minutes
     afficher_timer(timer_win, 5);
 
-    // Attendre une touche pour quitter
-    getch();
-
-    // Nettoyer et fermer ncurses
-    delwin(map_win);
     delwin(timer_win);
 
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
