@@ -391,6 +391,7 @@ void get_player_info() {
 
     // Convert seed input to an integer
     player_seed = atoi(seed_input);
+    graine = player_seed;
 
     // Copy name input to the player_name buffer
     strncpy(player_name, name_input, sizeof(player_name) - 1);

@@ -244,7 +244,7 @@ void afficher_inventaire(WINDOW *win) {
             wattroff(win, A_REVERSE);
         }
         else{
-            mvwprintw(menu_win, y, x, "%s", choices[i]);
+            mvwprintw(win, y, x, "%s", objets[i]);
         ++y;
     }
     // Actualiser la fenêtre
