@@ -88,6 +88,7 @@ int testSol(int x, int y,int cote){
 
     case 2:
         return 2;
+        perso.hp--;
         break;
     
     default:

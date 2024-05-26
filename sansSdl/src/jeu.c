@@ -20,6 +20,7 @@ extern bool stop_music;
 extern personnage perso;
 int start_y;
 int start_x;
+int item = 1;
 
 extern int Xcamera;
 extern int Ycamera;
@@ -157,7 +158,6 @@ int jeu (void){
 	char str[20];
 	sprintf(str, "%d, %d, %d", map[perso.posX][perso.posY].contenu, perso.posX, perso.posY);
 	debug(str);
-	getch();
 
 	Xcamera = perso.posX - 4;
 	Ycamera = perso.posY - 3;
@@ -179,7 +179,6 @@ int jeu (void){
 	//gestion des évènements
 
 	int ch = 0;
-	int item = 1;
 
 	while (ch != 10) {
 		ch = getch();
@@ -208,14 +207,14 @@ int jeu (void){
 			case 'm':
 				afficherMap();
 				continue;
-			case "w":
+			case 'w':
 				if (item == 1)
                     item = 4;
                 else
                     --item;
 				break;
 
-			case "x":
+			case 'x':
 				if (item == 4)
                     item = 1;
                 else
