@@ -18,15 +18,15 @@ Expliquation gameplay du jeu :
 
     on commence avec l'invetaire vide
     1) l'épée/tuyau permet de frapper autour de soi, fait 50 de dégats
-    2 ) le pistolet tire sur une ligne droite devant soi, fait 20 dégats
+    2 ) le pistolet tire sur une ligne droite devant soi, fait 20 dégats (NON IMPLEMENTE)
     3) les potions de vies redonnes 1 coeurs au joueur
     4) les potions d'xp donne 1/4 de l'xp nécessaire pour ganer un niveau
     5) les clé a molette servent à réparé les machines
     6) les clés servent à ouvrir les coffres
     7) la grande clé sert à ouvrir la dernière salle
 
-    une épée/tuyau est généré dans l'une des 5 premières salles (1/3 chance par sale, 1/1 si salle 5)
-    une salle de boss, fermé avec une porte spéciale est générée dans les alles 10 à 25 ==> vérifié qu'il y a des portes libres autrepart pour ne pas bloquer joueur
+    une épée/tuyau est généré dans l'une des 5 premières salles (1/3 chance par sale, 1/1 si salle 5) (DONNEE AU DEBUT)
+    une salle de boss, fermé avec une porte spéciale est générée dans les alles 10 à 25 ==> vérifié qu'il y a des portes libres autrepart pour ne pas bloquer joueur (NON IMPLEMENTE)
 
     on trouve forcement un pistolet dans l'un des 10 premiers coffres ouverts
     on trouve la clé du boss dans l'un des coffres entre le 10eme et 20eme
