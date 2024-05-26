@@ -46,7 +46,7 @@ void afficher_inventaire(WINDOW * win);
 void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire);
 
 void* timer_thread(void * arg);
-void start_timer(timer_t* timer_data);
+void start_timer(my_timer_t* timer_data);
 void afficher_timer(WINDOW *win, int minutes);
 
 int jeu (void){
@@ -360,7 +360,6 @@ int camera(WINDOW *win){
     perso.frameAnimation++;
 
 	WINDOW * timer = newwin(3,20,4,185);
-
 	afficher_timer(timer,7);
 	delwin(timer);
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs

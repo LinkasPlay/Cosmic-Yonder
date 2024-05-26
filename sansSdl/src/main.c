@@ -11,8 +11,7 @@
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 void start_ncurses(bool useRaw, bool useNoecho);
-void demander_nom_et_graine(void);
-//void printMenu(WINDOW * menu, stdin choices[], int size, int highlight);
+
 
 extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern unsigned int aleatoire(int salle, int graine, int min, int max);
@@ -31,6 +30,7 @@ salle room;
 int L, C; /*L pour désigner la ligne et C la colonne du click de la souris*/
 
 void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[]);
+void get_player_info(void);
 
 
 char *choices[] = { 
@@ -229,7 +229,13 @@ int main(int argc, char **argv) {
     switch (choice) {
         case 1:
             perso.lvl = 0;
-            demander_nom_et_graine();
+            char player_name[50];
+            int player_seed;
+            get_player_info();
+            clear();
+            mvprintw(0, 0, "Player Name: %s", player_name);
+            mvprintw(1, 0, "Seed: %d", player_seed);
+            refresh();
 
             if (jeu() != EXIT_SUCCESS) {
                 printf("Erreur jeu");
@@ -322,47 +328,75 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
     wrefresh(menu_win);
 }
 
-void demander_nom_et_graine(void) {
-    // Taille maximale du nom
-    const int nom_max_len = 50;
+// Variables globales pour stocker le nom du joueur et la graine
+char player_name[50];
+int player_seed;
 
-    int LINES = getmaxy(stdscr);
-    int COLS = getmaxx(stdscr);
+void get_player_info() {
+    int height = 10, width = 50;
+    int start_y = (LINES - height) / 2;
+    int start_x = (COLS - width) / 2;
 
-    // Calculer les positions de la fenêtre et de l'entrée
-    int winHauteur = 10;
-    int winLargeur = 50;
-    int winY = (LINES - winHauteur) / 2;
-    int winX = (COLS - winLargeur) / 2;
+    WINDOW *info_win = newwin(height, width, start_y, start_x);
+    box(info_win, 0, 0);
+    mvwprintw(info_win, 1, 2, "Enter your name: ");
+    mvwprintw(info_win, 3, 2, "Enter a seed: ");
 
-    WINDOW *input_win = newwin(winHauteur, winLargeur, winY, winX);
-    box(input_win, 0, 0);
-    mvwprintw(input_win, 1, 1, "Entrez votre nom:");
-    mvwprintw(input_win, 3, 1, "Entrez une graine:");
+    char name_input[7] = {0};
+    char seed_input[7] = {0};
+    int name_index = 0, seed_index = 0;
+    bool entering_name = true;
+    int ch;
 
-    // Afficher la fenêtre
-    wrefresh(input_win);
+    echo(); // Enable echoing of characters
+    keypad(info_win, TRUE); // Enable keypad for the window
 
-    // Lire le nom du joueur
-    char nom[nom_max_len + 1];
-    mvwgetnstr(input_win, 1, 18, nom, nom_max_len); // Position après "Entrez votre nom:"
-    nom[nom_max_len] = '\0'; // S'assurer que la chaîne est terminée par un '\0'
+    while (1) {
+        if (entering_name) {
+            wmove(info_win, 1, 18 + name_index);
+        } else {
+            wmove(info_win, 3, 15 + seed_index);
+        }
+        wrefresh(info_win);
 
-    // Lire la graine
-    char graine_str[11]; // Espace suffisant pour un entier et le '\0'
-    mvwgetnstr(input_win, 3, 18, graine_str, 10); // Position après "Entrez une graine:"
-    graine_str[10] = '\0'; // S'assurer que la chaîne est terminée par un '\0'
-    int graine = atoi(graine_str);
+        ch = wgetch(info_win);
+        if (ch == '\t') { // Tab key to switch input
+            entering_name = !entering_name;
+        } else if (ch == '\n' && !entering_name) { // Enter key to finish input when in seed input
+            break;
+        } else if (ch == KEY_BACKSPACE || ch == 127) { // Handle backspace
+            if (entering_name && name_index > 0) {
+                name_input[--name_index] = '\0';
+                mvwaddch(info_win, 1, 18 + name_index, ' '); // Erase character
+            } else if (!entering_name && seed_index > 0) {
+                seed_input[--seed_index] = '\0';
+                mvwaddch(info_win, 3, 15 + seed_index, ' '); // Erase character
+            }
+        } else if (ch >= 32 && ch <= 126) { // Handle printable characters (ASCII range for printable characters)
+            if (entering_name && name_index < sizeof(name_input) - 1) {
+                name_input[name_index++] = ch;
+                mvwaddch(info_win, 1, 18 + name_index - 1, ch);
+            } else if (!entering_name && seed_index < sizeof(seed_input) - 1) {
+                seed_input[seed_index++] = ch;
+                mvwaddch(info_win, 3, 15 + seed_index - 1, ch);
+            }
+        }
+    }
 
-    // Nettoyer la fenêtre
-    delwin(input_win);
+    noecho(); // Disable echoing of characters
 
-    // Terminer ncurses
-    endwin();
+    // Convert seed input to an integer
+    player_seed = atoi(seed_input);
 
-    // Afficher les valeurs (pour test)
-    printf("Nom: %s\n", nom);
-    printf("Graine: %d\n", graine);
+    // Copy name input to the player_name buffer
+    strncpy(player_name, name_input, sizeof(player_name) - 1);
+    player_name[sizeof(player_name) - 1] = '\0'; // Ensure null termination
+
+    wrefresh(info_win);
+    delwin(info_win);
 }
+
+
+
 
 //test

@@ -475,11 +475,11 @@ int pause(){
 typedef struct {
     int minutes;
     WINDOW *win;
-}Timer_t;
+}my_timer_t;
 
 // Fonction du thread du timer
 void* timer_thread(void* arg) {
-    Timer_t* data = (Timer_t*)arg;
+    my_timer_t* data = (my_timer_t*)arg;
     int secondes_restantes = data->minutes * 60;
 
     while (secondes_restantes > 0) {
@@ -501,7 +501,7 @@ void* timer_thread(void* arg) {
 
 
 // Fonction pour démarrer le timer
-void start_timer(Timer_t* timer_data) {
+void start_timer(my_timer_t* timer_data) {
     pthread_t timer_tid;
 
     // Créer le thread du timer en mode détaché
@@ -519,7 +519,7 @@ void start_timer(Timer_t* timer_data) {
 
 //Fonction pour afficher le timer
 void afficher_timer(WINDOW *win, int minutes) {
-    Timer_t timer_data;
+    my_timer_t timer_data;
     timer_data.minutes = minutes;
     timer_data.win = win;
 
