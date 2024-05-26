@@ -112,38 +112,51 @@ int degatMonstre(int dmg, monstre mstr){
     }
 }
 
-int monstreMouvement(int x, int y){
+int monstreMouvement(int x, int y) {
     int x2 = x, y2 = y;
-    for(unsigned i = x-2; i < x+3; i++){
-        for(unsigned j = y-2; i < y+3; i++){
-            if (map[i][j].contenu == 1){
-                if (i <= x){
-                    x2 = x - 1;
+
+    // Vérifiez les limites de la carte pour éviter les débordements
+    int min_x = MAX(0, x - 2);
+    int max_x = MIN(DIMENSION_MAP - 1, x + 2);
+    int min_y = MAX(0, y - 2);
+    int max_y = MIN(DIMENSION_MAP - 1, y + 2);
+
+    for (int i = min_x; i <= max_x; i++) {
+        for (int j = min_y; j <= max_y; j++) {
+            if (map[i][j].contenu == 1) {
+                // Vérifiez si le mouvement est valide (ne pas traverser les murs)
+                if (map[x2][y2].contenu != -2) {
+                    if (i < x) {
+                        x2 = x - 1;
+                    } else if (i > x) {
+                        x2 = x + 1;
+                    } else if (j < y) {
+                        y2 = y - 1;
+                    } else if (j > y) {
+                        y2 = y + 1;
+                    }
+
+                    // Vérifiez les limites de la carte pour la nouvelle position
+                    if (x2 >= 0 && x2 < DIMENSION_MAP && y2 >= 0 && y2 < DIMENSION_MAP) {
+                        // Déplacer le monstre
+                        map[x2][y2].contenu = map[x][y].contenu;
+                        map[x2][y2].mstr = map[x][y].mstr;
+
+                        // Réinitialiser la position de départ
+                        map[x][y].contenu = 0;
+                        map[x][y].mstr.frameAnimation = 0;
+                        map[x][y].mstr.hp = 0;
+                        map[x][y].mstr.xp = 0;
+                        map[x][y].mstr.loot = 0;
+
+                        return EXIT_SUCCESS;
+                    }
                 }
-                else if (i > x){
-                    x2 = x + 1;
-                }
-                else if (j < y){
-                    y2 = y - 1;
-                }
-                else{
-                    y2 = y + 1;
-                }
-                map[x2][y2].contenu = map[x][y].contenu;
-                map[x2][y2].mstr = map[x][y].mstr;
-                map[x][y].contenu = 0;
-                map[x][y].mstr.frameAnimation = 0;
-                map[x][y].mstr.hp = 0;
-                map[x][y].mstr.xp = 0;
-                map[x][y].mstr.loot = 0;
-                return EXIT_SUCCESS;
             }
         }
     }
-    
+
     return EXIT_SUCCESS;
-
-
 }
 
 int interaction_obj(void) {
@@ -183,14 +196,14 @@ int interaction_obj(void) {
         
             case 1:
                 if(perso.inv[5]!=0){
-                    int al = aleatoire(num_salle, i * j, 1, 10);
+                    int al = aleatoire(num_salle * 2, graine * 8, 1, 10);
                     if (al <= 4) {
-                        perso.inv[5]+=1
+                        perso.inv[5]+=1;
                         
                     } else if (al <= 7) {
-                        perso.inv[3]+=1
+                        perso.inv[3]+=1;
                     } else {
-                        perso.inv[4]+=1
+                        perso.inv[4]+=1;
                     }
                 }
             break;
