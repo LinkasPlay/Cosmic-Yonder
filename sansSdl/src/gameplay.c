@@ -185,16 +185,12 @@ int interaction_obj(void) {
                 if(perso.inv[5]!=0){
                     int al = aleatoire(num_salle, i * j, 1, 10);
                     if (al <= 4) {
-                        p[i][j].contenu = 2;
-                        p[i][j].mstr.hp = 80;
-                        p[i][j].mstr.xp = 10;
+                        perso.inv[5]+=1
+                        
                     } else if (al <= 7) {
-                        p[i][j].contenu = 2;
-                        p[i][j].mstr.hp = 180;
-                        p[i][j].mstr.xp = 20;
+                        perso.inv[3]+=1
                     } else {
-                        p[i][j].contenu = 3;
-                        p[i][j].spe.type = 1;
+                        perso.inv[4]+=1
                     }
                 }
             break;
