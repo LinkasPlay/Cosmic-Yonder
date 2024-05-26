@@ -522,13 +522,50 @@ void start_timer(int *minutes) {
     }
 }
 
-void affiche_timer(WINDOW *win,int minutes) {
+void affiche_timer(WINDOW *win, int minutes) {
     int secondes_restantes = minutes * 60;
     int minutes_restantes = secondes_restantes / 60;
     int secondes = secondes_restantes % 60;
 
-    mvwprintw(win,"Temps restant : %d min %d s",minutes_restantes,secondes_restantes);
+    // Efface le contenu précédent de la fenêtre
+    werase(win);
+
+    // Affiche le temps restant dans la fenêtre
+    mvwprintw(win, 0, 0, "Temps restant : %d min %d s", minutes_restantes, secondes);
+
+    // Rafraîchit la fenêtre pour afficher les modifications
+    wrefresh(win);
 }
+
+void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire) {
+    // Calcule le pourcentage d'expérience par rapport à l'expérience nécessaire pour passer au niveau suivant
+    double pourcentage_experience = ((double)experience / (double)experience_necessaire) * 100;
+
+    // Calcule la longueur de la barre d'expérience en fonction du pourcentage
+    int longueur_barre = (pourcentage_experience * (getmaxx(win) - 2)) / 100; // -2 pour laisser de l'espace pour les bords
+
+    // Efface le contenu précédent de la fenêtre
+    werase(win);
+
+    // Dessine la barre d'expérience
+    mvwprintw(win, 0, 0, "Expérience : ");
+    wattron(win, COLOR_PAIR(1)); // Utilise une paire de couleurs pour la barre d'expérience
+    for (int i = 0; i < longueur_barre; ++i) {
+        mvwprintw(win, 0, 13 + i, "="); // Dessine la barre avec le caractère "="
+    }
+    wattroff(win, COLOR_PAIR(1));
+    // Affiche le niveau et l'expérience actuelle
+    mvwprintw(win, 1, 0, "Niveau : %d | Expérience : %d / %d", niveau, experience, experience_necessaire);
+
+    // Rafraîchit la fenêtre pour afficher les modifications
+    wrefresh(win);
+}
+
+
+
+
+
+
 
 
 
