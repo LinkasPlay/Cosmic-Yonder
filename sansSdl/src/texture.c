@@ -218,6 +218,9 @@ void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x
     }
 }
 
+
+
+
 void afficher_inventaire(WINDOW *win) {
     // Liste des objets et leurs quantités
     char *objets[] = {"Epee", "Pistolet", "Potions de vie", "Potion d'exp", "Clé à molette", "Clés", "Grande clé"};
@@ -241,6 +244,7 @@ void afficher_inventaire(WINDOW *win) {
     // Actualiser la fenêtre
     wrefresh(win);
 }
+
 
 
 
