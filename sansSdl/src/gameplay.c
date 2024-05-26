@@ -16,7 +16,7 @@ Expliquation gameplay du jeu :
     on commence avec l'invetaire vide
     1) l'épée/tuyau permet de frapper autour de soi, fait 50 de dégats
     2 ) le pistolet tire sur une ligne droite devant soi, fait 20 dégats
-    3) les potions de vies redonnes 2 coeurs au joueur
+    3) les potions de vies redonnes 1 coeurs au joueur
     4) les potions d'xp donne 1/4 de l'xp nécessaire pour ganer un niveau
     5) les clé a molette servent à réparé les machines
     6) les clés servent à ouvrir les coffres

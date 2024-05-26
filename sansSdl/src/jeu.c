@@ -211,6 +211,59 @@ int jeu (void){
 			//attaque
 			case 'e':
             case ' ':
+				switch(item){
+				
+				case 1:
+					if(perso.inv[1]!=0){
+						//50 degats
+					}
+				break;
+			
+				case 2:
+					if(perso.inv[2]!=0){
+						//gun
+					}
+				break;
+
+				case 3:
+					if(perso.inv[3]!=0){
+						perso.hp+=
+					}
+				break;
+
+				case 4:
+				break;
+
+				case 5:
+				break;
+
+				case 6:
+				break;
+
+				case 7:
+				break;
+
+				case 8:
+				break; 
+
+				case 9:
+				break;
+
+				case 10:
+				break;
+
+
+
+
+				}
+
+
+
+
+
+
+
+
 				if(attaqueEpee() != EXIT_SUCCESS){
 					printf("Erreur attaque");
 				}
