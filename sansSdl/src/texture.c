@@ -242,4 +242,10 @@ void afficher_inventaire(WINDOW *win) {
     wrefresh(win);
 }
 
+
+
+
+
+
+
 //test

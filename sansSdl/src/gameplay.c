@@ -7,10 +7,7 @@
 #include <pthread.h>
 #include <pulse/simple.h>
 #include <pulse/error.h>
-
-
-
-
+#include <time.h>
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 /*
@@ -474,3 +471,101 @@ int pause(){
     }
     return EXIT_SUCCESS;
 }
+
+// Structure pour les arguments du timer
+typedef struct {
+    int minutes;
+} TimerArgs;
+
+// Fonction du thread du timer
+void* timer_thread(void* args) {
+    TimerArgs* timer_args = (TimerArgs*)args;
+    int minutes = timer_args->minutes;
+    
+    time_t start_time = time(NULL);
+    time_t end_time = start_time + minutes * 60;
+
+    printf("Le timer de %d minutes commence maintenant...\n", minutes);
+
+    while (time(NULL) < end_time) {
+        int remaining_seconds = end_time - time(NULL);
+        int remaining_minutes = remaining_seconds / 60;
+        remaining_seconds %= 60;
+
+        printf("\rTemps restant: %02d:%02d", remaining_minutes, remaining_seconds);
+        fflush(stdout);
+
+        sleep(1);
+    }
+
+    printf("\nLe timer de %d minutes est écoulé !\n", minutes);
+    return NULL;
+}
+
+// Fonction pour démarrer le timer
+
+
+
+void start_timer(int *minutes) {
+    pthread_t timer_tid;
+
+    // Créer le thread du timer en mode détaché
+    if (pthread_create(&timer_tid, NULL, timer_thread, minutes) != 0) {
+        fprintf(stderr, "Erreur de création du thread du timer\n");
+        return;
+    }
+
+    // Définir le thread comme détaché
+    if (pthread_detach(timer_tid) != 0) {
+        fprintf(stderr, "Erreur de définition du thread du timer comme détaché\n");
+        return;
+    }
+}
+
+void affiche_timer(WINDOW *win, int minutes) {
+    int secondes_restantes = minutes * 60;
+    int minutes_restantes = secondes_restantes / 60;
+    int secondes = secondes_restantes % 60;
+
+    // Efface le contenu précédent de la fenêtre
+    werase(win);
+
+    // Affiche le temps restant dans la fenêtre
+    mvwprintw(win, 0, 0, "Temps restant : %d min %d s", minutes_restantes, secondes);
+
+    // Rafraîchit la fenêtre pour afficher les modifications
+    wrefresh(win);
+}
+
+void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire) {
+    // Calcule le pourcentage d'expérience par rapport à l'expérience nécessaire pour passer au niveau suivant
+    double pourcentage_experience = ((double)experience / (double)experience_necessaire) * 100;
+
+    // Calcule la longueur de la barre d'expérience en fonction du pourcentage
+    int longueur_barre = (pourcentage_experience * (getmaxx(win) - 2)) / 100; // -2 pour laisser de l'espace pour les bords
+
+    // Efface le contenu précédent de la fenêtre
+    werase(win);
+
+    // Dessine la barre d'expérience
+    mvwprintw(win, 0, 0, "Expérience : ");
+    wattron(win, COLOR_PAIR(1)); // Utilise une paire de couleurs pour la barre d'expérience
+    for (int i = 0; i < longueur_barre; ++i) {
+        mvwprintw(win, 0, 13 + i, "="); // Dessine la barre avec le caractère "="
+    }
+    wattroff(win, COLOR_PAIR(1));
+    // Affiche le niveau et l'expérience actuelle
+    mvwprintw(win, 1, 0, "Niveau : %d | Expérience : %d / %d", niveau, experience, experience_necessaire);
+
+    // Rafraîchit la fenêtre pour afficher les modifications
+    wrefresh(win);
+}
+
+
+
+
+
+
+
+
+
