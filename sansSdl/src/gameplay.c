@@ -472,45 +472,40 @@ int pause(){
     return EXIT_SUCCESS;
 }
 
-// Structure pour les arguments du timer
 typedef struct {
     int minutes;
-} TimerArgs;
+    WINDOW *win;
+}Timer_t;
 
 // Fonction du thread du timer
-void* timer_thread(void* args) {
-    TimerArgs* timer_args = (TimerArgs*)args;
-    int minutes = timer_args->minutes;
-    
-    time_t start_time = time(NULL);
-    time_t end_time = start_time + minutes * 60;
+void* timer_thread(void* arg) {
+    Timer_t* data = (Timer_t*)arg;
+    int secondes_restantes = data->minutes * 60;
 
-    printf("Le timer de %d minutes commence maintenant...\n", minutes);
-
-    while (time(NULL) < end_time) {
-        int remaining_seconds = end_time - time(NULL);
-        int remaining_minutes = remaining_seconds / 60;
-        remaining_seconds %= 60;
-
-        printf("\rTemps restant: %02d:%02d", remaining_minutes, remaining_seconds);
-        fflush(stdout);
-
+    while (secondes_restantes > 0) {
         sleep(1);
+        secondes_restantes--;
+
+        int minutes_restantes = secondes_restantes / 60;
+        int secondes = secondes_restantes % 60;
+
+        // Mutex lock si nécessaire pour éviter des problèmes de concurrence
+        werase(data->win);
+        mvwprintw(data->win, 0, 0, "Temps restant : %d min %d s", minutes_restantes, secondes);
+        wrefresh(data->win);
+        // Mutex unlock si nécessaire
     }
 
-    printf("\nLe timer de %d minutes est écoulé !\n", minutes);
     return NULL;
 }
 
+
 // Fonction pour démarrer le timer
-
-
-
-void start_timer(int *minutes) {
+void start_timer(Timer_t* timer_data) {
     pthread_t timer_tid;
 
     // Créer le thread du timer en mode détaché
-    if (pthread_create(&timer_tid, NULL, timer_thread, minutes) != 0) {
+    if (pthread_create(&timer_tid, NULL, timer_thread, timer_data) != 0) {
         fprintf(stderr, "Erreur de création du thread du timer\n");
         return;
     }
@@ -522,20 +517,15 @@ void start_timer(int *minutes) {
     }
 }
 
+//Fonction pour afficher le timer
 void afficher_timer(WINDOW *win, int minutes) {
-    int secondes_restantes = minutes * 60;
-    int minutes_restantes = secondes_restantes / 60;
-    int secondes = secondes_restantes % 60;
+    Timer_t timer_data;
+    timer_data.minutes = minutes;
+    timer_data.win = win;
 
-    // Efface le contenu précédent de la fenêtre
-    werase(win);
-
-    // Affiche le temps restant dans la fenêtre
-    mvwprintw(win, 0, 0, "Temps restant : %d min %d s", minutes_restantes, secondes);
-
-    // Rafraîchit la fenêtre pour afficher les modifications
-    wrefresh(win);
+    start_timer(&timer_data);
 }
+
 
 void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire) {
     // Calcule le pourcentage d'expérience par rapport à l'expérience nécessaire pour passer au niveau suivant
@@ -555,7 +545,7 @@ void affiche_barre_experience(WINDOW *win, int niveau, int experience, int exper
     }
     wattroff(win, COLOR_PAIR(1));
     // Affiche le niveau et l'expérience actuelle
-    mvwprintw(win, 1, 0, "Niveau : %d | Expérience : %d / %d", niveau, experience, experience_necessaire);
+    mvwprintw(win, 1, 0, "Niveau : %d |\nExpérience : %d / %d", niveau, experience, experience_necessaire);
 
     // Rafraîchit la fenêtre pour afficher les modifications
     wrefresh(win);

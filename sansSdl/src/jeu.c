@@ -17,8 +17,6 @@ tile contenuCase;
 extern void* play_music(void* arg);
 extern bool stop_music;
 //void afficher_barre_experience(WINDOW *win, int start_y, int start_x);
-void* timer_thread(void * args);
-void start_timer(int minutes);
 
 extern personnage perso;
 int start_y;
@@ -45,8 +43,11 @@ extern void debug(char * msg);
 
 void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x);
 void afficher_inventaire(WINDOW * win);
-void afficher_timer(WINDOW *win, int minutes);
 void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire);
+
+void* timer_thread(void * arg);
+void start_timer(timer_t* timer_data);
+void afficher_timer(WINDOW *win, int minutes);
 
 int jeu (void){
 
@@ -171,7 +172,6 @@ int jeu (void){
 	//gestion des évènements
 
 	int ch = 0;
-	start_timer(7);
 
 	while (ch != 10) {
 		ch = getch();
@@ -359,7 +359,8 @@ int camera(WINDOW *win){
 	wrefresh(boiteCase);
     perso.frameAnimation++;
 
-	WINDOW * timer = newwin(3,20,0,max_x - 20);
+	WINDOW * timer = newwin(3,20,4,185);
+
 	afficher_timer(timer,7);
 	delwin(timer);
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
@@ -368,7 +369,7 @@ int camera(WINDOW *win){
 	WINDOW *inventory_win = newwin(13, 23, 18, 0); // Fenêtre pour l'inventaire
     afficher_inventaire(inventory_win);
     delwin(inventory_win);
-	WINDOW *exp_win = newwin(3,20,5,max_x - 20);
+	WINDOW *exp_win = newwin(3,20,8,185);
 	affiche_barre_experience(exp_win,1,0,50);
 	delwin(exp_win);
     return EXIT_SUCCESS;
