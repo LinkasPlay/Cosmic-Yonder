@@ -328,73 +328,79 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
     wrefresh(menu_win);
 }
 
-// Variables globales pour stocker le nom du joueur et la graine
-char player_name[50];
-int player_seed;
+bool is_alpha(int ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+}
+
+bool is_digit(int ch) {
+    return ch >= '0' && ch <= '9';
+}
 
 void get_player_info() {
     int height = 10, width = 50;
     int start_y = (LINES - height) / 2;
     int start_x = (COLS - width) / 2;
+    int player_seed;
+    char player_name[8]; // 7 characters + null terminator
 
     WINDOW *info_win = newwin(height, width, start_y, start_x);
     box(info_win, 0, 0);
-    mvwprintw(info_win, 1, 2, "Enter your name: ");
-    mvwprintw(info_win, 3, 2, "Enter a seed: ");
+    mvwprintw(info_win, 1, 2, "Enter your name (max 7 characters): ");
+    mvwprintw(info_win, 3, 2, "Enter a seed (numbers only, max 7 digits): ");
 
-    char name_input[7] = {0};
-    char seed_input[7] = {0};
+    char name_input[8] = {0}; // 7 characters + null terminator
+    char seed_input[8] = {0}; // 7 digits + null terminator
     int name_index = 0, seed_index = 0;
     bool entering_name = true;
     int ch;
 
-    echo(); // Enable echoing of characters
-    keypad(info_win, TRUE); // Enable keypad for the window
+    echo();
+    keypad(info_win, TRUE);
 
     while (1) {
         if (entering_name) {
-            wmove(info_win, 1, 18 + name_index);
+            wmove(info_win, 1, 35 + name_index);
         } else {
-            wmove(info_win, 3, 15 + seed_index);
+            wmove(info_win, 3, 32 + seed_index);
         }
         wrefresh(info_win);
 
         ch = wgetch(info_win);
-        if (ch == '\t') { // Tab key to switch input
+        if (ch == '\t') {
             entering_name = !entering_name;
-        } else if (ch == '\n' && !entering_name) { // Enter key to finish input when in seed input
-            break;
-        } else if (ch == KEY_BACKSPACE || ch == 127) { // Handle backspace
-            if (entering_name && name_index > 0) {
-                name_input[--name_index] = '\0';
-                mvwaddch(info_win, 1, 18 + name_index, ' '); // Erase character
-            } else if (!entering_name && seed_index > 0) {
-                seed_input[--seed_index] = '\0';
-                mvwaddch(info_win, 3, 15 + seed_index, ' '); // Erase character
-            }
-        } else if (ch >= 32 && ch <= 126) { // Handle printable characters (ASCII range for printable characters)
-            if (entering_name && name_index < sizeof(name_input) - 1) {
-                name_input[name_index++] = ch;
-                mvwaddch(info_win, 1, 18 + name_index - 1, ch);
-            } else if (!entering_name && seed_index < sizeof(seed_input) - 1) {
-                seed_input[seed_index++] = ch;
-                mvwaddch(info_win, 3, 15 + seed_index - 1, ch);
-            }
+            continue;
+        } else if (ch == '\n') {
+            if (!entering_name && seed_index > 0)
+                break;
+            else
+                continue;
         }
+
+        if (entering_name && name_index < 7 && ch != ':' && name_index > 0) {
+            name_input[name_index++] = ch;
+            mvwaddch(info_win, 1, 35 + name_index - 1, ch);
+        } else if (!entering_name && seed_index < 7 && is_digit(ch)) {
+            seed_input[seed_index++] = ch;
+            mvwaddch(info_win, 3, 32 + seed_index - 1, ch);
+        }
+
+        wrefresh(info_win);
     }
 
-    noecho(); // Disable echoing of characters
+    noecho();
 
-    // Convert seed input to an integer
     player_seed = atoi(seed_input);
 
-    // Copy name input to the player_name buffer
     strncpy(player_name, name_input, sizeof(player_name) - 1);
-    player_name[sizeof(player_name) - 1] = '\0'; // Ensure null termination
+    player_name[sizeof(player_name) - 1] = '\0';
 
     wrefresh(info_win);
     delwin(info_win);
 }
+
+
+
+
 
 
 

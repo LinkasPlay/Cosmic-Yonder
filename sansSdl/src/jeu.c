@@ -51,7 +51,6 @@ typedef struct {
 }my_timer_t;
 
 void afficher_temps_restante(WINDOW *win, int secondes_restantes);
-void* timer_thread(void * arg);
 void start_timer(my_timer_t* timer_data);
 //void display_timer(TimerArgs* timer_args);
 
@@ -211,6 +210,59 @@ int jeu (void){
 			//attaque
 			case 'e':
             case ' ':
+				switch(item){
+				
+				case 1:
+					if(perso.inv[1]!=0){
+						//50 degats
+					}
+				break;
+			
+				case 2:
+					if(perso.inv[2]!=0){
+						//gun
+					}
+				break;
+
+				case 3:
+					if(perso.inv[3]!=0){
+						perso.hp+=
+					}
+				break;
+
+				case 4:
+				break;
+
+				case 5:
+				break;
+
+				case 6:
+				break;
+
+				case 7:
+				break;
+
+				case 8:
+				break; 
+
+				case 9:
+				break;
+
+				case 10:
+				break;
+
+
+
+
+				}
+
+
+
+
+
+
+
+
 				if(attaqueEpee() != EXIT_SUCCESS){
 					printf("Erreur attaque");
 				}
@@ -366,6 +418,7 @@ int camera(WINDOW *win){
 	wrefresh(boiteCase);
     perso.frameAnimation++;
 	
+<<<<<<< Updated upstream
 	// Obtenir les dimensions de la fenêtre principale
     int my, mx;
     getmaxyx(stdscr, my, mx);
@@ -381,6 +434,8 @@ int camera(WINDOW *win){
     //display_timer(timer_win);
 
     delwin(timer_win);
+=======
+>>>>>>> Stashed changes
 
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
     afficher_coeurs(status_win, "image/coeur.txt", 0, 0);
