@@ -312,6 +312,52 @@ void ajouterSalle(void) {
     sprintf(str, "Ajout de la salle: %d, %d | %d, %d", room.posX, room.posX + room.largeur, room.posY, room.posY + room.longueur);
     debug(str);
 
+    // Vérification des collisions et ajustement de la salle
+    int newLargeur = room.largeur;
+    int newLongueur = room.longueur;
+
+    for (unsigned int i = room.posX; i < room.posX + newLargeur; i++) {
+        for (unsigned int j = room.posY; j < room.posY + newLongueur; j++) {
+            if (i >= DIMENSION_MAP || j >= DIMENSION_MAP || map[i][j].contenu != -5) {
+                // Réduire la taille de la salle si collision détectée
+                if (i < DIMENSION_MAP) {
+                    newLargeur--;
+                }
+                if (j < DIMENSION_MAP) {
+                    newLongueur--;
+                }
+            }
+        }
+    }
+
+    // Si la nouvelle taille de la salle est trop petite, annuler la création
+    if (newLargeur < 5 || newLongueur < 5) {
+        // Placer un mur à la place de la porte
+        map[perso.posX][perso.posY].contenu = -2;
+
+        // Faire reculer le joueur
+        switch (perso.direction) {
+            case 0: // Haut
+                mouvementBas();
+                break;
+            case 1: // Droite
+                mouvementGauche();
+                break;
+            case 2: // Bas
+                mouvementHaut();
+                break;
+            case 3: // Gauche
+                mouvementDroite();
+                break;
+        }
+        return;
+    }
+
+    // Mise à jour des dimensions de la salle
+    room.largeur = newLargeur;
+    room.longueur = newLongueur;
+
+    // Ajout de la salle à la carte
     for (unsigned int i = room.posX; i < room.posX + room.largeur; i++) {
         for (unsigned int j = room.posY; j < room.posY + room.longueur; j++) {
             if (i >= DIMENSION_MAP || j >= DIMENSION_MAP) {
@@ -336,4 +382,6 @@ void ajouterSalle(void) {
         m = 0;
         n++;
     }
+
+    map[perso.posX][perso.posY].contenu = 1;
 }
