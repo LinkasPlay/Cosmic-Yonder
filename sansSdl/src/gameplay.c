@@ -8,10 +8,6 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 #include <time.h>
-
-
-
-
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 /*
@@ -476,75 +472,55 @@ int pause(){
     return EXIT_SUCCESS;
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <time.h>
-
-// Structure pour passer le temps au thread du timer
+// Structure pour les arguments du timer
 typedef struct {
     int minutes;
 } TimerArgs;
 
 // Fonction du thread du timer
-
-// Nouvelle signature de la fonction timer_thread prenant un entier comme argument
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-// Structure pour passer les arguments au thread du timer
-typedef struct {
-    int minutes;
-} TimerArgs;
-
-// Fonction du thread du timer
-void* timer_thread(void *arg) {
-    TimerArgs *timer_args = (TimerArgs *)arg; // Convertir le pointeur générique en TimerArgs
-
+void* timer_thread(void* args) {
+    TimerArgs* timer_args = (TimerArgs*)args;
     int minutes = timer_args->minutes;
-    time_t debut = time(NULL); // Moment de début du timer
-    time_t fin = debut + minutes * 60; // Temps de fin calculé
+    
+    time_t start_time = time(NULL);
+    time_t end_time = start_time + minutes * 60;
 
     printf("Le timer de %d minutes commence maintenant...\n", minutes);
 
-    while (time(NULL) < fin) {
-        time_t maintenant = time(NULL);
-        int secondes_restantes = fin - maintenant;
-        int minutes_restantes = secondes_restantes / 60;
-        int secondes = secondes_restantes % 60;
+    while (time(NULL) < end_time) {
+        int remaining_seconds = end_time - time(NULL);
+        int remaining_minutes = remaining_seconds / 60;
+        remaining_seconds %= 60;
 
-        printf("\rTemps restant: %02d:%02d", minutes_restantes, secondes); // Affichage du temps restant
+        printf("\rTemps restant: %02d:%02d", remaining_minutes, remaining_seconds);
         fflush(stdout);
 
-        sleep(1); // Attendre une seconde
+        sleep(1);
     }
 
-    printf("\nLe temps de %d minutes est écoulé !\n", minutes);
+    printf("\nLe timer de %d minutes est écoulé !\n", minutes);
     return NULL;
 }
 
 // Fonction pour démarrer le timer
-void start_timer() {
-    int timer_duration;
-    printf("Entrez la durée du timer en minutes: ");
-    scanf("%d", &timer_duration);
-
+void start_timer(int minutes) {
     pthread_t timer_tid;
+    
+    TimerArgs timer_args = { .minutes = minutes };
 
-    // Préparation des arguments pour le thread du timer
-    TimerArgs timer_args;
-    timer_args.minutes = timer_duration;
-
-    // Créer le thread du timer
     if (pthread_create(&timer_tid, NULL, timer_thread, &timer_args) != 0) {
         fprintf(stderr, "Erreur de création du thread du timer\n");
         return;
     }
 
-    // Ne pas attendre la fin du thread ici
+    // Attente de la fin du thread du timer
+    if (pthread_join(timer_tid, NULL) != 0) {
+        fprintf(stderr, "Erreur de jointure du thread du timer\n");
+        return;
+    }
 }
 
-//fjienjfuvhienzifjgrneefk,o"t'jçhritgezfok'jihrgk,fezko"ji'othugerjnfkz,ko"i'jt(uyhjntkr,ezfokpk'i"tjougrjefkzoij"t'gnrk,flzkoijr"tujngref,kzkio"'jt(rgekf,ezok'ijt(yrthnk,gfrlfeorp"'jio"t(yrjt))))
+int main() {
+    start_timer(7); // Démarrer le timer pour 7 minutes
+    return 0;
+}
