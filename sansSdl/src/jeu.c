@@ -187,6 +187,7 @@ int jeu (void){
 				
             case 10: /*Pour quitter le jeu*/
 				printf("fin jeu\n");
+				endwin();
 				break;
 
 			//afficher la carte

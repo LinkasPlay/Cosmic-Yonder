@@ -239,7 +239,7 @@ int attaqueEpee(void){
 }
 
 int mouvementHaut(void){
-    switch (testSol(perso.posX, perso.posY - 1, 2)) {
+    switch (testSol(perso.posX, perso.posY - 1, 0)) {
     case 1:
     case -1:
         if ( (Ycamera != 0) ){
@@ -267,7 +267,7 @@ int mouvementHaut(void){
 }
 
 int mouvementGauche(void){
-    switch (testSol(perso.posX - 1, perso.posY, 3)) {
+    switch (testSol(perso.posX - 1, perso.posY, 1)) {
         case 1:
         case -1:
             if ( (Xcamera != 0) ) {
@@ -294,7 +294,7 @@ int mouvementGauche(void){
 }
 
 int mouvementBas(void){
-    switch (testSol(perso.posX, perso.posY + 1, 0)) {
+    switch (testSol(perso.posX, perso.posY + 1, 2)) {
         case 1:
         case -1:
             if ( (Ycamera < (DIMENSION_MAP - (WINDOW_HEIGHT / 100) ) ) ){
@@ -321,7 +321,7 @@ int mouvementBas(void){
 }
 
 int mouvementDroite(void){
-    switch (testSol(perso.posX + 1, perso.posY, 1)) {
+    switch (testSol(perso.posX + 1, perso.posY, 3)) {
         case 1:
         case -1:
             if ( (Xcamera < (DIMENSION_MAP - (WINDOW_WIDTH / 100) ) ) ) {

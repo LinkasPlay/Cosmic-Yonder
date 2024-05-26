@@ -14,6 +14,9 @@ extern int afficher_image_ascii(WINDOW *win, const char *filename);
 extern int nouvelleSalle(int longueur, int largeur, int num_salle, int cote);
 extern void debug(char * msg);
 extern void* play_music(void* arg);
+extern void freeRoomCases(tile **cases, int largeur);
+
+extern int num_salle;
 
 personnage perso;
 personnage persoPast;
@@ -24,9 +27,15 @@ int Xcamera = 0;
 int Ycamera = 0;
 tile **map;
 
-int creeMap(void) {
+int liberationMap(void) {
+    for (unsigned i = 0; i < DIMENSION_MAP; ++i) {
+        free(map[i]);
+    }
+    free(map);
+    return EXIT_SUCCESS;
+}
 
-    // initialisation perso
+int creeMap(void) {
     perso.posX = (DIMENSION_MAP / 2);
     perso.posY = (DIMENSION_MAP / 2);
     perso.direction = 3;
@@ -37,18 +46,21 @@ int creeMap(void) {
     perso.xp = 0;
 
     // Allocation de mémoire pour map
-    map = malloc(sizeof(tile*[DIMENSION_MAP]));
-
+    map = malloc(sizeof(tile*) * DIMENSION_MAP);
     if (map == NULL) {
         printf("Échec de l'allocation\n");
         return EXIT_FAILURE;
     }
 
     for (unsigned i = 0; i < DIMENSION_MAP; ++i) {
-        map[i] = malloc(sizeof(tile[DIMENSION_MAP]));
-
+        map[i] = malloc(sizeof(tile) * DIMENSION_MAP);
         if (map[i] == NULL) {
             printf("Échec de l'allocation\n");
+            // Libération de la mémoire allouée avant de retourner l'erreur
+            for (unsigned j = 0; j < i; ++j) {
+                free(map[j]);
+            }
+            free(map);
             return EXIT_FAILURE;
         }
     }
@@ -56,45 +68,21 @@ int creeMap(void) {
     for (unsigned i = 0; i < DIMENSION_MAP; ++i) {
         for (unsigned j = 0; j < DIMENSION_MAP; ++j) {
             map[i][j].contenu = -5;
-            if ( (i == perso.posX) && (j == perso.posY) ){
+            if (i == perso.posX && j == perso.posY) {
                 map[i][j].contenu = 1;
             }
         }
     }
 
-    if (nouvelleSalle(5, 5, 1, 0) != EXIT_SUCCESS){
+    if (nouvelleSalle(5, 5, 1, 0) != EXIT_SUCCESS) {
         printf("Erreur generation salle 1");
+        liberationMap(); // Libération de la mémoire en cas d'échec
         return EXIT_FAILURE;
     }
 
-    return EXIT_SUCCESS;
-}
-
-int liberationMap(void){
-    for (unsigned i = 0; i < DIMENSION_MAP; ++i) {
-        free(map[i]);
-    }
-
-    free(map);
-    return EXIT_SUCCESS;
-}
-
-int actualiserMap(void){
-    for (unsigned i = 0; i < DIMENSION_MAP; ++i) { // pos X case
-        for (unsigned j = 0; j < DIMENSION_MAP; ++j) { // pos Y case
-            if ( (i == perso.posX) && (j == perso.posY) ){
-                map[i][j].contenu = 1;
-            }
-            else if ( (i == persoPast.posX) && (j == persoPast.posY) ){
-                map[i][j].contenu = 0;
-            }
-            
-            //printf("[%d] ",p[i][j]);
-        }
-    }
+    num_salle = 2;
 
     return EXIT_SUCCESS;
-
 }
 
 void afficherMap(void) {

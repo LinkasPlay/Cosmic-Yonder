@@ -51,7 +51,6 @@ int texture(WINDOW *win) {
     switch (contenuCase.contenu) {
         case -5:
             image = "image/espace.txt";
-            debug("aaaaaaaaaaaaa");
             break;
         case -2:
             image = "image/mur.txt";
