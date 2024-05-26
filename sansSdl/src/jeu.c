@@ -53,7 +53,7 @@ typedef struct {
 void afficher_temps_restante(WINDOW *win, int secondes_restantes);
 void* timer_thread(void * arg);
 void start_timer(my_timer_t* timer_data);
-void afficher_timer(WINDOW *win, int minutes);
+//void display_timer(TimerArgs* timer_args);
 
 
 int jeu (void){
@@ -112,7 +112,7 @@ int jeu (void){
         mvwprintw(win, winHauteur / 2 + 1, (winLargeur / 2) - (taille2 / 2), "%s", msg2);
         wrefresh(win);
 
-        if (getch() == 10) {// Touche pour sortir = entrée
+        if (getch() == 10) { // Touche pour sortir = entrée
 			if(winHauteur < CASE_HEIGHT * 5 || winLargeur < CASE_WIDTH * 7){ // verif taille écran
 
 				clear(); // Efface le contenu de la fenêtre principale
@@ -131,7 +131,7 @@ int jeu (void){
     			taille3 = strlen(msg3);
 				mvwprintw(win, winHauteur / 2 + 1, (winLargeur / 2) - (taille3 / 2), "%s", msg3);
 				wrefresh(win);
-				if (getch() == 10) {// Touche pour sortir = entrée
+				if (getch() == 10) { // Touche pour sortir = entrée
 					break;
            		}
 			}
@@ -370,12 +370,6 @@ int camera(WINDOW *win){
     int my, mx;
     getmaxyx(stdscr, my, mx);
 
-    // Créer une fenêtre pour afficher la carte
-    WINDOW *map_win = newwin(my, mx / 2, 0, 0);
-    box(map_win, 0, 0);
-    wrefresh(map_win);
-	delwin(map_win);
-
     // Créer une fenêtre pour afficher le timer dans le coin supérieur droit
     int timer_win_height = 1;
     int timer_win_width = 20;
@@ -384,7 +378,7 @@ int camera(WINDOW *win){
     wrefresh(timer_win);
 
     // Afficher le timer avec une durée de 5 minutes
-    afficher_timer(timer_win, 5);
+    //display_timer(timer_win);
 
     delwin(timer_win);
 

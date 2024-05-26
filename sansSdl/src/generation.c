@@ -68,9 +68,6 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
 
 int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
     char str[100];
-    sprintf(str, "Numéro de salle: %d | Côté: %d", num_salle, cote);
-    debug(str);
-    getch();
 
     // Réinitialisation room
     room.num = 0;
@@ -78,12 +75,12 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
     room.longueur = 0;
     room.posX = 0;
     room.posY = 0;
-    
+
     if (room.cases != NULL) {
         freeRoomCases(room.cases, room.largeur); // Utiliser la fonction de libération
         room.cases = NULL;
     }
-    
+
     debug("1");
 
     // Génération de la nouvelle salle
@@ -98,32 +95,32 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
     if (num_salle == 1) {
         room.posX = perso.posX - 2;
         room.posY = perso.posY - 2;
-    } else {
+    } 
+    else {
         switch (cote) {
-            case 0:
+            case 0: // Haut
                 room.posX = perso.posX - entreeX;
                 room.posY = perso.posY - longueur;
                 break;
-            case 1:
-                room.posX = perso.posX - largeur;
+            case 3: // Droite
+                room.posX = perso.posX + 1;
                 room.posY = perso.posY - entreeY;
                 break;
-            case 2:
+            case 2: // Bas
                 room.posX = perso.posX - entreeX;
                 room.posY = perso.posY + 1;
                 break;
-            case 3:
-                room.posX = perso.posX + 1;
+            case 1: // Gauche  
+                room.posX = perso.posX - largeur;
                 room.posY = perso.posY - entreeY;
                 break;
             default:
                 break;
         }
-        sprintf(str, "Position de la salle: %d | %d", room.posX, room.posY);
-        debug(str);
-        getch();
     }
-
+    sprintf(str, "cote /entreeX / Y: %d / %d|%d", cote, entreeX, entreeY);
+    debug(str);
+    getch();
     debug("3");
 
     // Vérification des limites de la carte
@@ -159,6 +156,8 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
 
 int generation(int longueur, int largeur, int num_salle, int cote) {
     // Allocation de mémoire pour la salle
+    char str[100];
+
     tile **p = malloc(sizeof(tile *) * largeur);
     if (p == NULL) {
         printf("Echec de l'allocation\n");
@@ -191,54 +190,79 @@ int generation(int longueur, int largeur, int num_salle, int cote) {
         }
     }
 
-    // Positionnement des portes pour la première salle
-    if (num_salle == 1) {
-        // Positionner les portes au centre des murs
-        int midX = longueur / 2;
-        int midY = largeur / 2;
+    // Initialisation des portes
+    int porteLibre = 0;
+    int portes[4] = {0}; // Initialiser toutes les portes à 0
 
-        p[0][midX].contenu = -1; // Porte haut
-        p[midY][0].contenu = -1; // Porte gauche
-        p[largeur - 1][midX].contenu = -1; // Porte bas
-        p[midY][longueur - 1].contenu = -1; // Porte droite
+    // Si c'est la première salle, positionner les portes au centre des murs
+    if (num_salle == 1) {
+        portes[0] = 1;
+        portes[1] = 1;
+        portes[2] = 1;
+        portes[3] = 1;
     } else {
-        // Positionnement aléatoire des portes sur les murs
+        portes[cote] = 1; // Activer la porte du côté spécifié
+
         for (int i = 0; i < 4; i++) {
+            if (portes[i] == 0 && aleatoire(num_salle, i, 1, 100) <= 60) {
+                portes[i] = 1;
+                porteLibre++;
+            }
+        }
+    }
+
+    for (int i = 0; i < 4; i++) {
+        if (portes[i] == 1) {
             int al;
-            if (aleatoire(num_salle, i, 1, 100) <= 60) {
-                switch (i) {
-                    case 0: // Porte haut
-                        al = aleatoire(num_salle, i, 1, longueur - 2);
-                        p[0][al].contenu = -1;
-                        break;
-                    case 1: // Porte gauche
-                        al = aleatoire(num_salle, i, 1, largeur - 2);
-                        p[al][0].contenu = -1;
-                        break;
-                    case 2: // Porte bas
-                        al = aleatoire(num_salle, i, 1, longueur - 2);
-                        p[largeur - 1][al].contenu = -1;
-                        break;
-                    case 3: // Porte droite
-                        al = aleatoire(num_salle, i, 1, largeur - 2);
-                        p[al][longueur - 1].contenu = -1;
-                        break;
-                    default:
-                        break;
-                }
+            switch (i) {
+                case 0: // Porte haut
+                    al = (num_salle == 1) ? longueur / 2 : aleatoire(num_salle, i, 1, longueur - 2);
+                    p[0][al].contenu = -1;
+                    if (i == cote) {
+                        entreeX = al;
+                        entreeY = 0;
+                    }
+                    break;
+                case 1: // Porte gauche
+                    al = (num_salle == 1) ? largeur / 2 : aleatoire(num_salle, i, 1, largeur - 2);
+                    p[al][0].contenu = -1;
+                    if (i == cote) {
+                        entreeX = 0;
+                        entreeY = al;
+                    }
+                    break;
+                case 2: // Porte bas
+                    al = (num_salle == 1) ? longueur / 2 : aleatoire(num_salle, i, 1, longueur - 2);
+                    p[largeur - 1][al].contenu = -1;
+                    if (i == cote) {
+                        entreeX = al;
+                        entreeY = longueur - 1;
+                    }
+                    break;
+                case 3: // Porte droite
+                    al = (num_salle == 1) ? largeur / 2 : aleatoire(num_salle, i, 1, largeur - 2);
+                    p[al][longueur - 1].contenu = -1;
+                    if (i == cote) {
+                        entreeX = largeur - 1;
+                        entreeY = al;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
 
     int obj = 0;
-
     for (int i = 0; i < largeur; i++) {
         for (int j = 0; j < longueur; j++) {
             if (j == 0 || j == longueur - 1 || i == 0 || i == largeur - 1) {
                 if (p[i][j].contenu != -1) {
                     p[i][j].contenu = -2;
                 }
-            } else if (num_salle != 1 && obj < ((longueur - 2) * (largeur - 2)) / OBJ_MAX) {
+            } else if (num_salle == 1) {
+                p[2][2].contenu = 1;
+            } else if (obj < ((longueur - 2) * (largeur - 2)) / OBJ_MAX) {
                 if (aleatoire(num_salle, i * j, 1, 100) <= 40) {
                     int al = aleatoire(num_salle, i * j, 1, 10);
                     if (al <= 3) {
@@ -268,6 +292,10 @@ int generation(int longueur, int largeur, int num_salle, int cote) {
             }
         }
     }
+
+    sprintf(str, "cote /entreeX / Y: %d / %d|%d", cote, entreeX, entreeY);
+    debug(str);
+    getch();
 
     room.num = num_salle;
     room.largeur = largeur;

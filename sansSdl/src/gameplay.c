@@ -481,12 +481,12 @@ typedef struct {
 // Fonction du thread du timer
 void* timer_thread(void* arg) {
     TimerArgs* timer_args = (TimerArgs*)arg;
-    int minutes = timer_args.minutes;
-    timer_args.end_time = time(NULL) + minutes * 60;
+    int minutes = timer_args->minutes;
+    timer_args->end_time = time(NULL) + minutes * 60;
 
     printf("Le timer de %d minutes commence maintenant...\n", minutes);
 
-    while (time(NULL) < timer_args.end_time) {
+    while (time(NULL) < timer_args->end_time) {
         sleep(1); // Attendre une seconde
     }
 
@@ -498,7 +498,7 @@ void* timer_thread(void* arg) {
 TimerArgs* start_timer(int minutes) {
     pthread_t timer_tid;
     TimerArgs* timer_args = (TimerArgs*)malloc(sizeof(TimerArgs));
-    timer_args.minutes = minutes;
+    timer_args->minutes = minutes;
 
     // Créer le thread du timer
     if (pthread_create(&timer_tid, NULL, timer_thread, timer_args) != 0) {
@@ -520,7 +520,7 @@ void display_timer(TimerArgs* timer_args) {
     }
 
     time_t maintenant = time(NULL);
-    int secondes_restantes = timer_args.end_time - maintenant;
+    int secondes_restantes = timer_args->end_time - maintenant;
     if (secondes_restantes < 0) {
         printf("Le temps est écoulé.\n");
     } else {
