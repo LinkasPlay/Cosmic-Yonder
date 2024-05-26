@@ -531,10 +531,6 @@ void start_timer() {
         return;
     }
 
-    // Attendre la fin du thread du timer
-    if (pthread_join(timer_tid, NULL) != 0) {
-        fprintf(stderr, "Erreur de jointure du thread du timer\n");
-        return;
-    }
+    
 }
 //fjienjfuvhienzifjgrneefk,o"t'jçhritgezfok'jihrgk,fezko"ji'othugerjnfkz,ko"i'jt(uyhjntkr,ezfokpk'i"tjougrjefkzoij"t'gnrk,flzkoijr"tujngref,kzkio"'jt(rgekf,ezok'ijt(yrthnk,gfrlfeorp"'jio"t(yrjt))))
