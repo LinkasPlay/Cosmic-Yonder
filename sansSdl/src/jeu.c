@@ -41,8 +41,9 @@ extern void afficherMap(void);
 extern void debug(char * msg);
 
 void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x);
+void afficher_inventaire(WINDOW * win);
 
-int jeu (void) {
+int jeu (void){
 
     int LINES = getmaxy(stdscr);
     int COLS = getmaxx(stdscr);
@@ -169,7 +170,7 @@ int jeu (void) {
 	while (ch != 10) {
 		ch = getch();
         switch (ch) {
-			case 27:
+			case 9:
 				switch(pause()){
 					case -1:
 						ch = 10;
@@ -178,7 +179,7 @@ int jeu (void) {
 						printf("Erreur pause.");
 						break;
 				}
-				ch = 27;
+				ch = 9;
 				win = newwin(winHauteur, winLargeur, winY, winX);
         		box(win, 0, 0); // Dessine le cadre de la fenêtre
 				wrefresh(win);
@@ -310,7 +311,7 @@ int jeu (void) {
 }
 
 // afficher les images de la camera
-int camera(WINDOW *win) {
+int camera(WINDOW *win){
 	debug("Camerara");
     int max_y, max_x;
 	char str[20];
@@ -350,8 +351,12 @@ int camera(WINDOW *win) {
     }
 	wrefresh(boiteCase);
     perso.frameAnimation++;
-	boiteCase = newwin(3, 20, 0, 0);
-	afficher_coeurs(boiteCase,"image/coeur.txt", 0, 0);
+	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
+    afficher_coeurs(status_win, "image/coeur.txt", 0, 0);
+    delwin(status_win);
+	WINDOW *inventory_win = newwin(13, 23, 18, 0); // Fenêtre pour l'inventaire
+    afficher_inventaire(inventory_win);
+    delwin(inventory_win);
     return EXIT_SUCCESS;
 }
 

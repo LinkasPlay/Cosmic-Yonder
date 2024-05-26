@@ -43,26 +43,24 @@ unsigned int aleatoire(int salle, int graine, int min, int max){
 }
 
 int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
-    // réinitialisation room
-    if (room.cases != NULL) {
-        for (unsigned i = 0; i < room.largeur; i++) {
-            free(room.cases[i]);
-        }
-        free(room.cases);
-        room.cases = NULL;
-    }
-
+    // Réinitialisation room
     room.num = 0;
     room.largeur = 0;
     room.longueur = 0;
     room.posX = 0;
     room.posY = 0;
+    if (room.cases != NULL) {
+        free(room.cases); // Libérer la mémoire si nécessaire
+        room.cases = NULL;
+    }
 
+    // Génération de la nouvelle salle
     if (generation(longueur, largeur, num_salle, cote) != EXIT_SUCCESS) {
-        printf("Erreur generation");
+        printf("Erreur generation\n");
         return EXIT_FAILURE;
     }
 
+    // Calcul de la position de la salle
     if (num_salle == 1) {
         room.posX = perso.posX - 2;
         room.posY = perso.posY - 2;
@@ -70,10 +68,10 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
         switch (cote) {
             case 0:
                 room.posX = perso.posX - entreeX;
-                room.posY = perso.posY - longueur;
+                room.posY = perso.posY - longueur + 1;
                 break;
             case 1:
-                room.posX = perso.posX - largeur;
+                room.posX = perso.posX - largeur + 1;
                 room.posY = perso.posY - entreeY;
                 break;
             case 2:
@@ -87,11 +85,13 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
             default:
                 break;
         }
+        sprintf(str, "%d | %d", room.posX, room.posY);
+         debug(str);
     }
 
-    // Verify room boundaries
+    // Vérification des limites de la carte
     if (room.posX < 0 || room.posX + room.largeur >= DIMENSION_MAP || room.posY < 0 || room.posY + room.longueur >= DIMENSION_MAP) {
-        map[perso.posX][perso.posY].contenu = -1;
+        map[perso.posX][perso.posY].contenu = -1; // Assumant que `contenu` est un int
 
         switch (cote) {
             case 0:
@@ -111,8 +111,9 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
         }
     }
 
+    // Ajout de la salle à la carte
     ajouterSalle();
-    map[perso.posX][perso.posY].contenu = 1;
+    map[perso.posX][perso.posY].contenu = 1; // Assumant que `contenu` est un int
 
     return EXIT_SUCCESS;
 }
@@ -250,7 +251,6 @@ int generation(int longueur, int largeur, int num_salle, int cote){
     for(unsigned i = 0 ; i<largeur ; i++){
         for(unsigned j = 0 ; j<largeur ; j++){
             if(j==0 || j==largeur-1 || i==0 || i==longueur-1){
-                
                 if (p[i][j].contenu != -1){
                     p[i][j].contenu = -2;
                 }
@@ -344,7 +344,7 @@ int generation(int longueur, int largeur, int num_salle, int cote){
                 p[i][j].mstr.frameAnimation = 0;
                 p[i][j].spe.type = 0;
                 p[i][j].spe.inv = 0;
-
+                
             }
             
         }

@@ -230,6 +230,10 @@ int main(int argc, char **argv) {
         case 1:
             perso.lvl = 0;
             demander_nom_et_graine();
+            pthread_t music_thr;
+            int music_choix = 1;
+            pthread_create(&music_thr, NULL, play_music, &music_choix);
+
             if (jeu() != EXIT_SUCCESS) {
                 printf("Erreur jeu");
                 exit(EXIT_FAILURE);
@@ -288,6 +292,8 @@ int main(int argc, char **argv) {
             printf("Fin du jeu\n");
             endwin();
             exit(EXIT_SUCCESS);
+            stop_music = true;
+            pthread_join(music_thr, NULL);
             break;
         default:
             break;
@@ -297,6 +303,7 @@ int main(int argc, char **argv) {
     while (ch != ' ') {
         ch = getch();
     }
+    
 
     endwin();
 
@@ -324,12 +331,18 @@ void demander_nom_et_graine(void) {
     // Taille maximale du nom
     const int nom_max_len = 50;
 
+    // Initialiser ncurses
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
     int LINES = getmaxy(stdscr);
     int COLS = getmaxx(stdscr);
 
     // Calculer les positions de la fenêtre et de l'entrée
     int winHauteur = 10;
-    int winLargeur = 40;
+    int winLargeur = 50;
     int winY = (LINES - winHauteur) / 2;
     int winX = (COLS - winLargeur) / 2;
 
@@ -342,12 +355,14 @@ void demander_nom_et_graine(void) {
     wrefresh(input_win);
 
     // Lire le nom du joueur
-    char * nom;
-    mvwgetnstr(input_win, 2, 1, nom, nom_max_len);
-    
+    char nom[nom_max_len + 1];
+    mvwgetnstr(input_win, 1, 18, nom, nom_max_len); // Position après "Entrez votre nom:"
+    nom[nom_max_len] = '\0'; // S'assurer que la chaîne est terminée par un '\0'
+
     // Lire la graine
-    char graine_str[10];
-    mvwgetnstr(input_win, 4, 1, graine_str, 10);
+    char graine_str[11]; // Espace suffisant pour un entier et le '\0'
+    mvwgetnstr(input_win, 3, 18, graine_str, 10); // Position après "Entrez une graine:"
+    graine_str[10] = '\0'; // S'assurer que la chaîne est terminée par un '\0'
     int graine = atoi(graine_str);
 
     // Nettoyer la fenêtre
@@ -355,6 +370,10 @@ void demander_nom_et_graine(void) {
 
     // Terminer ncurses
     endwin();
+
+    // Afficher les valeurs (pour test)
+    printf("Nom: %s\n", nom);
+    printf("Graine: %d\n", graine);
 }
 
 //test
