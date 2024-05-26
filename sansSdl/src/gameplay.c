@@ -490,7 +490,21 @@ typedef struct {
 // Fonction du thread du timer
 
 // Nouvelle signature de la fonction timer_thread prenant un entier comme argument
-void* timer_thread(int minutes) {
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+// Structure pour passer les arguments au thread du timer
+typedef struct {
+    int minutes;
+} TimerArgs;
+
+// Fonction du thread du timer
+void* timer_thread(void *arg) {
+    TimerArgs *timer_args = (TimerArgs *)arg; // Convertir le pointeur générique en TimerArgs
+
+    int minutes = timer_args->minutes;
     time_t debut = time(NULL); // Moment de début du timer
     time_t fin = debut + minutes * 60; // Temps de fin calculé
 
@@ -512,7 +526,6 @@ void* timer_thread(int minutes) {
     return NULL;
 }
 
-
 // Fonction pour démarrer le timer
 void start_timer() {
     int timer_duration;
@@ -531,6 +544,7 @@ void start_timer() {
         return;
     }
 
-    
+    // Ne pas attendre la fin du thread ici
 }
+
 //fjienjfuvhienzifjgrneefk,o"t'jçhritgezfok'jihrgk,fezko"ji'othugerjnfkz,ko"i'jt(uyhjntkr,ezfokpk'i"tjougrjefkzoij"t'gnrk,flzkoijr"tujngref,kzkio"'jt(rgekf,ezok'ijt(yrthnk,gfrlfeorp"'jio"t(yrjt))))
