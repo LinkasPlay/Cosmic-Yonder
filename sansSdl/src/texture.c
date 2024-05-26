@@ -17,6 +17,7 @@
 
 extern personnage perso;
 extern void debug(char * msg);
+extern int item;
 
 int afficher_image_ascii(WINDOW *win, const char *filename) {
     FILE *file = fopen(filename, "r");
@@ -237,12 +238,18 @@ void afficher_inventaire(WINDOW *win) {
 
     // Afficher les objets et leurs quantités
     for (int i = 0; i < n_objets; ++i) {
-        mvwprintw(win, y, x, "%s: %d", objets[i], 0);
+        if(item += 1){
+            wattron(win, A_REVERSE);
+            mvwprintw(win, y, x, "%s: %d", objets[i], 0);
+            wattroff(win, A_REVERSE);
+        }
+        else{
+            mvwprintw(menu_win, y, x, "%s", choices[i]);
         ++y;
     }
-
     // Actualiser la fenêtre
     wrefresh(win);
+}
 }
 
 

@@ -43,7 +43,7 @@ extern void debug(char * msg);
 void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x);
 void afficher_inventaire(WINDOW * win);
 void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire);
-int item(WINDOW *win, int n_objets);
+
 
 
 typedef struct {
@@ -179,6 +179,7 @@ int jeu (void){
 	//gestion des évènements
 
 	int ch = 0;
+	int item = 1;
 
 	while (ch != 10) {
 		ch = getch();
@@ -207,7 +208,19 @@ int jeu (void){
 			case 'm':
 				afficherMap();
 				continue;
+			case "w":
+				if (item == 1)
+                    item = 4;
+                else
+                    --item;
+				break;
 
+			case "x":
+				if (item == 4)
+                    item = 1;
+                else
+                    ++item;
+                break;
 			//attaque
 			case 'e':
             case ' ':
@@ -446,11 +459,6 @@ int camera(WINDOW *win){
 	WINDOW *inventory_win = newwin(13, 23, 18, 0); // Fenêtre pour l'inventaire
     afficher_inventaire(inventory_win);
     delwin(inventory_win);
-	int choix = item(inventory_win, n_objets);
-
-    // Afficher le choix
-    mvprintw(15, 2, "Objet sélectionné : %s", objets[choix]);
-    refresh();
 	WINDOW *exp_win = newwin(3,20,8,185);
 	affiche_barre_experience(exp_win,1,0,50);
 	delwin(exp_win);
