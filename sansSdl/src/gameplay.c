@@ -8,6 +8,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 #include <time.h>
+
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
 /*
@@ -532,63 +533,51 @@ int pause(){
     return EXIT_SUCCESS;
 }
 
-// Structure pour passer les arguments au thread du timer
-typedef struct {
-    int minutes;
-    time_t end_time;
-} TimerArgs;
+
+
+
+// Fonction du thread du timer
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
 
 // Fonction du thread du timer
 void* timer_thread(void* arg) {
-    TimerArgs* timer_args = (TimerArgs*)arg;
-    int minutes = timer_args->minutes;
-    timer_args->end_time = time(NULL) + minutes * 60;
+    int minutes = *((int*)arg);
+    int seconds = minutes * 60;
 
     printf("Le timer de %d minutes commence maintenant...\n", minutes);
 
-    while (time(NULL) < timer_args->end_time) {
-        sleep(1); // Attendre une seconde
-    }
+    // Attendre le nombre de secondes spécifié
+    sleep(seconds);
 
-    printf("\nLe temps de %d minutes est écoulé !\n", minutes);
+    printf("Le temps de %d minutes est écoulé !\n", minutes);
+
     return NULL;
 }
 
-// Fonction pour démarrer le timer
-TimerArgs* start_timer(int minutes) {
+void start_timer(int timer_duration) {
     pthread_t timer_tid;
-    TimerArgs* timer_args = (TimerArgs*)malloc(sizeof(TimerArgs));
-    timer_args->minutes = minutes;
 
     // Créer le thread du timer
-    if (pthread_create(&timer_tid, NULL, timer_thread, timer_args) != 0) {
+    if (pthread_create(&timer_tid, NULL, timer_thread, &timer_duration) != 0) {
         fprintf(stderr, "Erreur de création du thread du timer\n");
-        free(timer_args); // Libérer la mémoire en cas d'erreur
-        return NULL;
+        exit(1);
     }
 
-    // Ne pas attendre la fin du thread du timer pour permettre de jouer en même temps
-    pthread_detach(timer_tid);
-    return timer_args;
+    // Continuer l'exécution du programme sans attendre la fin du timer
+    printf("Le programme continue pendant que le timer s'exécute...\n");
+
+    // Attendre que le thread du timer se termine
+    if (pthread_join(timer_tid, NULL) != 0) {
+        fprintf(stderr, "Erreur de jointure du thread du timer\n");
+        exit(2);
+    }
+
+    printf("Fin du programme\n");
 }
 
-// Fonction pour afficher le temps restant du timer
-void display_timer(TimerArgs* timer_args) {
-    if (timer_args == NULL) {
-        printf("Le timer n'a pas été démarré.\n");
-        return;
-    }
-
-    time_t maintenant = time(NULL);
-    int secondes_restantes = timer_args->end_time - maintenant;
-    if (secondes_restantes < 0) {
-        printf("Le temps est écoulé.\n");
-    } else {
-        int minutes_restantes = secondes_restantes / 60;
-        int secondes = secondes_restantes % 60;
-        printf("Temps restant: %02d:%02d\n", minutes_restantes, secondes);
-    }
-}
 
 void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire) {
     // Calcule le pourcentage d'expérience par rapport à l'expérience nécessaire pour passer au niveau suivant
