@@ -9,7 +9,7 @@
 #include <pulse/error.h>
 #include <time.h>
 
-// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
+
 
 /*
 Expliquation gameplay du jeu :

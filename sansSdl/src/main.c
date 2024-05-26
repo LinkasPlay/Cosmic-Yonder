@@ -8,7 +8,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
-// COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
+
 
 void start_ncurses(bool useRaw, bool useNoecho);
 
