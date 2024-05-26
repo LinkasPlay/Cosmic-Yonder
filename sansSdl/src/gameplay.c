@@ -503,24 +503,23 @@ void* timer_thread(void* args) {
 }
 
 // Fonction pour démarrer le timer
-void start_timer(int minutes) {
-    pthread_t timer_tid;
-    
-    TimerArgs timer_args = { .minutes = minutes };
 
-    if (pthread_create(&timer_tid, NULL, timer_thread, &timer_args) != 0) {
+
+
+void start_timer(int *minutes) {
+    pthread_t timer_tid;
+
+    // Créer le thread du timer en mode détaché
+    if (pthread_create(&timer_tid, NULL, timer_thread, minutes) != 0) {
         fprintf(stderr, "Erreur de création du thread du timer\n");
         return;
     }
 
-    // Attente de la fin du thread du timer
-    if (pthread_join(timer_tid, NULL) != 0) {
-        fprintf(stderr, "Erreur de jointure du thread du timer\n");
+    // Définir le thread comme détaché
+    if (pthread_detach(timer_tid) != 0) {
+        fprintf(stderr, "Erreur de définition du thread du timer comme détaché\n");
         return;
     }
 }
 
-int main() {
-    start_timer(7); // Démarrer le timer pour 7 minutes
-    return 0;
-}
+
