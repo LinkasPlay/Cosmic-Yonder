@@ -527,7 +527,7 @@ void start_timer(my_timer_t* timer_data) {
 }
 
 // Fonction pour afficher le timer
-void afficher_timer(WINDOW *win, int minutes) {
+void afficher_timer(WINDOW *win) {
     my_timer_t timer_data;
     timer_data.minutes = minutes;
     timer_data.win = win;
