@@ -4,12 +4,11 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 #include <pthread.h>
 #include <pulse/simple.h>
 #include <pulse/error.h>
-
-
 
 // COMMANDE TERMINAL : gcc -o ProgMain *.c -lncurses -lm -lpthread -lpulse-simple -lpulse
 
@@ -45,9 +44,17 @@ void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x
 void afficher_inventaire(WINDOW * win);
 void affiche_barre_experience(WINDOW *win, int niveau, int experience, int experience_necessaire);
 
+
+typedef struct {
+    int minutes;
+    WINDOW *win;
+}my_timer_t;
+
+void afficher_temps_restante(WINDOW *win, int secondes_restantes);
 void* timer_thread(void * arg);
 void start_timer(my_timer_t* timer_data);
 void afficher_timer(WINDOW *win, int minutes);
+
 
 int jeu (void){
 
@@ -358,10 +365,33 @@ int camera(WINDOW *win){
     }
 	wrefresh(boiteCase);
     perso.frameAnimation++;
+	
+	// Obtenir les dimensions de la fenêtre principale
+    int my, mx;
+    getmaxyx(stdscr, my, mx);
 
-	WINDOW * timer = newwin(3,20,4,185);
-	afficher_timer(timer,7);
-	delwin(timer);
+    // Créer une fenêtre pour afficher la carte
+    WINDOW *map_win = newwin(my, mx / 2, 0, 0);
+    box(map_win, 0, 0);
+    wrefresh(map_win);
+
+    // Créer une fenêtre pour afficher le timer dans le coin supérieur droit
+    int timer_win_height = 1;
+    int timer_win_width = 20;
+    WINDOW *timer_win = newwin(timer_win_height, timer_win_width, 0, mx - timer_win_width);
+    box(timer_win, 0, 0);
+    wrefresh(timer_win);
+
+    // Afficher le timer avec une durée de 5 minutes
+    afficher_timer(timer_win, 5);
+
+    // Attendre une touche pour quitter
+    getch();
+
+    // Nettoyer et fermer ncurses
+    delwin(map_win);
+    delwin(timer_win);
+
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
     afficher_coeurs(status_win, "image/coeur.txt", 0, 0);
     delwin(status_win);
