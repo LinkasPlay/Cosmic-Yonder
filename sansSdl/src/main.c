@@ -230,9 +230,6 @@ int main(int argc, char **argv) {
         case 1:
             perso.lvl = 0;
             demander_nom_et_graine();
-            pthread_t music_thr;
-            int music_choix = 1;
-            pthread_create(&music_thr, NULL, play_music, &music_choix);
 
             if (jeu() != EXIT_SUCCESS) {
                 printf("Erreur jeu");
@@ -292,8 +289,6 @@ int main(int argc, char **argv) {
             printf("Fin du jeu\n");
             endwin();
             exit(EXIT_SUCCESS);
-            stop_music = true;
-            pthread_join(music_thr, NULL);
             break;
         default:
             break;
@@ -330,12 +325,6 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices, char *choices[])
 void demander_nom_et_graine(void) {
     // Taille maximale du nom
     const int nom_max_len = 50;
-
-    // Initialiser ncurses
-    initscr();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
 
     int LINES = getmaxy(stdscr);
     int COLS = getmaxx(stdscr);

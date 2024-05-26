@@ -351,6 +351,7 @@ int camera(WINDOW *win){
     }
 	wrefresh(boiteCase);
     perso.frameAnimation++;
+	
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
     afficher_coeurs(status_win, "image/coeur.txt", 0, 0);
     delwin(status_win);
