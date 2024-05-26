@@ -67,24 +67,26 @@ int nouvelleSalle(int longueur, int largeur, int num_salle, int cote) {
     } else {
         switch (cote) {
             case 0:
-                room.posX = perso.posX - 2;
-                room.posY = perso.posY - longueur;
+                room.posX = perso.posX - entreeX;
+                room.posY = perso.posY - longueur + 1;
                 break;
             case 1:
-                room.posX = perso.posX - largeur;
-                room.posY = perso.posY - 2;
+                room.posX = perso.posX - largeur + 1;
+                room.posY = perso.posY - entreeY;
                 break;
             case 2:
-                room.posX = perso.posX - 2;
+                room.posX = perso.posX - entreeX;
                 room.posY = perso.posY;
                 break;
             case 3:
                 room.posX = perso.posX;
-                room.posY = perso.posY - 2;
+                room.posY = perso.posY - entreeY;
                 break;
             default:
                 break;
         }
+        sprintf(str, "%d | %d", room.posX, room.posY);
+         debug(str);
     }
 
     // Vérification des limites de la carte
