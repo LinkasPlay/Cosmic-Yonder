@@ -211,7 +211,7 @@ void afficher_coeur(WINDOW *win, const char *filename, int start_y, int start_x)
 
 // Fonction pour afficher trois coeurs
 void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x) {
-    int decalage = 6; // Décalage entre les coeurs
+    int decalage = 7; // Décalage entre les coeurs
 
     // Afficher les trois coeurs
     for (int i = 0; i < 3; i++) {
@@ -221,7 +221,7 @@ void afficher_coeurs(WINDOW *win, const char *filename, int start_y, int start_x
 
 void afficher_inventaire(WINDOW *win) {
     // Liste des objets et leurs quantités
-    char *objets[] = {"Epee", "Pistolet", "Potions de vie", "Potion d'expérience", "Clé à molette", "Clés pour les portes", "Grande clé"};
+    char *objets[] = {"Epee", "Pistolet", "Potions de vie", "Potion d'exp", "Clé à molette", "Clés", "Grande clé"};
     int n_objets = sizeof(objets) / sizeof(objets[0]);
 
     int x = 2;
@@ -231,11 +231,11 @@ void afficher_inventaire(WINDOW *win) {
     werase(win);
 
     // Réimprimer la bordure de la fenêtre
-    box(win, 0, 0);
+    box(win, 4, 0);
 
     // Afficher les objets et leurs quantités
     for (int i = 0; i < n_objets; ++i) {
-        mvwprintw(win, y, x, "%s: %d", objets[i], n_objets);
+        mvwprintw(win, y, x, "%s: %d", objets[i], 0);
         ++y;
     }
 

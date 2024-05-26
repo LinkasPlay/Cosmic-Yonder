@@ -351,10 +351,10 @@ int camera(WINDOW *win){
     }
 	wrefresh(boiteCase);
     perso.frameAnimation++;
-	WINDOW *status_win = newwin(3, 20, 0, 0); //Fenêtre pour les coeurs
+	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
     afficher_coeurs(status_win, "image/coeur.txt", 0, 0);
     delwin(status_win);
-	WINDOW *inventory_win = newwin(13, 26, 4, 0); // Fenêtre pour l'inventaire
+	WINDOW *inventory_win = newwin(13, 23, 18, 0); // Fenêtre pour l'inventaire
     afficher_inventaire(inventory_win);
     delwin(inventory_win);
     return EXIT_SUCCESS;

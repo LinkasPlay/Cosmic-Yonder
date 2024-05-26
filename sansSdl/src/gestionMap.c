@@ -13,6 +13,7 @@ extern int generation(int longueur, int largeur, int num_salle, int cote);
 extern int afficher_image_ascii(WINDOW *win, const char *filename);
 extern int nouvelleSalle(int longueur, int largeur, int num_salle, int cote);
 extern void debug(char * msg);
+extern void* play_music(void* arg);
 
 personnage perso;
 personnage persoPast;
@@ -109,6 +110,7 @@ void afficherMap(void) {
         }
         fprintf(fichier, "\n");
     }
+    
 
     fclose(fichier);
 
