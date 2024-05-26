@@ -522,4 +522,3 @@ void start_timer(int *minutes) {
     }
 }
 
-

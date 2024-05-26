@@ -16,8 +16,9 @@
 tile contenuCase;
 extern void* play_music(void* arg);
 extern bool stop_music;
-void afficher_barre_experience(WINDOW *win, int start_y, int start_x);
-
+//void afficher_barre_experience(WINDOW *win, int start_y, int start_x);
+void* timer_thread(void * args);
+void start_timer(int minutes);
 extern personnage perso;
 int start_y;
 int start_x;
@@ -167,6 +168,7 @@ int jeu (void){
 	//gestion des évènements
 
 	int ch = 0;
+	start_timer(7);
 
 	while (ch != 10) {
 		ch = getch();
@@ -359,9 +361,9 @@ int camera(WINDOW *win){
 	WINDOW *inventory_win = newwin(13, 23, 18, 0); // Fenêtre pour l'inventaire
     afficher_inventaire(inventory_win);
     delwin(inventory_win);
-	WINDOW *exp_win = newwin(3,23,21,0);
-	afficher_barre_experience(exp_win,20,0);
-	delwin(exp_win);
+	//WINDOW *exp_win = newwin(3,23,21,0);
+	//afficher_barre_experience(exp_win,20,0);
+	//delwin(exp_win);
 	
     return EXIT_SUCCESS;
 }
