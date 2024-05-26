@@ -51,7 +51,6 @@ typedef struct {
 }my_timer_t;
 
 void afficher_temps_restante(WINDOW *win, int secondes_restantes);
-void* timer_thread(void * arg);
 void start_timer(my_timer_t* timer_data);
 void afficher_timer(WINDOW *win, int minutes);
 
@@ -419,6 +418,7 @@ int camera(WINDOW *win){
 	wrefresh(boiteCase);
     perso.frameAnimation++;
 	
+<<<<<<< Updated upstream
 	// Obtenir les dimensions de la fenêtre principale
     int my, mx;
     getmaxyx(stdscr, my, mx);
@@ -440,6 +440,8 @@ int camera(WINDOW *win){
     afficher_timer(timer_win, 5);
 
     delwin(timer_win);
+=======
+>>>>>>> Stashed changes
 
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
     afficher_coeurs(status_win, "image/coeur.txt", 0, 0);
