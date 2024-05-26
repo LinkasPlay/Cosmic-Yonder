@@ -19,6 +19,7 @@ extern bool stop_music;
 //void afficher_barre_experience(WINDOW *win, int start_y, int start_x);
 void* timer_thread(void * args);
 void start_timer(int minutes);
+void affiche_timer(WINDOW *win,int minutes);
 extern personnage perso;
 int start_y;
 int start_x;
@@ -354,6 +355,9 @@ int camera(WINDOW *win){
     }
 	wrefresh(boiteCase);
     perso.frameAnimation++;
+
+	WINDOW * timer = newwin(3,20,0,max_x - 20);
+	afficher_timer(timer,7);
 
 	WINDOW *status_win = newwin(3, 20, 4, 0); //Fenêtre pour les coeurs
     afficher_coeurs(status_win, "image/coeur.txt", 0, 0);
